@@ -1,0 +1,937 @@
+.settingscontainer{
+    width: 100%;
+    padding: 20px;
+}
+
+.settingsheader{
+    height: 150px;
+    width: 1020px;
+    border-radius: 24px;
+    border: 1px solid #E2E8F0;
+    background: linear-gradient(135deg, #F8FAFC, #FAFAFA);
+    padding: 24px;
+}
+
+.settingsheader h1{
+    color: #1D293D;
+    font-size: 48px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.settingsheader p{
+    color: #52525C;
+    font-size: 18px;
+    margin-top: 12px;
+    font-weight: 400;
+}
+
+.activitycat1{
+    height: 60px;
+    width: 1020px;
+    border-radius: 14px;
+    border: 1px solid #FEE685;
+    background-color: #FEFCE8;
+    padding: 5px;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.catmenu4{
+    color: #000000;
+    font-size: 14px;
+    font-weight: bold;
+    height: 48px;
+    width: 320px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.catmenu4.active-profile, .active-membership, .active-security {
+    background-color: #314158;
+    color: #FFFFFF;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.profileinformation{
+    height: 768px;
+    width: 1020px;
+    border-radius: 14px;
+    border: 1px solid #E9D4FF;
+    margin-top: 20px;
+}
+
+.securityinformation{
+    height: 514px;
+    width: 1020px;
+    border-radius: 14px;
+    border: 1px solid #E9D4FF;
+    margin-top: 20px;
+}
+
+.profileinformationtop{
+    height: 110px;
+    width: 1018px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #F8FAFC, #FAFAFA);
+    padding: 20px;
+}
+
+.profileinformationtop h2{
+    color: #18181B;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.profileinformationtop p{
+    color: #52525C;
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 12px;
+}
+
+.profileinfo{
+    padding: 20px;
+    margin-top: 35px;
+    display: flex;
+    gap: 12px;
+}
+
+.profileinfoicon{
+    height: 96px;
+    width: 96px;
+    position: relative;
+    border-radius: 50%;
+    color: #FFFFFF;
+    font-size: 48px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #51A2FF, #7C86FF, #2B7FFF);
+}
+
+.profileinfoicon span {
+    height: 30px;
+    position: absolute;
+    bottom: 0;
+    right: 0; 
+    width: 30px;
+    background-color: #314158;
+    color: #ffffff;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    border-radius: 50%;
+}
+
+.profileinfodetails{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-left: 12px;
+}
+
+.profileinfodetails h3{
+    color: #18181B;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.profileinfodetails p{
+    color: #52525C;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.profileinfodetails span{
+    width: fit-content;
+    color: #BB4D00;
+    font-size: 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px;
+    border-radius: 8px;
+    border: 1px solid #FEE685;
+    background-color: #FEF3C6;
+}
+
+.profileinfoname{
+    margin: 16px 0 0 24px;
+    display: flex;
+    gap: 12px;
+}
+
+.profileinfonaming p, .profileotherdetails p{
+    color: #3F3F47;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.profileinfonaming h3{
+    height: 48px;
+    width: 470px;
+    border-radius: 14px;
+    border: 1px solid #E4E4E7;
+    background-color: #F3F3F5;
+    color: #0A0A0A;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 12px;
+    margin-top: 12px;
+}
+
+.profileotherdetails h3{
+    height: 48px;
+    width: 960px;
+    border-radius: 14px;
+    border: 1px solid #E4E4E7;
+    background-color: #F3F3F5;
+    color: #0A0A0A;
+    font-size: 14px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    margin-top: 12px;
+}
+
+.profileotherdetails{
+    padding: 12px 0 0 24px;
+}
+
+.savechanges{
+    height: 48px;
+    width: 960px;
+    border-radius: 14px;
+    background-color: #314158;
+    color: #ffffff;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    gap: 8px;
+    margin: 32px 0 0 24px;
+}
+
+.membershipinformation{
+    width: 100%;
+    margin-top: 20px;
+}
+
+.currentmemebership{
+    height: 440px;
+    width: 1020px;
+    border-radius: 24px;
+    border: 1px solid #FEE685;
+    background: linear-gradient(135deg, #FFFBEB, #FEFCE8, #FEF3C6);
+    padding: 24px;
+}
+
+.currentmemebershiptop{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.currentmemebershipleft{
+    display: flex;
+    gap: 24px;
+}
+
+.currentmembershipicon{
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFB900, #FDC700, #FE9A00);
+    color: #ffffff;
+    padding: 20px;
+    font-size: 40px;
+}
+
+.currentmembershipplan h3{
+    color: #BB4D00;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.currentmembershipplan h2{
+    color: #7B3306;
+    font-size: 36px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.currentmembershipplan p{
+    color: #BB4D00;
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 8px;
+}
+
+.currentmembershipactive{
+    height: 42px;
+    width: 102px;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #E17100, #D08700);
+    color: #ffffff;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.plandetails{
+    padding: 24px;
+    display: flex;
+    gap: 14px;
+}
+
+.planinfodetails, .planinfodetails1, .planinfodetails2{
+    height: 155px;
+    width: 310px;
+    padding: 20px;
+    border-radius: 16px;
+    background-color: #ffffff;
+}
+
+.planinfodetailstop{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.planinfodetailstop p{
+    color: #52525C;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.planinfoicon{
+    height: 40px;
+    width: 40px;
+    border-radius: 10px;
+    background-color: #FEF3C6;
+    color: #E17100;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.planinfoicon1{
+    height: 40px;
+    width: 40px;
+    border-radius: 10px;
+    background-color: #D0FAE5;
+    color: #009966;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.planinfoicon2{
+    height: 40px;
+    width: 40px;
+    border-radius: 10px;
+    background-color: #DBEAFE;
+    color: #155DFC;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.planinfodetails h2{
+    color: #7B3306;
+    font-size: 36px;
+    font-weight: bold;
+    margin-top: 14px;
+}
+
+.planinfodetails1 h2{
+    color: #004F3B;
+    font-size: 36px;
+    font-weight: bold;
+    margin-top: 14px;
+}
+
+.planinfodetails2 h2{
+    color: #1C398E;
+    font-size: 36px;
+    font-weight: bold;
+    margin-top: 14px;
+}
+
+.planinfodetails p, .planinfodetails1 p, .planinfodetails2 p{
+    color: #52525C;
+    font-size: 14px;
+    font-weight: 400;
+    margin-top: 12px;
+}
+
+.planlistings{
+    color: #004F3B;
+    font-size: 36px;
+    font-weight: bold;
+    margin-top: 14px;
+}
+
+.renewalinformation{
+    height: 76px;
+    width: 950px;
+    display: flex;
+    justify-content: space-between;
+    padding-left: 24px;
+}
+
+.renewalinfoleft p{
+    color: #BB4D00;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.renewalinfoleft h2{
+    color: #7B3306;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.renewbutton{
+    background-color: #ffffff;
+    border: 1px solid #FFD230;
+    border-radius: 14px;
+    height: 48px;
+    width: 144px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.benefits{
+    height: 460px;
+    width: 1020px;
+    border-radius: 14px;
+    border: 1px solid #E4E4E7;
+    margin-top: 20px;
+}
+
+.benefitstop{
+    height: 110px;
+    width: 1018px;
+    background: linear-gradient(135deg, #F8FAFC, #FAFAFA);
+    border-radius: 14px;
+    padding: 20px;
+}
+
+.benefitstop h2{
+    color: #18181B;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.benefitstop p{
+    color: #52525C;
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 12px;
+}
+
+.benefitsinfo{
+    padding: 20px;
+    margin-top: 30px;
+}
+
+.benefitsinforow{
+    display: flex;
+    gap: 20px;
+    margin-top: 12px;
+}
+
+.benefitsinfo1{
+    height: 80px;
+    width: 460px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #EFF6FF, #EEF2FF);
+    display: flex;
+    padding: 16px;
+    gap: 12px;
+    border: 1px solid #DBEAFE;
+}
+
+.benefitsinfo2{
+    height: 80px;
+    width: 460px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #ECFDF5, #F0FDF4);
+    display: flex;
+    padding: 16px;
+    gap: 12px;
+    border: 1px solid #D0FAE5;
+}
+
+.benefitsinfo3{
+    height: 80px;
+    width: 460px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #FAF5FF, #F5F3FF);
+    display: flex;
+    padding: 16px;
+    gap: 12px;
+    border: 1px solid #F3E8FF;
+}
+
+.benefitsinfo4{
+    height: 80px;
+    width: 460px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #FFFBEB, #FEFCE8);
+    display: flex;
+    padding: 16px;
+    gap: 12px;
+    border: 1px solid #FEF3C6;
+}
+
+.benefitsinfo5{
+    height: 80px;
+    width: 460px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #FDF2F8, #FFF1F2);
+    display: flex;
+    padding: 16px;
+    gap: 12px;
+    border: 1px solid #FCE7F3;
+}
+
+.benefitsinfo6{
+    height: 80px;
+    width: 460px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #ECFEFF, #EFF6FF);
+    display: flex;
+    padding: 16px;
+    gap: 12px;
+    border: 1px solid #CEFAFE;
+}
+
+.benefitsinfo1icon{
+    height: 48px;
+    width: 48px;
+    border-radius: 14px;
+    background-color: #155DFC;
+    color: #ffffff;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.benefitsinfo2icon{
+    height: 48px;
+    width: 48px;
+    border-radius: 14px;
+    background-color: #009966;
+    color: #ffffff;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.benefitsinfo3icon{
+    height: 48px;
+    width: 48px;
+    border-radius: 14px;
+    background-color: #9810FA;
+    color: #ffffff;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.benefitsinfo4icon{
+    height: 48px;
+    width: 48px;
+    border-radius: 14px;
+    background-color: #E17100;
+    color: #ffffff;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.benefitsinfo5icon{
+    height: 48px;
+    width: 48px;
+    border-radius: 14px;
+    background-color: #E60076;
+    color: #ffffff;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.benefitsinfo6icon{
+    height: 48px;
+    width: 48px;
+    border-radius: 14px;
+    background-color: #0092B8;
+    color: #ffffff;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.benefitsinfo1details h3{
+    color: #18181B;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.benefitsinfo1details p{
+    color: #52525C;
+    font-size: 14px;
+    font-weight: 400;
+    margin-top: 10px;
+}
+
+.upgradeplans{
+    height: 656px;
+    width: 1020px;
+    margin-top: 20px;
+}
+
+.upgradeplans h2{
+    color: #18181B;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.upgradeplans p{
+    color: #52525C;
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 12px;
+}
+
+.upgradeplandetails{
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
+    align-items: center;
+}
+
+.basicplan{
+    width: 320px;
+    height: 528px;
+    border-radius: 14px;
+    border: 1px solid #E4E4E7;
+    padding: 24px;
+}
+
+.basicplanicon{
+    height: 56px;
+    width: 56px;
+    border-radius: 16px;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #51A2FF, #615FFF);
+    font-size: 24px;
+    margin-top: 30px;
+}
+
+.basicplan h2{
+    color: #18181B;
+    font-size: 24px;
+    font-weight: 600;
+    margin-top: 16px;
+}
+
+.basicplan p, .basicplan span{
+    color: #717182;
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 12px;
+}
+
+.basicplan h3{
+    color: #18181B;
+    font-size: 48px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 20px;
+}
+
+.basicplan ul, .eliteplan ul, .proplan ul{
+    list-style: none;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.basicplan li{
+    color: #3F3F47;
+    font-size: 14px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.basicplanlisticon{
+    color:#155DFC;
+    font-size: 20px;
+}
+
+.downgradebutton{
+    height: 48px;
+    width: 280px;
+    border-radius: 14px;
+    border: 1px solid #8EC5FF;
+    color: #1447E6;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 34px;
+}
+
+.proplan{
+    width: 320px;
+    height: 568px;
+    border-radius: 14px;
+    border: 3px solid #FFB900;
+    background: linear-gradient(135deg, #FFFBEB, #FEFCE8);
+    padding: 24px;
+}
+
+.proplanicon{
+    height: 56px;
+    width: 56px;
+    border-radius: 16px;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #FFB900, #FDC700, #FE9A00);
+    font-size: 24px;
+    margin-top: 30px;
+}
+
+.proplan h2{
+    color: #7B3306;
+    font-size: 24px;
+    font-weight: 600;
+    margin-top: 16px;
+}
+
+.proplan p, .proplan span{
+    color: #BB4D00;
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 12px;
+}
+
+.proplan h3{
+    color: #7B3306;
+    font-size: 48px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 20px;
+}
+
+.proplan li{
+    color: #7B3306;
+    font-size: 14px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.proplanlisticon{
+    color:#E17100;
+    font-size: 20px;
+}
+
+.currentbutton{
+    height: 48px;
+    width: 280px;
+    border-top: 1px solid #FEE685;
+    color: #BB4D00;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.eliteplan{
+    width: 320px;
+    height: 528px;
+    border-radius: 14px;
+    border: 1px solid #E9D4FF;
+    background: linear-gradient(135deg, #FAF5FF, #FDF2F8);
+    padding: 24px;
+}
+
+.eliteplanicon{
+    height: 56px;
+    width: 56px;
+    border-radius: 16px;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #AD46FF, #8E51FF, #F6339A);
+    font-size: 24px;
+}
+
+.eliteplan h2{
+    color: #59168B;
+    font-size: 24px;
+    font-weight: 600;
+    margin-top: 16px;
+}
+
+.eliteplan p, .eliteplan span{
+    color: #8200DB;
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 12px;
+}
+
+.eliteplan h3{
+    color: #59168B;
+    font-size: 48px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 14px;
+}
+
+.eliteplan li{
+    color: #59168B;
+    font-size: 14px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.eliteplanlisticon{
+    color:#9810FA;
+    font-size: 20px;
+}
+
+.upgradebutton{
+    height: 48px;
+    width: 280px;
+    border-radius: 14px;
+    color: #ffffff;
+    background: linear-gradient(180deg, #9810FA, #7F22FE, #E60076);
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.needhelp{
+    height: 156px;
+    width: 1020px;
+    margin-top: 20px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #F8FAFC, #FAFAFA);
+    align-items: center ;
+    text-align: center;
+}
+
+.needhelp h2{
+    color: #18181B;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 16px;
+    padding-top: 16px;
+}
+
+.needhelp p{
+    color: #52525C;
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 12px;
+}
+
+.finalctas{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.comparision{
+    background-color: #ffffff;
+    border: 1px solid #CAD5E2;
+    color: #0A0A0A;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.contactsales{
+    background-color: #314158;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    border-radius: 8px;
+}

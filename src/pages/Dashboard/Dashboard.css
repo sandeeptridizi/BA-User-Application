@@ -1,0 +1,828 @@
+.dashboardcontainer{
+    width: 100%;
+    height: 4136px;
+    padding: 20px;
+}
+
+.dashboardheader{
+    height: 190px;
+    width: 1020px;
+    border-radius: 24px;
+    box-shadow: 0 0 1.25px #89898a;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    padding: 24px;
+}
+
+.dashboardheaddetails h1{
+    color: #1D293D;
+    font-size: 48px;
+    font-weight: bold;
+}
+
+.dashboardheaddetails p{
+    color: #52525C;
+    font-size: 18px;
+    font-weight: 400;
+    margin-top: 8px;
+    display: block;
+}
+
+.headertags{
+    display: flex;
+    gap: 20px;
+}
+
+.protag{
+    color: #BB4D00;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 8px;
+    border: 1px solid #FEE685;
+    width: fit-content;
+    background-color: #FEF3C6;
+    display: flex;
+    align-items: center;
+    margin-top: 12px;
+    gap: 6px;
+    padding: 8px;
+}
+
+.verifiedtag{
+    color: #007A55;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: 1px solid #A4F4CF;
+    width: fit-content;
+    background-color: #D0FAE5;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    gap: 6px;
+    margin-top: 12px;
+}
+
+.verifiedtag1{
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: 1px solid #A4F4CF;
+    width: fit-content;
+    background-color: #D0FAE5;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    color: #10B981;
+}
+
+.verifiedtag2{
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 8px;
+    border: 1px solid #8B5CF6;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    color: #8B5CF6;
+}
+
+.verifiedtag3{
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 8px;
+    border: 1px solid #F59E0B;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    color: #F59E0B;
+}
+
+.categorytag{
+    color: #3F3F47;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 8px;
+    border: 1px solid #e6e5e5;
+    width: fit-content;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+}
+
+.addnewlisting{
+    height: 56px;
+    width: 200px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #155DFC, #4F39F6);
+    border-color: #4F39F6;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+    align-items: center;
+    display: flex;
+    margin-top: 30px;
+    gap: 8px;
+    justify-content: center;
+}
+
+.dashboardstats{
+    display: flex;
+    gap: 20px;
+    width: 1020px;
+    margin-top: 20px;
+}
+
+.mylistings{
+    background: linear-gradient(135deg, #EFF6FF, #EEF2FF);
+    height: 190px;
+    width: 240px;
+    border-radius: 14px;
+    box-shadow: 0px 4px 6px #7e7f80;
+    padding: 20px;
+}
+
+.mylistings1{
+    background: linear-gradient(135deg, #FAF5FF, #F5F3FF);
+    height: 190px;
+    width: 240px;
+    border-radius: 14px;
+    box-shadow: 0px 4px 6px #7e7f80;
+    padding: 20px;
+}
+
+.mylistings2{
+    background: linear-gradient(135deg, #ECFDF5, #F0FDF4);
+    height: 190px;
+    width: 240px;
+    border-radius: 14px;
+    box-shadow: 0px 4px 6px #7e7f80;
+    padding: 20px;
+}
+
+.mylistings3{
+    background: linear-gradient(135deg, #FFFBEB, #FEFCE8);
+    height: 190px;
+    width: 240px;
+    border-radius: 14px;
+    box-shadow: 0px 4px 6px #7e7f80;
+    padding: 20px;
+}
+
+.mylistingstop{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mylistingsname{
+    color: #52525C;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.mylistings span{
+    height: 42px;
+    width: 42px;
+    background: linear-gradient(135deg, #51A2FF, #615FFF, #155DFC);
+    color: #ffffff;
+    border-radius: 16px;
+    font-size: 24px;
+    display: block;
+    padding: 9px;
+}
+
+.mylistings1 span{
+    height: 42px;
+    width: 42px;
+    background: linear-gradient(135deg, #C27AFF, #8E51FF, #9810FA);
+    color: #ffffff;
+    border-radius: 16px;
+    font-size: 24px;
+    display: block;
+    padding: 9px;
+}
+
+.mylistings2 span{
+    height: 42px;
+    width: 42px;
+    background: linear-gradient(135deg, #00D492, #00C950, #009966);
+    color: #ffffff;
+    border-radius: 16px;
+    font-size: 24px;
+    display: block;
+    padding: 9px;
+}
+
+.mylistings3 span{
+    height: 42px;
+    width: 42px;
+    background: linear-gradient(135deg, #FFB900, #FDC700, #FE9A00);
+    color: #ffffff;
+    border-radius: 16px;
+    font-size: 24px;
+    display: block;
+    padding: 9px;
+}
+
+.dashboardstatnum{
+    color: #18181B;
+    font-size: 36px;
+    font-weight: bold;
+    margin-top: 30px;
+}
+
+.dashboardstatcta{
+    color: #52525C;
+    font-size: 14px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    margin-top: 12px;
+    gap: 6px;
+}
+
+.performancemetrics{
+    height: 278px;
+    width: 1020px;
+    border-radius: 14px;
+    box-shadow: 0px 4px 6px #b1b1b1;
+    margin-top: 20px;
+}
+
+.performancementricshead{
+    height: 98px;
+    width: 1020px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #FAF5FF, #F5F3FF);
+    padding: 24px;
+}
+
+.performancemetricstitle{
+    color: #18181B;
+    font-size: 16px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.performancemetricsicon{
+    color: #9810FA;
+    font-size: 20px;
+}
+
+.activelistingsicon{
+    color: #155DFC;
+    font-size: 20px;
+}
+
+.enquiriesicon{
+    color: #009966;
+    font-size: 20px;
+}
+
+.ticketsicon{
+    color: #E7000B;
+    font-size: 20px;
+}
+
+.actionsicon{
+    color: #4A5565;
+    font-size: 20px;
+}
+
+.benefitsicon{
+    color: #E17100;
+    font-size: 20px;
+}
+
+.performancemetricsnote{
+    color: #52525C;
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 10px;
+}
+
+.performancestats{
+    margin: 30px 0 0 20px;
+    display: flex;
+    gap: 12px;
+}
+
+.perfromstat{
+    height: 106px;
+    width: 235px;
+    background: linear-gradient(135deg, #99a09d, #ffffff);
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.performvalue{
+    display: flex;
+    gap: 10px;
+}
+
+.perfromstat p{
+    color: #52525C;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.performvaluenum{
+    color: #009966;
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.performvaluenum1{
+    color: #155DFC;
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+.performvaluenum2{
+    color: #E17100;
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+.performvaluenum3{
+    color: #9810FA;
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.performvaluegrowth{
+    color: #007A55;
+    font-size: 12px;
+    font-weight: 400;
+    width: fit-content;
+    background-color: #D0FAE5;
+    border-radius: 8px;
+    border: 1px solid #A4F4CF;
+    padding: 5px;
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.performvaluegrowth1{
+    color: #1447E6;
+    font-size: 12px;
+    font-weight: 400;
+    width: fit-content;
+    background-color: #DBEAFE;
+    border-radius: 8px;
+    border: 1px solid #BEDBFF;
+    padding: 5px;
+    display: inline-block;
+    margin-top: 20px;
+}
+.performvaluegrowth2{
+    color: #BB4D00;
+    font-size: 12px;
+    font-weight: 400;
+    width: fit-content;
+    background-color: #FEF3C6;
+    border-radius: 8px;
+    border: 1px solid #FEE685;
+    padding: 5px;
+    display: inline-block;
+    margin-top: 20px;
+}
+.performvaluegrowth3{
+    color: #8200DB;
+    font-size: 12px;
+    font-weight: 400;
+    width: fit-content;
+    background-color: #F3E8FF;
+    border-radius: 8px;
+    border: 1px solid #E9D4FF;
+    padding: 5px;
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.activelistings{
+    height: 1214px;
+    width: 1020px;
+    border-radius: 14px;
+    border: 1px solid #e6e5e5;
+    margin-top: 30px;
+}
+
+.activelistingshead{
+    height: 102px;
+    width: 1020px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #EFF6FF, #EEF2FF);
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.activelistingshead1{
+    height: 102px;
+    width: 1020px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #ECFDF5, #F0FDF4);
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.supportticketsheader{
+    height: 98px;
+    width: 1020px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #FEF2F2, #FFF1F2);
+    padding: 20px;
+}
+
+.quickactionsheader{
+    height: 98px;
+    width: 1020px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #F9FAFB, #F9FAFB);
+    padding: 20px;
+}
+
+.membershipbenifitsheader{
+    height: 98px;
+    width: 1020px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #FFFBEB, #FFFBEB);
+    padding: 20px;
+}
+
+.viewalllistings{
+    background-color: #155DFC;
+    width: 134px;
+    height: 32px;
+    padding: 6px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    align-items: center;
+    text-align: center;
+    border-radius: 8px;
+}
+
+.viewallleads{
+    background-color: #009966;
+    width: 134px;
+    height: 32px;
+    padding: 6px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    align-items: center;
+    text-align: center;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.activelistingslist{
+    padding: 30px;
+}
+
+.listingcontainer{
+    height: 250px;
+    width: 965px;
+    border-radius: 16px;
+    border: 1px solid #e6e5e5;
+    margin-top: 16px;
+}
+
+.listingcontainertop{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.listingcontainerleft h2{
+    color: #18181B;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.listingcontainerleft p{
+    color: #52525C;
+    font-size: 14px;
+    font-weight: 400;
+    margin-top: 10px;
+}
+
+.listingcontainerright{
+    color: #314158;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.listingcontainerbottom{
+    display: flex;
+    gap: 10px;
+    padding: 20px;
+}
+
+.listingproductstat{
+    background-color: #EFF6FF;
+    height: 80px;
+    width: 310px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 4px;
+    padding-top: 10px;
+}
+
+.listingproductstat span{
+    color: #155DFC;
+}
+
+.listingproductstat h3{
+    color: #18181B;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.listingproductstat p{
+    color: #52525C;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.listingproductstat1{
+    background-color: #ECFDF5;
+    height: 80px;
+    width: 310px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 4px;
+    padding-top: 10px;
+}
+
+.listingproductstat1 span{
+    color: #009966;
+}
+
+.listingproductstat1 h3{
+    color: #18181B;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.listingproductstat1 p{
+    color: #52525C;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.listingproductstat2{
+    background-color: #FAF5FF;
+    height: 80px;
+    width: 310px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 4px;
+    padding-top: 10px;
+}
+
+.listingproductstat2 span{
+    color: #9810FA;
+}
+
+.listingproductstat2 h3{
+    color: #18181B;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.listingproductstat2 p{
+    color: #52525C;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.buyerenquiries{
+    height: 475px;
+    width: 1020px;
+    border-radius: 14px;
+    border: 1px solid #e6e5e5;
+    margin-top: 20px;
+}
+
+.enquiriesdetails{
+    padding: 24px;
+}
+
+.enquiryinfo{
+    height: 100px;
+    width: 965px;
+    border-radius: 14px;
+    border: 1px solid #e6e5e5;
+    margin-top: 10px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.enquiryinfo1{
+    height: 85px;
+    width: 965px;
+    border-radius: 14px;
+    border: 1px solid #e6e5e5;
+    margin-top: 10px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.enquiryinfoleft{
+    padding: 12px;
+    display: flex;
+    gap: 14px;
+}
+
+.buyerprofile{
+    height: 46px;
+    width: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #51A2FF, #615FFF);
+    color: #ffffff;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.buyerprofile1{
+    height: 46px;
+    width: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FF6467, #FF2056);
+    color: #ffffff;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.buyerprofile2{
+    height: 46px;
+    width: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #99A1AF, #6A7282);
+    color: #ffffff;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.buyerprofile3{
+    height: 46px;
+    width: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFB900, #FE9A00);
+    color: #ffffff;
+    padding: 12px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.buyerdetails{
+    list-style: none;
+    gap: 12px;
+}
+
+.buyername{
+    color: #18181B;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    gap: 10px;
+}
+
+.buyerproduct{
+    color: #52525C;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.buyertime{
+    color: #71717B;
+    font-size: 12px;
+    font-weight: 400;
+    margin-top: 8px;
+}
+
+.buyertag{
+    color: #3B82F6;
+    border: 1px solid #3B82F6;
+    width: fit-content;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.progresstag{
+    color: #F59E0B;
+    border: 1px solid #F59E0B;
+    width: fit-content;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.respondedtag{
+    color: #10B981;
+    border: 1px solid #10B981;
+    width: fit-content;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.respondtag{
+    color: #007A55;
+    border: 1px solid #5EE9B5;
+    width: fit-content;
+    height: 30px;
+    margin: 26px 10px 0 0 ;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 6px;
+}
+
+.ticketviewtag{
+    color: #C10007;
+    border: 1px solid #FFA2A2;
+    width: fit-content;
+    height: 30px;
+    margin: 16px 10px 0 0 ;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 6px;
+}
+
+.quickactiontag{
+    color: #364153;
+    border: 1px solid #D1D5DC;
+    width: fit-content;
+    height: 30px;
+    margin: 16px 10px 0 0 ;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 6px;
+}
+
+.benefitstag{
+    color: #BB4D00;
+    border: 1px solid #FFD230;
+    width: fit-content;
+    height: 30px;
+    margin: 16px 10px 0 0 ;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 6px;
+}
+
+.supporttickets{
+    height: 425px;
+    width: 1020px;
+    border-radius: 14px;
+    border: 1px solid #e6e5e5;
+    margin-top: 20px;
+}
+
+.quickactions{
+    height: 530px;
+    width: 1020px;
+    border-radius: 14px;
+    border: 1px solid #e6e5e5;
+    margin-top: 20px;
+}

@@ -1,0 +1,402 @@
+.contactcontainer{
+    height: 895px;
+    width: 1020px;
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.contactcontainerleft{
+    height: 895px;
+    width: 690px;
+    border-radius: 14px;
+    border: 1px solid #e6e5e5;
+}
+
+.contactcontainerright{
+    height: 640px;
+    width: 310px;
+    border-radius: 14px;
+    border: 1px solid #e6e5e5;
+}
+
+.contactcontainerleftheader{
+    width: 688px;
+    height: 100px;
+    background: linear-gradient(180deg, #F8FAFC, #FAFAFA);
+    border-radius: 14px;
+    padding: 20px;
+}
+
+.contactcontainerrightheader{
+    width: 310px;
+    height: 100px;
+    background: linear-gradient(180deg, #F8FAFC, #FAFAFA);
+    border-radius: 14px;
+    padding: 20px;
+}
+
+.contactcontainerleftheader h3, .contactcontainerrightheader h3{
+    color: #18181B;
+    font-size: 24px;
+    font-weight: 400;
+}
+
+.contactcontainerleftheader p, .contactcontainerrightheader p{
+    color: #52525C;
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 14px;
+}
+
+.accountinformation{
+    background-color: #EFF6FF;
+    border: 1px solid #BEDBFF;
+    width: 640px;
+    height: 110px;
+    border-radius: 14px;
+    padding: 20px;
+    margin: 30px 0 0 20px;
+}
+
+.accountformdiv{
+    margin: 30px 0 0 20px;
+    gap: 14px;
+}
+
+.accountinfo{
+    display: flex;
+    gap: 160px;
+}
+
+.accountinformationtitle{
+    color: #1C398E;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.accountinformationleft p{
+    color: #1447E6;
+    font-size: 14px;
+    font-weight: 400;
+    margin-top: 14px;
+}
+
+.accountformdiv h3{
+    color: #3F3F47;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.accountformtext{
+    color: #717182;
+    height: 36px;
+    width: 640px;
+    background-color: #F3F3F5;
+    padding: 4px;
+    border: none;
+    margin-top: 12px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.accountformtext1{
+    color: #717182;
+    height: 180px;
+    width: 640px;
+    background-color: #F3F3F5;
+    padding: 14px;
+    border: none;
+    font-family: 'Arimo', sans-serif;
+    margin-top: 12px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.accountformdiv p{
+    color: #71717B;
+    font-size: 12px;
+    font-weight: 400;
+    margin-top: 8px;
+}
+
+.prioritylevel{
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    color: #3F3F47;
+    font-size: 14px;
+    font-weight: 400;
+    margin: 10px 0 0 20px;
+}
+
+.prioritylevellow{
+    height: 50px;
+    width: 200px;
+    border: 1px solid #A4F4CF;
+    background-color: #ECFDF5;
+    color: #007A55;
+    border-radius: 14px;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    display: inline-flex;
+    font-weight: bold;
+}
+
+.prioritylevelmedium{
+    height: 50px;
+    width: 200px;
+    border: 1px solid #FEE685;
+    background-color: #FFFBEB;
+    color: #BB4D00;
+    border-radius: 14px;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    display: inline-flex;
+    font-weight: bold;
+}
+
+.prioritylevelhigh{
+    height: 50px;
+    width: 200px;
+    border: 1px solid #FFC9C9;
+    background-color: #FEF2F2;
+    color: #C10007;
+    border-radius: 14px;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    display: inline-flex;
+    font-weight: bold;
+}
+
+.prioritylevelnote{
+    color: #3F3F47;
+    font-size: 14px;
+    font-weight: 400;
+    margin: 20px 0 0 20px;
+}
+
+.ticketsubmitbutton{
+    height: 46px;
+    width: 640px;
+    border-radius: 14px;
+    background-color: #009966;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px;
+}
+
+.supportcontactinfo{
+    height: 100px;
+    width: 260px;
+    border-radius: 14px;
+    border: 1px solid #e6e5e5;
+    margin: 30px 0 0 20px;
+    padding: 20px;
+    display: flex;
+    gap: 14px;
+}
+
+.supportcontacticon{
+    height: 36px;
+    width: 36px;
+    border-radius: 10px;
+    background-color: #DBEAFE;
+    color: #155DFC;
+    padding: 9px;
+}
+
+.supportcontacticon1{
+    height: 36px;
+    width: 36px;
+    border-radius: 10px;
+    background-color: #D0FAE5;
+    color: #009966;
+    padding: 9px;
+}
+
+.supportcontacticon2{
+    height: 36px;
+    width: 36px;
+    border-radius: 10px;
+    background-color: #FEF3C6;
+    color: #E17100;
+    padding: 9px;
+}
+
+.supportcontacticon3{
+    height: 36px;
+    width: 36px;
+    border-radius: 10px;
+    background-color: #F3E8FF;
+    color: #9810FA;
+    padding: 9px;
+}
+
+.supportcontactdetails h3{
+    color: #18181B;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.supportcontactdetails p{
+    color: #52525C;
+    font-size: 13px;
+    font-weight: 400;
+    margin-top: 4px;
+}
+
+.previoustickets{
+    height: 1666px;
+    width: 1020px;
+}
+
+.previousticketsheader{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.previousticketsheader h2{
+    color: #18181B;
+    font-size: 30px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.previousticketsheader p{
+    height: 34px;
+    width: 110px;
+    background-color: #F3E8FF;
+    border-radius: 8px;
+    border: 1px solid #E9D4FF;
+    color: #8200DB;
+    font-size: 12px;
+    font-weight: bold;
+    align-items: center;
+    justify-content: center ;
+    display: flex;
+}
+
+.previousticketsicon{
+    color: #9810FA;
+    font-size: 24px;
+}
+
+.ticketdetails{
+    height: 400px;
+    width: 1020px;
+    border-radius: 14px;
+    border: 1px solid #E9D4FF;
+    margin-top: 20px;
+}
+
+.ticketdetailstop{
+    height: 148px;
+    width: 1018px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #F8FAFC, #FAFAFA);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ticketdetailstags{
+    list-style: none;
+    display: flex;
+    gap: 14px;
+}
+
+.ticketdetailstop h2{
+    font-size: 20px;
+    color: #18181B;
+    font-weight: 400;
+    margin-top: 12px;
+}
+
+.ticketdetailstop p{
+    color: #52525C;
+    font-size: 14px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+}
+
+.ticketdetailicon{color: #009966;}
+
+.responsetime{
+    height: 22px;
+    width: 148px;
+    background-color: #DCFCE7;
+    border: 1px solid #B9F8CF;
+    color: #008236;
+    font-size: 12px;
+    justify-content: center;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 8px;
+}
+
+.yourquery{
+    padding: 24px;
+}
+
+.yourquery1{
+    padding-left: 24px;
+}
+
+.yourquery h2{
+    font-size: 14px;
+    font-weight: bold;
+    color: #3F3F47;
+    margin-top: 12px;
+}
+
+.yourquery1 h2{
+    font-size: 14px;
+    font-weight: bold;
+    color: #007A55;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.yourquery p{
+    height: 58px;
+    width: 960px;
+    border-radius: 14px;
+    border: 1px solid #E2E8F0;
+    background-color: #F8FAFC;
+    color: #3F3F47;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 20px;
+    margin-top: 12px;
+}
+
+.yourquery1 p{
+    height: 58px;
+    width: 960px;
+    border-radius: 14px;
+    border: 1px solid #A4F4CF;
+    background: linear-gradient(135deg, #ECFDF5, #F0FDF4);
+    color: #004F3B;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 20px;
+    margin-top: 12px;
+}
