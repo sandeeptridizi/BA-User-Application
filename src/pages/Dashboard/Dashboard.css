@@ -317,9 +317,10 @@
 .perfromstat {
   height: 106px;
   width: 235px;
-  background: linear-gradient(135deg, #99a09d, #ffffff);
+  background: linear-gradient(135deg, rgb(242, 242, 27), #ffffff);
   border-radius: 16px;
   padding: 20px;
+  box-shadow: 0px 4px 5px 3px rgba(0, 0, 0, 0.3);
 }
 
 .performvalue {
