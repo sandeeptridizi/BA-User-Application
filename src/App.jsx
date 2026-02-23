@@ -5,23 +5,23 @@ import Products from './pages/Products/Products';
 import MyLeads from './pages/My Leads/MyLeads';
 import Settings from './pages/Settings/Settings';
 import Enquiry from './pages/Enquiry/Enquiry';
+import MobileNavbar from './components/MobileNavbar/MobileNavbar';
 
-
-
-  const App = () => {
+const App = () => {
   return (
     <BrowserRouter>
+      <MobileNavbar />
       <Routes>
         <Route path='/' element={<LandingPage />}>
-           <Route index element={<DashboardPage />} />
-            <Route path='products' element={<Products />} />
-            <Route path='myleads' element={<MyLeads />} />
-            <Route path='settings' element={<Settings />} />
-            <Route path='enquiry' element={<Enquiry />} />
+          <Route index element={<DashboardPage />} />
+          <Route path='products' element={<Products />} />
+          <Route path='myleads' element={<MyLeads />} />
+          <Route path='settings' element={<Settings />} />
+          <Route path='enquiry' element={<Enquiry />} />
         </Route>
       </Routes>
     </BrowserRouter>
-  )
-}
+  );
+};
 
-export default App
+export default App;

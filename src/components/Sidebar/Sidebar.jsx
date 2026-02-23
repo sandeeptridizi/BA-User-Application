@@ -9,10 +9,8 @@ import { LuLayoutDashboard } from 'react-icons/lu';
 import { FiShoppingBag } from 'react-icons/fi';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { MdLogout } from 'react-icons/md';
-import { FiTarget } from "react-icons/fi";
-import { FiMessageSquare } from "react-icons/fi";
-
-
+import { FiTarget } from 'react-icons/fi';
+import { FiMessageSquare } from 'react-icons/fi';
 
 const linksData = [
   {
@@ -21,7 +19,7 @@ const linksData = [
     title: 'Dashboard',
     link: '/',
   },
-   {
+  {
     id: 2,
     icon: <FiShoppingBag />,
     title: 'Products',
@@ -29,13 +27,13 @@ const linksData = [
   },
   {
     id: 3,
-    icon: <FiTarget  />,
+    icon: <FiTarget />,
     title: 'My Leads',
     link: 'myleads',
   },
   {
     id: 4,
-    icon: <FiMessageSquare  />,
+    icon: <FiMessageSquare />,
     title: 'Enquiry',
     link: 'enquiry',
   },

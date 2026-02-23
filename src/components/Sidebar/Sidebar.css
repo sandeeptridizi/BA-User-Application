@@ -1,4 +1,4 @@
-    .sidebar-container {
+.sidebar-container {
   width: 288px;
   height: 720px;
   background: linear-gradient(
@@ -150,4 +150,10 @@
   height: 16px;
   color: rgba(251, 44, 54, 1);
   cursor: pointer;
+}
+
+@media screen and (max-width: 510px) {
+  .sidebar-container {
+    display: none;
+  }
 }
