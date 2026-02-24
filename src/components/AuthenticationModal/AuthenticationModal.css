@@ -1,0 +1,32 @@
+.auth-shield-icon {
+  width: 16px;
+  height: 16px;
+  color: rgba(152, 16, 250, 1);
+}
+
+.auth-tags-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auth-change-num {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  color: rgba(152, 16, 250, 1);
+}
+
+.auth-time {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: rgba(82, 82, 92, 1);
+}
+
+.seconds {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  color: rgba(152, 16, 250, 1);
+}

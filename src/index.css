@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;600;700&display=swap');
 
-
 * {
   margin: 0;
   padding: 0;
@@ -12,4 +11,5 @@ body {
   height: 100vh;
   background: rgba(255, 255, 255, 1);
   font-family: 'Arimo', sans-serif;
+  position: relative;
 }

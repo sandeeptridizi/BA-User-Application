@@ -6,8 +6,16 @@ import MyLeads from './pages/My Leads/MyLeads';
 import Settings from './pages/Settings/Settings';
 import Enquiry from './pages/Enquiry/Enquiry';
 import MobileNavbar from './components/MobileNavbar/MobileNavbar';
+import SignIn from './pages/SignIn/SignIn';
+import SignUp from './pages/SignUp/SignUp';
+import { useState } from 'react';
+import OTPVerificationModal from './components/OTPVerificationModal/OTPVerificationModal';
+import useAppContext from './context/AppContext';
+import AuthenticationModal from './components/AuthenticationModal/AuthenticationModal';
 
 const App = () => {
+  const { openVerificationModel, openAuthenticationModal } = useAppContext();
+
   return (
     <BrowserRouter>
       <MobileNavbar />
@@ -19,7 +27,11 @@ const App = () => {
           <Route path='settings' element={<Settings />} />
           <Route path='enquiry' element={<Enquiry />} />
         </Route>
+        <Route path='sign-in' element={<SignIn />} />
+        <Route path='sign-up' element={<SignUp />} />
       </Routes>
+      {openVerificationModel && <OTPVerificationModal />}
+      {openAuthenticationModal && <AuthenticationModal />}
     </BrowserRouter>
   );
 };
