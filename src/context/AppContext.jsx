@@ -5,6 +5,8 @@ const AppContext = createContext();
 export const AppContextProvider = ({ children }) => {
   const [openVerificationModel, setOpenVerificationModal] = useState(false);
   const [openAuthenticationModal, setOpenAuthenticationModal] = useState(false);
+  const [pendingOtpPhone, setPendingOtpPhone] = useState(null);
+  const [pendingOtpPayload, setPendingOtpPayload] = useState(null);
 
   return (
     <AppContext.Provider
@@ -13,6 +15,10 @@ export const AppContextProvider = ({ children }) => {
         setOpenVerificationModal,
         openAuthenticationModal,
         setOpenAuthenticationModal,
+        pendingOtpPhone,
+        setPendingOtpPhone,
+        pendingOtpPayload,
+        setPendingOtpPayload,
       }}
     >
       {children}

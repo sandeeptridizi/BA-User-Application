@@ -13,11 +13,19 @@ import { FaRegStar } from "react-icons/fa6";
 import { GoArrowUpRight } from "react-icons/go";
 import { IoLockClosedOutline } from "react-icons/io5";
 import { FiShield } from "react-icons/fi";
+import { getUser } from '../../../lib/auth';
 
+const getFirstLast = (name) => {
+  if (!name || typeof name !== 'string') return { first: '', last: '' };
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) return { first: parts[0], last: parts.slice(1).join(' ') };
+  return { first: parts[0] || '', last: '' };
+};
 
 const Settings = () => {
-
     const [activeTab, setActiveTab] = useState("profile");
+    const user = getUser();
+    const { first: firstName, last: lastName } = getFirstLast(user?.name);
 
     return <div className='settingscontainer'>
         <div className='settingsheader'>
@@ -38,7 +46,7 @@ const Settings = () => {
                 <div className='profileinfo'>
                     <div className='profileinfoicon'><FiUser /><span><IoSettingsOutline /></span></div>
                     <div className='profileinfodetails'>
-                        <h3>Rajesh Kumar</h3>
+                        <h3>{user?.name || '—'}</h3>
                         <p>Member Since February 2025</p>
                         <span><MdStar />Pro Member</span>
                     </div>
@@ -46,24 +54,24 @@ const Settings = () => {
                 <div className='profileinfoname'>
                     <div className='profileinfonaming'>
                         <p>First Name</p>
-                        <h3>Rajesh</h3>
+                        <h3>{firstName || '—'}</h3>
                     </div>
                     <div className='profileinfonaming'>
                         <p>Last Name</p>
-                        <h3>Kumar</h3>
+                        <h3>{lastName || '—'}</h3>
                     </div>
                 </div>
                 <div className='profileotherdetails'>
                     <p>Email Address</p>
-                    <h3><MdOutlineMail />rajesh.kumar@email.com</h3>
+                    <h3><MdOutlineMail />{user?.email || '—'}</h3>
                 </div>
                 <div className='profileotherdetails'>
                     <p>Phone Number</p>
-                    <h3><LuPhone />+91 98765 43210</h3>
+                    <h3><LuPhone />{user?.phone ? `+91 ${user.phone.replace(/^91/, '').trim()}` : '—'}</h3>
                 </div>
                 <div className='profileotherdetails'>
                     <p>Location</p>
-                    <h3><SlLocationPin />Mumbai, Maharashtra</h3>
+                    <h3><SlLocationPin />{[user?.city, user?.state].filter(Boolean).join(', ') || '—'}</h3>
                 </div>
                 <div className='savechanges'>Save Changes</div>
             </div>)}

@@ -16,16 +16,16 @@ import { FaRegCircleQuestion } from "react-icons/fa6";
 import { LuCrown } from "react-icons/lu";
 import { ImCross } from "react-icons/im";
 import { RxCross2 } from "react-icons/rx";
-
-
-
+import { getUser } from '../../../lib/auth';
 
 
 const DashboardPage = () => {
+    const user = getUser();
+    const displayName = user?.name || 'User';
     return <div className='dashboardcontainer'>
         <div className='dashboardheader'>
             <div className='dashboardheaddetails'>
-                <h1>Welcome Back, Rajesh!</h1>
+                <h1>Welcome Back, {displayName}!</h1>
                 <p>Manage your property listings and track buyer inquiries</p>
                 <div className='headertags'>
                 <span className='protag'><FaRegStar /> Pro Seller</span>

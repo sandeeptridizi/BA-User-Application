@@ -104,6 +104,13 @@
   background: rgba(152, 16, 250, 1);
 }
 
+.sign-up-error {
+  width: 100%;
+  font-size: 14px;
+  color: #b91c1c;
+  margin: -8px 0 8px;
+}
+
 .sign-up-btn {
   width: 100%;
   background: linear-gradient(90deg, #9810fa 0%, #e60076 100%);

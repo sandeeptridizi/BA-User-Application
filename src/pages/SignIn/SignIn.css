@@ -108,6 +108,12 @@
   color: rgba(113, 113, 113, 1);
 }
 
+.sign-in-error {
+  font-size: 14px;
+  color: #b91c1c;
+  margin: -8px 0 0;
+}
+
 .sign-in-text {
   font-size: 12px;
   font-weight: 400;

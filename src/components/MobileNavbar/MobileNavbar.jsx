@@ -11,7 +11,8 @@ import { IoSettingsOutline } from 'react-icons/io5';
 import { MdLogout } from 'react-icons/md';
 import { FiTarget } from 'react-icons/fi';
 import { FiMessageSquare } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { logout } from '../../../lib/auth';
 
 const linksData = [
   {
@@ -47,10 +48,17 @@ const linksData = [
 ];
 
 const MobileNavbar = () => {
+  const navigate = useNavigate();
   const [showLinks, setShowLinks] = useState(false);
   const [activeLink, setActiveLink] = useState(
     linksData[0].title.toLowerCase(),
   );
+
+  const handleLogout = () => {
+    logout();
+    setShowLinks(false);
+    navigate('/sign-in');
+  };
 
   return (
     <div className='mobile-navbar-container'>
@@ -82,6 +90,15 @@ const MobileNavbar = () => {
               </Link>
             );
           })}
+          <div
+            className='mobile-link-container mobile-logout'
+            onClick={(e) => {
+              e.stopPropagation();
+              handleLogout();
+            }}
+          >
+            <MdLogout /> Logout
+          </div>
         </div>
       )}
     </div>

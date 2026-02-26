@@ -8,7 +8,7 @@ import Enquiry from './pages/Enquiry/Enquiry';
 import MobileNavbar from './components/MobileNavbar/MobileNavbar';
 import SignIn from './pages/SignIn/SignIn';
 import SignUp from './pages/SignUp/SignUp';
-import { useState } from 'react';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import OTPVerificationModal from './components/OTPVerificationModal/OTPVerificationModal';
 import useAppContext from './context/AppContext';
 import AuthenticationModal from './components/AuthenticationModal/AuthenticationModal';
@@ -20,7 +20,14 @@ const App = () => {
     <BrowserRouter>
       <MobileNavbar />
       <Routes>
-        <Route path='/' element={<LandingPage />}>
+        <Route
+          path='/'
+          element={
+            <ProtectedRoute>
+              <LandingPage />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<DashboardPage />} />
           <Route path='products' element={<Products />} />
           <Route path='myleads' element={<MyLeads />} />

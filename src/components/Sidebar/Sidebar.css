@@ -143,6 +143,10 @@
   color: rgba(63, 63, 71, 1);
   padding-left: 24px;
   cursor: pointer;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-family: inherit;
 }
 
 .logout-icon {

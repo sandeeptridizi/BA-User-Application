@@ -1,9 +1,10 @@
 import './Sidebar.css';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 import companyLogo from '../../assets/company-logo.png';
+import { getUser, logout as doLogout } from '../../../lib/auth';
 
 import { LuLayoutDashboard } from 'react-icons/lu';
 import { FiShoppingBag } from 'react-icons/fi';
@@ -45,10 +46,24 @@ const linksData = [
   },
 ];
 
+const getInitials = (name) => {
+  if (!name || typeof name !== 'string') return 'UP';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  return name.slice(0, 2).toUpperCase();
+};
+
 const Sidebar = () => {
+  const navigate = useNavigate();
   const [activeLink, setActiveLink] = useState(
     linksData[0].title.toLowerCase(),
   );
+  const user = getUser();
+
+  const handleLogout = () => {
+    doLogout();
+    navigate('/sign-in');
+  };
 
   return (
     <div className='sidebar-container'>
@@ -81,17 +96,17 @@ const Sidebar = () => {
       </div>
       <div className='sidebar-admin-logout-container'>
         <div className='admin-container'>
-          <div className='admin-icon-container'>UP</div>
+          <div className='admin-icon-container'>{getInitials(user?.name)}</div>
           <div className='admin-content-container'>
-            <p className='admin-title'>User Profile</p>
-            <p className='admin-mail'>user.profile@gmail.com</p>
+            <p className='admin-title'>{user?.name || 'User Profile'}</p>
+            <p className='admin-mail'>{user?.email || '—'}</p>
           </div>
           <div className='admin-online-container'></div>
         </div>
       </div>
-      <div className='logout-container'>
+      <button type='button' className='logout-container' onClick={handleLogout}>
         <MdLogout className='logout-icon' /> Logout
-      </div>
+      </button>
     </div>
   );
 };
