@@ -1,0 +1,79 @@
+.productedit-form {
+  max-width: 1024px;
+  margin-top: 20px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #FEE685;
+  box-shadow: inset 0 0 0 1.25px rgba(0, 0, 0, 0.1);
+}
+
+.productedit-field {
+  margin-bottom: 16px;
+}
+
+.productedit-field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #0A0A0A;
+  margin-bottom: 6px;
+}
+
+.productedit-field input,
+.productedit-field select,
+.productedit-field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.productedit-field textarea.productedit-meta {
+  font-family: monospace;
+  resize: vertical;
+}
+
+.productedit-row {
+  display: flex;
+  gap: 16px;
+}
+
+.productedit-row .productedit-field {
+  flex: 1;
+}
+
+.productedit-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.productedit-actions .editproductbutton,
+.productedit-actions .productsbackbutton {
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.productedit-actions .editproductbutton {
+  background: #FFB900;
+  color: #0A0A0A;
+  border: none;
+}
+
+.productedit-actions .editproductbutton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.productedit-actions .productsbackbutton {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  color: #0A0A0A;
+}

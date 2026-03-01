@@ -2,6 +2,9 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LandingPage from './pages/LandingPage/LandingPage';
 import DashboardPage from './pages/Dashboard/Dashboard';
 import Products from './pages/Products/Products';
+import ProductCreation from './pages/ProductCreation/productcreation';
+import ProductPage from './pages/ProductPage/ProductPage';
+import ProductEdit from './pages/ProductEdit/ProductEdit';
 import MyLeads from './pages/My Leads/MyLeads';
 import Settings from './pages/Settings/Settings';
 import Enquiry from './pages/Enquiry/Enquiry';
@@ -30,6 +33,9 @@ const App = () => {
         >
           <Route index element={<DashboardPage />} />
           <Route path='products' element={<Products />} />
+          <Route path='productcreation' element={<ProductCreation />} />
+          <Route path='productpage/:id' element={<ProductPage />} />
+          <Route path='productedit/:id' element={<ProductEdit />} />
           <Route path='myleads' element={<MyLeads />} />
           <Route path='settings' element={<Settings />} />
           <Route path='enquiry' element={<Enquiry />} />
