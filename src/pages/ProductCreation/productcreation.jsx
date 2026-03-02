@@ -3,7 +3,7 @@ import { useRef } from "react";
 import api from "../../../lib/api";
 import './productcreation.css';
 import { BiLeftArrowAlt } from "react-icons/bi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { AiOutlineShop } from "react-icons/ai";
 import { BsLightningCharge } from "react-icons/bs";
 import { TbHammer } from "react-icons/tb";
@@ -88,6 +88,15 @@ const ProductCreation = () => {
     const [activeTab, setActiveTab] = useState("realestate");
     const [listingMode, setListingMode] = useState("marketplace");
     const navigate = useNavigate();
+    const { mode } = useParams();
+    const modeByRoute = {
+      marketplace: "marketplace",
+      buynow: "buynow",
+      auction: "auction",
+      auctions: "auction",
+      tolet: "tolet",
+      "to-let": "tolet",
+    };
 
     React.useEffect(() => {
       marketplacePreviewsRef.current = marketplaceFilePreviews;
@@ -100,6 +109,13 @@ const ProductCreation = () => {
     React.useEffect(() => () => {
       marketplacePreviewsRef.current.forEach((item) => URL.revokeObjectURL(item.url));
     }, []);
+
+    React.useEffect(() => {
+      const nextMode = modeByRoute[(mode || "").toLowerCase()];
+      if (nextMode) {
+        setListingMode(nextMode);
+      }
+    }, [mode]);
 
     const categoryByTab = {
       realestate: "REAL_ESTATE",
@@ -213,16 +229,54 @@ const ProductCreation = () => {
       return returnedKey;
     };
 
-    const handleMarketplaceCreate = async () => {
-      if (listingMode !== "marketplace" || isMarketplaceSubmitting) return;
+    const listingTypeByMode = {
+      marketplace: "MARKETPLACE",
+      buynow: "BUY_NOW",
+      auction: "AUCTIONS",
+      tolet: "TO_LET",
+    };
 
-      const title = marketplaceTitleRef.current?.value?.trim();
-      const description = marketplaceDescriptionRef.current?.value?.trim();
-      const rawValue = marketplaceValueRef.current?.value?.trim();
-      const status = marketplaceStatusRef.current?.value || "ACTIVE";
+    const resolveTitle = (formRoot) =>
+      marketplaceTitleRef.current?.value?.trim() ||
+      formRoot?.querySelector("input.basicinfoinput")?.value?.trim() ||
+      "";
+
+    const resolveDescription = (formRoot) =>
+      marketplaceDescriptionRef.current?.value?.trim() ||
+      formRoot
+        ?.querySelector('input[placeholder*="description" i], textarea[placeholder*="description" i]')
+        ?.value?.trim() ||
+      "";
+
+    const resolveRawValue = (formRoot) => {
+      const fromRef = marketplaceValueRef.current?.value?.trim();
+      if (fromRef) return fromRef;
+      const numericCandidate = Array.from(
+        formRoot?.querySelectorAll(".basicinfoinput1, .basicinfoinput4") || [],
+      )
+        .map((element) => element.value?.trim() || "")
+        .find(Boolean);
+      return numericCandidate || "";
+    };
+
+    const handleCreateProduct = async () => {
+      if (isMarketplaceSubmitting) return;
+
+      const listingType = listingTypeByMode[listingMode];
+      if (!listingType) {
+        alert("Unsupported listing mode.");
+        return;
+      }
+
+      const formRoot = marketplaceFormRef.current;
+      const title = resolveTitle(formRoot);
+      const description = resolveDescription(formRoot);
+      const rawValue = resolveRawValue(formRoot);
       const tier = marketplaceTierRef.current?.value || "GENERAL";
-      const category = categoryByTab[activeTab];
-      const parsedValue = rawValue ? Number.parseInt(rawValue, 10) : undefined;
+      const category = listingMode === "tolet" ? "REAL_ESTATE" : categoryByTab[activeTab];
+      const parsedValue = rawValue
+        ? Number.parseInt(rawValue.replace(/[^0-9]/g, ""), 10)
+        : undefined;
 
       if (!title) {
         alert("Title is required.");
@@ -235,7 +289,7 @@ const ProductCreation = () => {
       }
 
       if (!category) {
-        alert("Selected category is not supported for marketplace yet.");
+        alert("Selected category is not supported for this listing.");
         return;
       }
 
@@ -245,7 +299,7 @@ const ProductCreation = () => {
         const createPayload = {
           title,
           description: description || undefined,
-          listingType: "MARKETPLACE",
+          listingType,
           category,
           tier,
           value: parsedValue,
@@ -262,7 +316,6 @@ const ProductCreation = () => {
         if (selectedMarketplaceFiles.length > 0) {
           const uploadedKeys = [];
           for (const file of selectedMarketplaceFiles) {
-            // Upload sequentially to keep the flow deterministic and easy to retry.
             const key = await uploadFileWithPresignedUrl(file, productId);
             uploadedKeys.push(key);
           }
@@ -274,7 +327,7 @@ const ProductCreation = () => {
           }
         }
 
-        alert("Marketplace product created successfully.");
+        alert("Product created successfully.");
         setMarketplaceFilePreviews((current) => {
           current.forEach((item) => URL.revokeObjectURL(item.url));
           return [];
@@ -288,7 +341,7 @@ const ProductCreation = () => {
         const message =
           error?.response?.data?.message ||
           error?.message ||
-          "Failed to create marketplace product.";
+          "Failed to create product.";
         alert(message);
       } finally {
         setIsMarketplaceSubmitting(false);
@@ -1936,7 +1989,7 @@ const ProductCreation = () => {
         </div>
     </div>}
     <div className='formsubmissiontags'>
-        <button className='submittbutton' onClick={handleMarketplaceCreate} disabled={isMarketplaceSubmitting}>
+        <button className='submittbutton' onClick={handleCreateProduct} disabled={isMarketplaceSubmitting}>
           {isMarketplaceSubmitting ? (
             <>
               <span className="buttonspinner" />
@@ -1946,10 +1999,10 @@ const ProductCreation = () => {
             "Create Product"
           )}
         </button>
-        <button className='cancelbutton'>Cancel</button>
+        <button className='cancelbutton' onClick={() => navigate("/products")}>Cancel</button>
     </div>
     </div>}
-    {listingMode === "buynow" && <div>
+    {listingMode === "buynow" && <div ref={marketplaceFormRef}>
     <div className="categoryfilter1">
         <div className='categoryselctionheader1'>
             <div className='productcategoryselector'><AiOutlineShop /></div>
@@ -2038,7 +2091,7 @@ const ProductCreation = () => {
         <input type="text" placeholder="e.g., Luxury 4BHK Penthouse in South Mumbai" className="basicinfoinput" />
         <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Title</h3>
+                <h3 className='basicinfotitle'>Value</h3>
                 <input type="text" placeholder="e.g., 5,50,00,000" className="basicinfoinput1" />
             </div>
             <div className='basicinfoinputdiv'>
@@ -3390,11 +3443,11 @@ const ProductCreation = () => {
         </div>
     </div>}
     <div className='formsubmissiontags'>
-        <button className='submittbutton'>Create Product</button>
-        <button className='cancelbutton'>Cancel</button>
+        <button className='submittbutton' onClick={handleCreateProduct} disabled={isMarketplaceSubmitting}>Create Product</button>
+        <button className='cancelbutton' onClick={() => navigate("/products")}>Cancel</button>
     </div>
     </div>}
-    {listingMode === "auction" && <div>
+    {listingMode === "auction" && <div ref={marketplaceFormRef}>
     <div className="categoryfilter1">
         <div className='categoryselctionheader1'>
             <div className='productcategoryselector'><AiOutlineShop /></div>
@@ -3483,7 +3536,7 @@ const ProductCreation = () => {
         <input type="text" placeholder="e.g., Luxury 4BHK Penthouse in South Mumbai" className="basicinfoinput" />
         <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Title</h3>
+                <h3 className='basicinfotitle'>Value</h3>
                 <input type="text" placeholder="e.g., 5,50,00,000" className="basicinfoinput1" />
             </div>
             <div className='basicinfoinputdiv'>
@@ -4835,11 +4888,11 @@ const ProductCreation = () => {
         </div>
     </div>}
     <div className='formsubmissiontags'>
-        <button className='submittbutton'>Create Product</button>
-        <button className='cancelbutton'>Cancel</button>
+        <button className='submittbutton' onClick={handleCreateProduct} disabled={isMarketplaceSubmitting}>Create Product</button>
+        <button className='cancelbutton' onClick={() => navigate("/products")}>Cancel</button>
     </div>
     </div>}
-    {listingMode === "tolet" && <div>
+    {listingMode === "tolet" && <div ref={marketplaceFormRef}>
     <div className="categoryfilter1">
         <div className='categoryselctionheader1'>
             <div className='productcategoryselector'><AiOutlineShop /></div>
@@ -5294,8 +5347,8 @@ const ProductCreation = () => {
     </div>
     }
     <div className='formsubmissiontags'>
-        <button className='submittbutton'>Create Product</button>
-        <button className='cancelbutton'>Cancel</button>
+        <button className='submittbutton' onClick={handleCreateProduct} disabled={isMarketplaceSubmitting}>Create Product</button>
+        <button className='cancelbutton' onClick={() => navigate("/products")}>Cancel</button>
     </div>
     </div>}
   </div>);

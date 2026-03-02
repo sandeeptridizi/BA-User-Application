@@ -32,6 +32,13 @@ const LISTING_TYPE_BY_TAB = {
   tolet: "TO_LET",
 };
 
+const CREATE_ROUTE_BY_TAB = {
+  marketplace: "/productcreation/marketplace",
+  buynow: "/productcreation/buynow",
+  auctions: "/productcreation/auction",
+  tolet: "/productcreation/tolet",
+};
+
 const LISTING_LABEL_BY_TAB = {
   marketplace: "Marketplace",
   buynow: "Buy Now",
@@ -122,7 +129,7 @@ const Products = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
   const user = getUser();
-  const userId = user?.id;
+  const userId = user?.id || user?.userId || user?._id;
 
   useEffect(() => {
     if (!userId) {
@@ -140,7 +147,8 @@ const Products = () => {
         const onlyMine = raw.filter(
           (p) => p.ownerId === userId || p.owner?.id === userId,
         );
-        setProducts(onlyMine);
+        // Fallback: when backend already filtered by ownerId, keep response visible.
+        setProducts(onlyMine.length > 0 ? onlyMine : raw);
       } catch (error) {
         const message =
           error?.response?.data?.message ||
@@ -244,7 +252,7 @@ const Products = () => {
         </div>
         <button
           className="addproduct"
-          onClick={() => navigate("/productcreation")}
+          onClick={() => navigate(CREATE_ROUTE_BY_TAB[selectedCat] || "/productcreation")}
         >
           <FaPlus />
           Add Product
