@@ -1,5 +1,5 @@
 import './MyLeads.css';
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FiTarget } from "react-icons/fi";
 import ChatCard from '../../components/ChatCard/ChatCard';
 import { CiCircleAlert } from "react-icons/ci";
@@ -12,13 +12,59 @@ import { LuPhone } from "react-icons/lu";
 import { MdOutlineMail } from "react-icons/md";
 import { CiCalendar } from "react-icons/ci";
 import { FiBox } from "react-icons/fi";
+import { getMyEnquiries } from '../../../lib/enquiries';
 
+const statusClass = { NEW: 'buyerenquirystage', IN_PROGRESS: 'buyerenquirystage1', RESOLVED: 'buyerenquirystage2', CLOSED: 'buyerenquirystage3' };
+const statusIcon = { NEW: <CiCircleAlert />, IN_PROGRESS: <IoMdTime />, RESOLVED: <FiMessageSquare />, CLOSED: <CiCircleCheck /> };
+const statusText = { NEW: 'New', IN_PROGRESS: 'In Progress', RESOLVED: 'Responded', CLOSED: 'Closed' };
 
+function timeAgo(dateStr) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins} min ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs} hour${hrs > 1 ? 's' : ''} ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days} day${days > 1 ? 's' : ''} ago`;
+}
 
+function formatValue(val) {
+  if (!val) return '';
+  if (val >= 10000000) return `₹${(val / 10000000).toFixed(1)} Cr`;
+  if (val >= 100000) return `₹${(val / 100000).toFixed(1)} L`;
+  return `₹${val.toLocaleString('en-IN')}`;
+}
 
 const MyLeads = () => {
+    const [selectedEnquiry, setSelectedEnquiry] = useState(null);
+    const [enquiries, setEnquiries] = useState([]);
+    const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
+    const [loading, setLoading] = useState(true);
+    const [statusFilter, setStatusFilter] = useState('');
 
-    const [showChat, setShowChat] = useState(false);
+    const statusCounts = {
+      NEW: enquiries.filter(e => e.status === 'NEW').length,
+      IN_PROGRESS: enquiries.filter(e => e.status === 'IN_PROGRESS').length,
+      RESOLVED: enquiries.filter(e => e.status === 'RESOLVED').length,
+      CLOSED: enquiries.filter(e => e.status === 'CLOSED').length,
+    };
+
+    const fetchEnquiries = useCallback(async () => {
+      setLoading(true);
+      try {
+        const params = { page: pagination.page, limit: 20 };
+        if (statusFilter) params.status = statusFilter;
+        const res = await getMyEnquiries(params);
+        setEnquiries(res.data || []);
+        setPagination(res.pagination || { page: 1, totalPages: 1, total: 0 });
+      } catch (err) {
+        console.error('Failed to fetch enquiries', err);
+      } finally {
+        setLoading(false);
+      }
+    }, [pagination.page, statusFilter]);
+
+    useEffect(() => { fetchEnquiries(); }, [fetchEnquiries]);
 
     return <div className='leadscontainer'>
         <div className='leadheader'>
@@ -27,275 +73,99 @@ const MyLeads = () => {
                 <p>Manage buyer leads and respond to inquiries on your listings</p>
             </div>
             <div className='leadheaderright'>
-                <h1>5</h1>
+                <h1>{pagination.total}</h1>
                 <p>Total Inquiries</p>
             </div>
         </div>
         <div className='inquirystats'>
-            <div className='inquirystat'>
+            <div className={`inquirystat${statusFilter === 'NEW' ? ' active' : ''}`} onClick={() => { setStatusFilter(f => f === 'NEW' ? '' : 'NEW'); setPagination(p => ({...p, page: 1})); }} style={{cursor:'pointer'}}>
                 <div className='inquirystatleft'>
                     <p>New Inquiries</p>
-                    <h2>1</h2>
+                    <h2>{statusCounts.NEW}</h2>
                 </div>
                 <div className='inquirystatright'><CiCircleAlert /> </div>
             </div>
-            <div className='inquirystat1'>
+            <div className={`inquirystat1${statusFilter === 'IN_PROGRESS' ? ' active' : ''}`} onClick={() => { setStatusFilter(f => f === 'IN_PROGRESS' ? '' : 'IN_PROGRESS'); setPagination(p => ({...p, page: 1})); }} style={{cursor:'pointer'}}>
                 <div className='inquirystatleft'>
                     <p>In Progress</p>
-                    <h2>2</h2>
+                    <h2>{statusCounts.IN_PROGRESS}</h2>
                 </div>
                 <div className='inquirystatright1'><IoMdTime /> </div>
             </div>
-            <div className='inquirystat2'>
+            <div className={`inquirystat2${statusFilter === 'RESOLVED' ? ' active' : ''}`} onClick={() => { setStatusFilter(f => f === 'RESOLVED' ? '' : 'RESOLVED'); setPagination(p => ({...p, page: 1})); }} style={{cursor:'pointer'}}>
                 <div className='inquirystatleft'>
                     <p>Responded</p>
-                    <h2>1</h2>
+                    <h2>{statusCounts.RESOLVED}</h2>
                 </div>
                 <div className='inquirystatright2'><FiMessageSquare  /> </div>
             </div>
-            <div className='inquirystat3'>
+            <div className={`inquirystat3${statusFilter === 'CLOSED' ? ' active' : ''}`} onClick={() => { setStatusFilter(f => f === 'CLOSED' ? '' : 'CLOSED'); setPagination(p => ({...p, page: 1})); }} style={{cursor:'pointer'}}>
                 <div className='inquirystatleft'>
                     <p>Closed/Converted</p>
-                    <h2>1</h2>
+                    <h2>{statusCounts.CLOSED}</h2>
                 </div>
                 <div className='inquirystatright3'><CiCircleCheck  /> </div>
             </div>
         </div>
-        <div className='buyerenquiry'>
-            <div className='buyerenquirytop'>
+
+        {loading ? (
+          <p style={{padding: '20px', textAlign: 'center'}}>Loading inquiries...</p>
+        ) : enquiries.length === 0 ? (
+          <p style={{padding: '20px', textAlign: 'center'}}>No inquiries yet.</p>
+        ) : (
+          enquiries.map((enq) => (
+            <div className='buyerenquiry' key={enq.id}>
+              <div className='buyerenquirytop'>
                 <div className='buyerenquiryfirst'>
-                <ul className='buyerenquirytags'>
-                    <li className='buyerenquiryid'>L-2891</li>
-                    <li className='buyerenquirystage'><CiCircleAlert />New</li>
-                    <li className='buyerenquirytag'>High Priority</li>
-                </ul>
-                <div className='respondbutton' onClick={() => setShowChat(true)}><FiMessageSquare  />Respond</div>
+                  <ul className='buyerenquirytags'>
+                    <li className='buyerenquiryid'>{enq.id.slice(0, 8)}</li>
+                    <li className={statusClass[enq.status] || 'buyerenquirystage'}>{statusIcon[enq.status]}{statusText[enq.status]}</li>
+                  </ul>
+                  <div className='respondbutton' onClick={() => setSelectedEnquiry(enq)}><FiMessageSquare />Respond</div>
                 </div>
                 <div className='buyerenquirynext'>
-                    <div className='buyerenquiryprofile'>R</div>
-                    <div className='buyerinfo'>
-                        <h2>Rajesh Kumar</h2>
-                        <p><CiLocationOn /> Mumbai, Maharashtra <IoMdTime />2 hours ago
-                        </p>
-                    </div>
+                  <div className='buyerenquiryprofile'>{enq.visitorName?.charAt(0).toUpperCase()}</div>
+                  <div className='buyerinfo'>
+                    <h2>{enq.visitorName}</h2>
+                    <p><IoMdTime />{timeAgo(enq.createdAt)}</p>
+                  </div>
                 </div>
-            </div>
-            <div className='buyerenquirybottom'>
+              </div>
+              <div className='buyerenquirybottom'>
                 <div className='buyerenquiryleft'>
-                   <h3><FiUser className='buyerenquiryicon'/>Buyer Contact Details</h3> 
-                   <ul className='buyercontactdetails'>
-                    <li className='buyercontactinfo'><LuPhone />+91 98765 43210</li>
-                    <li className='buyercontactinfo'><MdOutlineMail />rajesh.kumar@email.com</li>
-                    <li className='buyercontactinfo'><CiCalendar />Received: 17 Feb 2026</li>
-                   </ul>
-                   <ul className='buyerproductdetails'>
+                  <h3><FiUser className='buyerenquiryicon'/>Buyer Contact Details</h3>
+                  <ul className='buyercontactdetails'>
+                    {enq.visitorPhone && <li className='buyercontactinfo'><LuPhone />{enq.visitorPhone}</li>}
+                    <li className='buyercontactinfo'><MdOutlineMail />{enq.visitorEmail}</li>
+                    <li className='buyercontactinfo'><CiCalendar />Received: {new Date(enq.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</li>
+                  </ul>
+                  <ul className='buyerproductdetails'>
                     <li className='buyerproductinfo'><FiBox />Interested In</li>
-                    <li className='buyerproductinfo'>Luxury Penthouse - Worli</li>
-                    <li className='buyerproductinfo'>Price: ₹15.5 Cr</li>
-                   </ul>
+                    <li className='buyerproductinfo'>{enq.product?.title || 'Unknown Product'}</li>
+                    {enq.product?.value && <li className='buyerproductinfo'>Price: {formatValue(enq.product.value)}</li>}
+                  </ul>
                 </div>
                 <div className='buyerenquiryright'>
-                    <h3>Buyer's Message</h3>
-                    <div className='buyermessage'>Very interested in viewing the property. Looking for immediate possession. Budget is flexible. Please contact at earliest.</div>
-                    <div className='buyerpreference'>
-                        <h3>Viewing Preference</h3>
-                        <p>Weekend viewing preferred</p>
-                    </div>
-                    <div className='buyerenquiryactions'>
-                        <h3><CiCircleCheck  /> Mark as Responded</h3>
-                        <p>Schedule Meeting</p>
-                    </div>
+                  <h3>Buyer's Message</h3>
+                  <div className='buyermessage'>{enq.message}</div>
                 </div>
+              </div>
             </div>
-        </div>
-        <div className='buyerenquiry'>
-            <div className='buyerenquirytop'>
-                <div className='buyerenquiryfirst'>
-                <ul className='buyerenquirytags'>
-                    <li className='buyerenquiryid'>L-2874</li>
-                    <li className='buyerenquirystage1'><IoMdTime />In Progress</li>
-                    <li className='buyerenquirystage1'>Medium Priority</li>
-                </ul>
-                <div className='respondbutton' onClick={() => setShowChat(true)}><FiMessageSquare  />Respond</div>
-                </div>
-                <div className='buyerenquirynext'>
-                    <div className='buyerenquiryprofile'>P</div>
-                    <div className='buyerinfo'>
-                        <h2>Priya Sharma</h2>
-                        <p><CiLocationOn /> Bangalore, Karnataka <IoMdTime />5 hours ago
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div className='buyerenquirybottom'>
-                <div className='buyerenquiryleft'>
-                   <h3><FiUser className='buyerenquiryicon'/>Buyer Contact Details</h3> 
-                   <ul className='buyercontactdetails'>
-                    <li className='buyercontactinfo'><LuPhone />+91 98234 56789</li>
-                    <li className='buyercontactinfo'><MdOutlineMail />priya.sharma@email.com</li>
-                    <li className='buyercontactinfo'><CiCalendar />Received: 16 Feb 2026</li>
-                   </ul>
-                   <ul className='buyerproductdetails'>
-                    <li className='buyerproductinfo'><FiBox />Interested In</li>
-                    <li className='buyerproductinfo'>BMW X7 2024</li>
-                    <li className='buyerproductinfo'>Price: ₹1.85 Cr</li>
-                   </ul>
-                </div>
-                <div className='buyerenquiryright'>
-                    <h3>Buyer's Message</h3>
-                    <div className='buyermessage'>Interested in test drive. Want to know about warranty details and service history.</div>
-                    <div className='buyerpreference'>
-                        <h3>Viewing Preference</h3>
-                        <p>Weekday evening (6-8 PM)</p>
-                    </div>
-                    <div className='buyerenquiryactions'>
-                        <h3><CiCircleCheck  /> Mark as Responded</h3>
-                        <p>Schedule Meeting</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div className='buyerenquiry'>
-            <div className='buyerenquirytop'>
-                <div className='buyerenquiryfirst'>
-                <ul className='buyerenquirytags'>
-                    <li className='buyerenquiryid'>L-2856</li>
-                    <li className='buyerenquirystage2'><FiMessageSquare />Responded</li>
-                    <li className='buyerenquirystage'>High Priority</li>
-                </ul>
-                <div className='respondbutton' onClick={() => setShowChat(true)}><FiMessageSquare  />Respond</div>
-                </div>
-                <div className='buyerenquirynext'>
-                    <div className='buyerenquiryprofile'>A</div>
-                    <div className='buyerinfo'>
-                        <h2>Amit Patel</h2>
-                        <p><CiLocationOn /> Ahmedabad, Gujarat <IoMdTime />1 day ago
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div className='buyerenquirybottom'>
-                <div className='buyerenquiryleft'>
-                   <h3><FiUser className='buyerenquiryicon'/>Buyer Contact Details</h3> 
-                   <ul className='buyercontactdetails'>
-                    <li className='buyercontactinfo'><LuPhone />+91 99887 76543</li>
-                    <li className='buyercontactinfo'><MdOutlineMail />amit.patel@email.com</li>
-                    <li className='buyercontactinfo'><CiCalendar />Received: 15 Feb 2026</li>
-                   </ul>
-                   <ul className='buyerproductdetails'>
-                    <li className='buyerproductinfo'><FiBox />Interested In</li>
-                    <li className='buyerproductinfo'>Rolex Daytona Platinum</li>
-                    <li className='buyerproductinfo'>Price: ₹45.8 L</li>
-                   </ul>
-                </div>
-                <div className='buyerenquiryright'>
-                    <h3>Buyer's Message</h3>
-                    <div className='buyermessage'>Need authenticity certificate. Willing to close deal quickly if genuine.</div>
-                    <div className='buyerpreference'>
-                        <h3>Viewing Preference</h3>
-                        <p>In-person viewing required</p>
-                    </div>
-                    <div className='buyerenquiryactions'>
-                        <h3><CiCircleCheck  /> Mark as Responded</h3>
-                        <p>Schedule Meeting</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div className='buyerenquiry'>
-            <div className='buyerenquirytop'>
-                <div className='buyerenquiryfirst'>
-                <ul className='buyerenquirytags'>
-                    <li className='buyerenquiryid'>L-2834</li>
-                    <li className='buyerenquirystage1'><IoMdTime />In Progress</li>
-                    <li className='buyerenquirystage1'>Medium Priority</li>
-                </ul>
-                <div className='respondbutton' onClick={() => setShowChat(true)}><FiMessageSquare  />Respond</div>
-                </div>
-                <div className='buyerenquirynext'>
-                    <div className='buyerenquiryprofile'>S</div>
-                    <div className='buyerinfo'>
-                        <h2>Sneha Reddy</h2>
-                        <p><CiLocationOn /> Hyderabad, Telangana <IoMdTime />3 days ago
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div className='buyerenquirybottom'>
-                <div className='buyerenquiryleft'>
-                   <h3><FiUser className='buyerenquiryicon'/>Buyer Contact Details</h3> 
-                   <ul className='buyercontactdetails'>
-                    <li className='buyercontactinfo'><LuPhone />+91 97654 32109</li>
-                    <li className='buyercontactinfo'><MdOutlineMail />sneha.reddy@email.com</li>
-                    <li className='buyercontactinfo'><CiCalendar />Received: 14 Feb 2026</li>
-                   </ul>
-                   <ul className='buyerproductdetails'>
-                    <li className='buyerproductinfo'><FiBox />Interested In</li>
-                    <li className='buyerproductinfo'>Villa in Jubilee Hills</li>
-                    <li className='buyerproductinfo'>Price: ₹8.2 Cr</li>
-                   </ul>
-                </div>
-                <div className='buyerenquiryright'>
-                    <h3>Buyer's Message</h3>
-                    <div className='buyermessage'>Looking for long-term rental. Need details about maintenance and available amenities</div>
-                    <div className='buyerpreference'>
-                        <h3>Viewing Preference</h3>
-                        <p>Open to all timings</p>
-                    </div>
-                    <div className='buyerenquiryactions'>
-                        <h3><CiCircleCheck  /> Mark as Responded</h3>
-                        <p>Schedule Meeting</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div className='buyerenquiry'>
-            <div className='buyerenquirytop'>
-                <div className='buyerenquiryfirst'>
-                <ul className='buyerenquirytags'>
-                    <li className='buyerenquiryid'>L-2819</li>
-                    <li className='buyerenquirystage3'><CiCircleCheck />Closed</li>
-                    <li className='buyerenquiryid'>Low Priority</li>
-                </ul>
-                <div className='respondbutton' onClick={() => setShowChat(true)}><FiMessageSquare  />Respond</div>
-                </div>
-                <div className='buyerenquirynext'>
-                    <div className='buyerenquiryprofile'>V</div>
-                    <div className='buyerinfo'>
-                        <h2>Vikram Singh</h2>
-                        <p><CiLocationOn /> Delhi, NCR <IoMdTime />7 days ago
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div className='buyerenquirybottom'>
-                <div className='buyerenquiryleft'>
-                   <h3><FiUser className='buyerenquiryicon'/>Buyer Contact Details</h3> 
-                   <ul className='buyercontactdetails'>
-                    <li className='buyercontactinfo'><LuPhone />+91 96543 21098</li>
-                    <li className='buyercontactinfo'><MdOutlineMail />vikram.singh@email.com</li>
-                    <li className='buyercontactinfo'><CiCalendar />Received: 10 Feb 2026</li>
-                   </ul>
-                   <ul className='buyerproductdetails'>
-                    <li className='buyerproductinfo'><FiBox />Interested In</li>
-                    <li className='buyerproductinfo'>Mercedes-Benz S-Class 2024</li>
-                    <li className='buyerproductinfo'>Price: ₹2.1 Cr</li>
-                   </ul>
-                </div>
-                <div className='buyerenquiryright'>
-                    <h3>Buyer's Message</h3>
-                    <div className='buyermessage'>Deal completed. Thank you for smooth transaction.</div>
-                    <div className='buyerpreference'>
-                        <h3>Viewing Preference</h3>
-                        <p>N/A</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {showChat && (<ChatCard closeChat={() => setShowChat(false)} />)}
+          ))
+        )}
+
+        {pagination.totalPages > 1 && (
+          <div style={{display: 'flex', justifyContent: 'center', gap: '10px', padding: '20px'}}>
+            <button disabled={pagination.page <= 1} onClick={() => setPagination(p => ({...p, page: p.page - 1}))} className='respondbutton'>Prev</button>
+            <span style={{alignSelf: 'center'}}>Page {pagination.page} of {pagination.totalPages}</span>
+            <button disabled={pagination.page >= pagination.totalPages} onClick={() => setPagination(p => ({...p, page: p.page + 1}))} className='respondbutton'>Next</button>
+          </div>
+        )}
+
+        {selectedEnquiry && (<ChatCard closeChat={() => setSelectedEnquiry(null)} enquiry={selectedEnquiry} onStatusUpdate={(id, newStatus) => {
+          setEnquiries(prev => prev.map(e => e.id === id ? { ...e, status: newStatus } : e));
+        }} />)}
     </div>;
 };
-
-
 
 export default MyLeads; 

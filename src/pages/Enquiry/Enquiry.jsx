@@ -9,10 +9,14 @@ import { GiBackwardTime } from "react-icons/gi";
 import { CiCircleCheck } from "react-icons/ci";
 import { RxCrossCircled } from "react-icons/rx";
 import { FiAlertCircle } from "react-icons/fi";
-
-
+import { getUser } from '../../../lib/auth';
 
 const Enquiry = () => {
+    const user = getUser();
+    const displayName = user?.name || '—';
+    const displayEmail = user?.email || '—';
+    const displayPhone = user?.phone ? `+91 ${user.phone.replace(/^91/, '').trim()}` : '—';
+
     return <div className='enquirycontainer'>
         <div className='leadheader'>
             <div className='leadheaderleft'>
@@ -30,11 +34,11 @@ const Enquiry = () => {
                <h2 className='accountinformationtitle'>Your Account Information</h2> 
                <div className='accountinfo'>
                <div className='accountinformationleft'>
-                    <p>Name:<span className='accountinformationtitle'>Rajesh Kumar</span></p>
-                    <p>Phone:<span className='accountinformationtitle'>+91 98765 43210</span></p>
+                    <p>Name:<span className='accountinformationtitle'>{displayName}</span></p>
+                    <p>Phone:<span className='accountinformationtitle'>{displayPhone}</span></p>
                </div>
                <div className='accountinformationleft'>
-                    <p>Email:<span className='accountinformationtitle'>rajesh.kumar@email.com</span></p>
+                    <p>Email:<span className='accountinformationtitle'>{displayEmail}</span></p>
                     <p>Member Type:<span className='accountinformationtitle'>Pro Seller</span></p>
                </div>
                </div>

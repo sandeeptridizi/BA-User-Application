@@ -1,4 +1,6 @@
 import './Dashboard.css';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaRegStar } from "react-icons/fa";
 import { CiCircleCheck } from "react-icons/ci";
 import { FaPlus } from "react-icons/fa";
@@ -14,14 +16,95 @@ import { BsLightningCharge } from "react-icons/bs";
 import { LuUsers } from "react-icons/lu";
 import { FaRegCircleQuestion } from "react-icons/fa6";
 import { LuCrown } from "react-icons/lu";
-import { ImCross } from "react-icons/im";
 import { RxCross2 } from "react-icons/rx";
 import { getUser } from '../../../lib/auth';
+import api from '../../../lib/api';
+import { getMyEnquiries } from '../../../lib/enquiries';
 
+const CATEGORY_LABELS = {
+  REAL_ESTATE: 'Real Estate', CARS: 'Cars', BIKES: 'Bikes', FURNITURE: 'Furniture',
+  JEWELLERY_AND_WATCHES: 'Jewellery & Watches', ARTS_AND_PAINTINGS: 'Arts & Paintings',
+  ANTIQUES: 'Antiques', COLLECTABLES: 'Collectables',
+};
+
+const statusTagClass = { NEW: 'buyertag', IN_PROGRESS: 'progresstag', RESOLVED: 'respondedtag', CLOSED: 'respondedtag' };
+const statusTagText = { NEW: 'New', IN_PROGRESS: 'In progress', RESOLVED: 'Responded', CLOSED: 'Closed' };
+
+function formatCurrency(value) {
+  if (!value && value !== 0) return '₹0';
+  if (value >= 10000000) return `₹${(value / 10000000).toFixed(1)} Cr`;
+  if (value >= 100000) return `₹${(value / 100000).toFixed(1)}L`;
+  return `₹${Number(value).toLocaleString('en-IN')}`;
+}
+
+function timeAgo(dateStr) {
+  if (!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins} min ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs} hour${hrs > 1 ? 's' : ''} ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days} day${days > 1 ? 's' : ''} ago`;
+}
+
+function daysAgo(dateStr) {
+  if (!dateStr) return '';
+  const days = Math.floor((Date.now() - new Date(dateStr).getTime()) / 86400000);
+  if (days === 0) return 'Posted today';
+  return `Posted ${days} day${days > 1 ? 's' : ''} ago`;
+}
+
+const getViews = (meta) => (meta && typeof meta === 'object' ? Number(meta.views || 0) : 0);
 
 const DashboardPage = () => {
     const user = getUser();
+    const userId = user?.id || user?.userId || user?._id;
     const displayName = user?.name || 'User';
+    const navigate = useNavigate();
+
+    const [products, setProducts] = useState([]);
+    const [enquiries, setEnquiries] = useState([]);
+    const [loadingProducts, setLoadingProducts] = useState(true);
+    const [loadingEnquiries, setLoadingEnquiries] = useState(true);
+
+    useEffect(() => {
+      if (!userId) return;
+      const fetchProducts = async () => {
+        try {
+          const res = await api.get('/api/product', { params: { ownerId: userId } });
+          const raw = res?.data?.data || [];
+          const mine = raw.filter(p => p.ownerId === userId || p.owner?.id === userId);
+          setProducts(mine.length > 0 ? mine : raw);
+        } catch (err) {
+          console.error('Failed to fetch products', err);
+        } finally {
+          setLoadingProducts(false);
+        }
+      };
+      const fetchEnquiries = async () => {
+        try {
+          const res = await getMyEnquiries({ page: 1, limit: 5 });
+          setEnquiries(res.data || []);
+        } catch (err) {
+          console.error('Failed to fetch enquiries', err);
+        } finally {
+          setLoadingEnquiries(false);
+        }
+      };
+      fetchProducts();
+      fetchEnquiries();
+    }, [userId]);
+
+    const totalListings = products.length;
+    const activeListings = products.filter(p => p.approvalStatus === 'APPROVED');
+    const totalViews = products.reduce((sum, p) => sum + getViews(p.meta), 0);
+    const totalValue = products.reduce((sum, p) => sum + Number(p.value || 0), 0);
+    const activeLeads = enquiries.length;
+
+    const recentProducts = activeListings.slice(0, 4);
+    const recentEnquiries = enquiries.slice(0, 5);
+
     return <div className='dashboardcontainer'>
         <div className='dashboardheader'>
             <div className='dashboardheaddetails'>
@@ -31,7 +114,7 @@ const DashboardPage = () => {
                 <span className='protag'><FaRegStar /> Pro Seller</span>
                 <span className='verifiedtag'><CiCircleCheck />Verified Seller</span></div>
             </div>
-            <button className='addnewlisting'><FaPlus />Add New Listing</button>
+            <button className='addnewlisting' onClick={() => navigate('/productcreation/marketplace')}><FaPlus />Add New Listing</button>
         </div>
         <div className='dashboardstats'>
             <div className='mylistings'>
@@ -39,32 +122,32 @@ const DashboardPage = () => {
                     <p className='mylistingsname'>My Listings</p>
                     <span><FiBox /></span>
                 </div>
-                <h2 className='dashboardstatnum'>18</h2>
-                <p className='dashboardstatcta'>View Detials <GoArrowUpRight /></p>
+                <h2 className='dashboardstatnum'>{loadingProducts ? '...' : totalListings}</h2>
+                <p className='dashboardstatcta' onClick={() => navigate('/products')} style={{cursor:'pointer'}}>View Details <GoArrowUpRight /></p>
             </div>
             <div className='mylistings1'>
                 <div className='mylistingstop'>
                     <p className='mylistingsname'>Total Views</p>
                     <span><FaRegEye  /></span>
                 </div>
-                <h2 className='dashboardstatnum'>12,456</h2>
-                <p className='dashboardstatcta'>View Detials <GoArrowUpRight /></p>
+                <h2 className='dashboardstatnum'>{loadingProducts ? '...' : totalViews.toLocaleString('en-IN')}</h2>
+                <p className='dashboardstatcta' onClick={() => navigate('/products')} style={{cursor:'pointer'}}>View Details <GoArrowUpRight /></p>
             </div>
             <div className='mylistings2'>
                 <div className='mylistingstop'>
                     <p className='mylistingsname'>Active Leads</p>
                     <span><FiMessageSquare /></span>
                 </div>
-                <h2 className='dashboardstatnum'>34</h2>
-                <p className='dashboardstatcta'>View Detials <GoArrowUpRight /></p>
+                <h2 className='dashboardstatnum'>{loadingEnquiries ? '...' : activeLeads}</h2>
+                <p className='dashboardstatcta' onClick={() => navigate('/myleads')} style={{cursor:'pointer'}}>View Details <GoArrowUpRight /></p>
             </div>
             <div className='mylistings3'>
                 <div className='mylistingstop'>
-                    <p className='mylistingsname'>Total Earnings</p>
+                    <p className='mylistingsname'>Total Value</p>
                     <span><MdCurrencyRupee  /></span>
                 </div>
-                <h2 className='dashboardstatnum'>₹2.4L</h2>
-                <p className='dashboardstatcta'>View Detials <GoArrowUpRight /></p>
+                <h2 className='dashboardstatnum'>{loadingProducts ? '...' : formatCurrency(totalValue)}</h2>
+                <p className='dashboardstatcta' onClick={() => navigate('/products')} style={{cursor:'pointer'}}>View Details <GoArrowUpRight /></p>
             </div>
         </div>
         <div className='performancemetrics'>
@@ -108,125 +191,44 @@ const DashboardPage = () => {
                 <div className='activelistingsheader'>
                 <p className='performancemetricstitle'><FiBox className='activelistingsicon'/>My Active Listings</p>
                 <p className='performancemetricsnote'>Manage and monitor your property listings</p></div>
-                <span className='viewalllistings'>View All Listings</span>
+                <span className='viewalllistings' onClick={() => navigate('/products')} style={{cursor:'pointer'}}>View All Listings</span>
             </div>
             <div className='activelistingslist'>
-                <div className='listingcontainer'>
-                    <div className='listingcontainertop'>
-                        <div className='listingcontainerleft'>
-                            <div className='headertags'>
-                            <span className='categorytag'>Real Estate</span>
-                            <span className='verifiedtag1'>Active</span></div>
-                            <h2>Luxury Villa - Bandra West</h2>
-                            <p>Posted 10 days ago</p>
+                {loadingProducts ? (
+                    <p style={{padding:'20px'}}>Loading listings...</p>
+                ) : recentProducts.length === 0 ? (
+                    <p style={{padding:'20px'}}>No active listings yet.</p>
+                ) : recentProducts.map(product => (
+                    <div className='listingcontainer' key={product.id} onClick={() => navigate(`/productpage/${product.id}`)} style={{cursor:'pointer'}}>
+                        <div className='listingcontainertop'>
+                            <div className='listingcontainerleft'>
+                                <div className='headertags'>
+                                <span className='categorytag'>{CATEGORY_LABELS[product.category] || product.category}</span>
+                                <span className='verifiedtag1'>Active</span></div>
+                                <h2>{product.title}</h2>
+                                <p>{daysAgo(product.createdAt)}</p>
+                            </div>
+                            <div className='listingcontainerright'>{formatCurrency(product.value)}</div>
                         </div>
-                        <div className='listingcontainerright'>₹8.5 Cr</div>
-                    </div>
-                    <div className='listingcontainerbottom'>
-                        <div className='listingproductstat'>
-                            <span><FaRegEye  /></span>
-                            <h3>2,453</h3>
-                            <p>Views</p>
-                        </div>
-                        <div className='listingproductstat1'>
-                            <span><FiMessageSquare  /></span>
-                            <h3>12</h3>
-                            <p>Leads</p>
-                        </div>
-                        <div className='listingproductstat2'>
-                            <span><FaArrowTrendUp   /></span>
-                            <h3>High</h3>
-                            <p>Interest</p>
-                        </div>
-                    </div>
-                </div>
-                <div className='listingcontainer'>
-                    <div className='listingcontainertop'>
-                        <div className='listingcontainerleft'>
-                            <div className='headertags'>
-                            <span className='categorytag'>Cars</span>
-                            <span className='verifiedtag1'>Active</span></div>
-                            <h2>BMW X7 2024</h2>
-                            <p>Posted 5 days ago</p>
-                        </div>
-                        <div className='listingcontainerright'>₹1.2 Cr</div>
-                    </div>
-                    <div className='listingcontainerbottom'>
-                        <div className='listingproductstat'>
-                            <span><FaRegEye  /></span>
-                            <h3>1,823</h3>
-                            <p>Views</p>
-                        </div>
-                        <div className='listingproductstat1'>
-                            <span><FiMessageSquare  /></span>
-                            <h3>8</h3>
-                            <p>Leads</p>
-                        </div>
-                        <div className='listingproductstat2'>
-                            <span><FaArrowTrendUp   /></span>
-                            <h3>High</h3>
-                            <p>Interest</p>
+                        <div className='listingcontainerbottom'>
+                            <div className='listingproductstat'>
+                                <span><FaRegEye  /></span>
+                                <h3>{getViews(product.meta).toLocaleString('en-IN')}</h3>
+                                <p>Views</p>
+                            </div>
+                            <div className='listingproductstat1'>
+                                <span><FiMessageSquare  /></span>
+                                <h3>—</h3>
+                                <p>Leads</p>
+                            </div>
+                            <div className='listingproductstat2'>
+                                <span><FaArrowTrendUp   /></span>
+                                <h3>—</h3>
+                                <p>Interest</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div className='listingcontainer'>
-                    <div className='listingcontainertop'>
-                        <div className='listingcontainerleft'>
-                            <div className='headertags'>
-                            <span className='categorytag'>Furniture</span>
-                            <span className='verifiedtag2'>Sold</span></div>
-                            <h2>Antique Furniture Set</h2>
-                            <p>Posted 20 days ago</p>
-                        </div>
-                        <div className='listingcontainerright'>₹4.8 L</div>
-                    </div>
-                    <div className='listingcontainerbottom'>
-                        <div className='listingproductstat'>
-                            <span><FaRegEye  /></span>
-                            <h3>967</h3>
-                            <p>Views</p>
-                        </div>
-                        <div className='listingproductstat1'>
-                            <span><FiMessageSquare  /></span>
-                            <h3>15</h3>
-                            <p>Leads</p>
-                        </div>
-                        <div className='listingproductstat2'>
-                            <span><FaArrowTrendUp   /></span>
-                            <h3>High</h3>
-                            <p>Interest</p>
-                        </div>
-                    </div>
-                </div>
-                <div className='listingcontainer'>
-                    <div className='listingcontainertop'>
-                        <div className='listingcontainerleft'>
-                            <div className='headertags'>
-                            <span className='categorytag'>Watches</span>
-                            <span className='verifiedtag3'>Pending</span></div>
-                            <h2>Rolex Submariner</h2>
-                            <p>Posted 3 days ago</p>
-                        </div>
-                        <div className='listingcontainerright'>₹12.5 L</div>
-                    </div>
-                    <div className='listingcontainerbottom'>
-                        <div className='listingproductstat'>
-                            <span><FaRegEye  /></span>
-                            <h3>1,234</h3>
-                            <p>Views</p>
-                        </div>
-                        <div className='listingproductstat1'>
-                            <span><FiMessageSquare  /></span>
-                            <h3>6</h3>
-                            <p>Leads</p>
-                        </div>
-                        <div className='listingproductstat2'>
-                            <span><FaArrowTrendUp   /></span>
-                            <h3>High</h3>
-                            <p>Interest</p>
-                        </div>
-                    </div>
-                </div>
+                ))}
             </div>
         </div>
         <div className='buyerenquiries'>
@@ -234,42 +236,26 @@ const DashboardPage = () => {
                 <div className='activelistingsheader'>
                 <p className='performancemetricstitle'><FiMessageSquare className='enquiriesicon'/>Recent Buyer Enquiries</p>
                 <p className='performancemetricsnote'>New leads received on your listings</p></div>
-                <span className='viewallleads'>View All Leads</span>
+                <span className='viewallleads' onClick={() => navigate('/myleads')} style={{cursor:'pointer'}}>View All Leads</span>
             </div>
             <div className='enquiriesdetails'>
-                <div className='enquiryinfo'>
-                    <div className='enquiryinfoleft'>
-                        <span className='buyerprofile'>R</span>
-                        <ul className='buyerdetails'>
-                            <li className='buyername'>Rajesh Kumar <span className='buyertag'>New</span></li>
-                            <li className='buyerproduct'>Luxury Villa - Bandra West</li>
-                            <li className='buyertime'>2 hours ago</li>
-                        </ul>
+                {loadingEnquiries ? (
+                    <p style={{padding:'20px'}}>Loading enquiries...</p>
+                ) : recentEnquiries.length === 0 ? (
+                    <p style={{padding:'20px'}}>No enquiries yet.</p>
+                ) : recentEnquiries.map(enq => (
+                    <div className='enquiryinfo' key={enq.id}>
+                        <div className='enquiryinfoleft'>
+                            <span className='buyerprofile'>{enq.visitorName?.charAt(0).toUpperCase()}</span>
+                            <ul className='buyerdetails'>
+                                <li className='buyername'>{enq.visitorName} <span className={statusTagClass[enq.status] || 'buyertag'}>{statusTagText[enq.status]}</span></li>
+                                <li className='buyerproduct'>{enq.product?.title || 'Unknown Product'}</li>
+                                <li className='buyertime'>{timeAgo(enq.createdAt)}</li>
+                            </ul>
+                        </div>
+                        <span className='respondtag' onClick={() => navigate('/myleads')} style={{cursor:'pointer'}}>Respond</span>
                     </div>
-                    <span className='respondtag'>Respond</span>
-                </div>
-                <div className='enquiryinfo'>
-                    <div className='enquiryinfoleft'>
-                        <span className='buyerprofile'>P</span>
-                        <ul className='buyerdetails'>
-                            <li className='buyername'>Priya Sharma <span className='progresstag'>In progress</span></li>
-                            <li className='buyerproduct'>BMW X7 2024</li>
-                            <li className='buyertime'>5 hours ago</li>
-                        </ul>
-                    </div>
-                    <span className='respondtag'>Respond</span>
-                </div>
-                <div className='enquiryinfo'>
-                    <div className='enquiryinfoleft'>
-                        <span className='buyerprofile'>A</span>
-                        <ul className='buyerdetails'>
-                            <li className='buyername'>Amit Patel <span className='respondedtag'>Responded</span></li>
-                            <li className='buyerproduct'>Rolex Submariner</li>
-                            <li className='buyertime'>1 day ago</li>
-                        </ul>
-                    </div>
-                    <span className='respondtag'>Respond</span>
-                </div>
+                ))}
             </div>
         </div>
         <div className='supporttickets'>
@@ -322,7 +308,7 @@ const DashboardPage = () => {
                             <li className='buyertime'>Add a new property</li>
                         </ul>
                     </div>
-                    <span className='quickactiontag'>Go</span>
+                    <span className='quickactiontag' onClick={() => navigate('/productcreation/marketplace')} style={{cursor:'pointer'}}>Go</span>
                 </div>
                 <div className='enquiryinfo1'>
                     <div className='enquiryinfoleft'>
@@ -332,7 +318,7 @@ const DashboardPage = () => {
                             <li className='buyertime'>Check buyer inquiries</li>
                         </ul>
                     </div>
-                    <span className='quickactiontag'>Go</span>
+                    <span className='quickactiontag' onClick={() => navigate('/myleads')} style={{cursor:'pointer'}}>Go</span>
                 </div>
                 <div className='enquiryinfo1'>
                     <div className='enquiryinfoleft'>
@@ -342,7 +328,7 @@ const DashboardPage = () => {
                             <li className='buyertime'>Get help & assistance</li>
                         </ul>
                     </div>
-                    <span className='quickactiontag'>Go</span>
+                    <span className='quickactiontag' onClick={() => navigate('/enquiry')} style={{cursor:'pointer'}}>Go</span>
                 </div>
                 <div className='enquiryinfo1'>
                     <div className='enquiryinfoleft'>
@@ -352,7 +338,7 @@ const DashboardPage = () => {
                             <li className='buyertime'>Upgrade your plan</li>
                         </ul>
                     </div>
-                    <span className='quickactiontag'>Go</span>
+                    <span className='quickactiontag' onClick={() => navigate('/settings')} style={{cursor:'pointer'}}>Go</span>
                 </div>
             </div>
         </div>
@@ -406,4 +392,4 @@ const DashboardPage = () => {
     </div>;
 };
 
-export default DashboardPage; 
+export default DashboardPage;

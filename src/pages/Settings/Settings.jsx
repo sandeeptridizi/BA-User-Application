@@ -1,6 +1,6 @@
 import './Settings.css';
 import { IoSettingsOutline } from "react-icons/io5";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiUser } from "react-icons/fi";
 import { MdStar } from "react-icons/md";
 import { MdOutlineMail } from "react-icons/md";
@@ -13,7 +13,8 @@ import { FaRegStar } from "react-icons/fa6";
 import { GoArrowUpRight } from "react-icons/go";
 import { IoLockClosedOutline } from "react-icons/io5";
 import { FiShield } from "react-icons/fi";
-import { getUser } from '../../../lib/auth';
+import api from '../../../lib/api';
+import { setUser as saveUserToStorage } from '../../../lib/auth';
 
 const getFirstLast = (name) => {
   if (!name || typeof name !== 'string') return { first: '', last: '' };
@@ -24,8 +25,64 @@ const getFirstLast = (name) => {
 
 const Settings = () => {
     const [activeTab, setActiveTab] = useState("profile");
-    const user = getUser();
-    const { first: firstName, last: lastName } = getFirstLast(user?.name);
+    const [profile, setProfile] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [editing, setEditing] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [saveMsg, setSaveMsg] = useState('');
+    const [form, setForm] = useState({ firstName: '', lastName: '', phone: '', city: '', state: '' });
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const res = await api.get('/api/user/me');
+                const user = res.data?.data;
+                setProfile(user);
+                const { first, last } = getFirstLast(user?.name);
+                setForm({
+                    firstName: first,
+                    lastName: last,
+                    phone: user?.phone || '',
+                    city: user?.city || '',
+                    state: user?.state || '',
+                });
+            } catch {
+                // fallback silent
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProfile();
+    }, []);
+
+    const handleSave = async () => {
+        setSaving(true);
+        setSaveMsg('');
+        try {
+            const fullName = [form.firstName.trim(), form.lastName.trim()].filter(Boolean).join(' ');
+            const res = await api.patch('/api/user/me', {
+                name: fullName,
+                phone: form.phone.trim(),
+                city: form.city.trim(),
+                state: form.state.trim(),
+            });
+            const updated = res.data?.data;
+            setProfile(updated);
+            saveUserToStorage(updated);
+            setEditing(false);
+            setSaveMsg('Profile updated successfully!');
+            setTimeout(() => setSaveMsg(''), 3000);
+        } catch (err) {
+            setSaveMsg(err.response?.data?.message || 'Failed to update profile');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const { first: firstName, last: lastName } = getFirstLast(profile?.name);
+    const memberSince = profile?.createdAt
+        ? new Date(profile.createdAt).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
+        : '—';
 
     return <div className='settingscontainer'>
         <div className='settingsheader'>
@@ -43,37 +100,118 @@ const Settings = () => {
                     <h2>Personal Information</h2>
                     <p>Update your personal details and contact information</p>
                 </div>
+                {loading ? (
+                    <p style={{ padding: '20px' }}>Loading profile...</p>
+                ) : (
+                <>
                 <div className='profileinfo'>
                     <div className='profileinfoicon'><FiUser /><span><IoSettingsOutline /></span></div>
                     <div className='profileinfodetails'>
-                        <h3>{user?.name || '—'}</h3>
-                        <p>Member Since February 2025</p>
-                        <span><MdStar />Pro Member</span>
+                        <h3>{profile?.name || '—'}</h3>
+                        <p>Member Since {memberSince}</p>
+                        <span><MdStar />{profile?.subscriptionStatus === 'ACTIVE' ? 'Pro Member' : 'Free Member'}</span>
                     </div>
                 </div>
-                <div className='profileinfoname'>
-                    <div className='profileinfonaming'>
-                        <p>First Name</p>
-                        <h3>{firstName || '—'}</h3>
+                {saveMsg && <p style={{ padding: '10px 20px', color: saveMsg.includes('success') ? 'green' : 'red' }}>{saveMsg}</p>}
+                {editing ? (
+                    <>
+                    <div className='profileinfoname'>
+                        <div className='profileinfonaming'>
+                            <p>First Name</p>
+                            <input
+                                type='text'
+                                value={form.firstName}
+                                onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+                                className='settings-input'
+                            />
+                        </div>
+                        <div className='profileinfonaming'>
+                            <p>Last Name</p>
+                            <input
+                                type='text'
+                                value={form.lastName}
+                                onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+                                className='settings-input'
+                            />
+                        </div>
                     </div>
-                    <div className='profileinfonaming'>
-                        <p>Last Name</p>
-                        <h3>{lastName || '—'}</h3>
+                    <div className='profileotherdetails'>
+                        <p>Email Address</p>
+                        <h3><MdOutlineMail />{profile?.email || '—'}</h3>
                     </div>
-                </div>
-                <div className='profileotherdetails'>
-                    <p>Email Address</p>
-                    <h3><MdOutlineMail />{user?.email || '—'}</h3>
-                </div>
-                <div className='profileotherdetails'>
-                    <p>Phone Number</p>
-                    <h3><LuPhone />{user?.phone ? `+91 ${user.phone.replace(/^91/, '').trim()}` : '—'}</h3>
-                </div>
-                <div className='profileotherdetails'>
-                    <p>Location</p>
-                    <h3><SlLocationPin />{[user?.city, user?.state].filter(Boolean).join(', ') || '—'}</h3>
-                </div>
-                <div className='savechanges'>Save Changes</div>
+                    <div className='profileotherdetails'>
+                        <p>Phone Number</p>
+                        <input
+                            type='tel'
+                            value={form.phone}
+                            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                            placeholder='Enter phone number'
+                            className='settings-input'
+                        />
+                    </div>
+                    <div className='profileinfoname'>
+                        <div className='profileinfonaming'>
+                            <p>City</p>
+                            <input
+                                type='text'
+                                value={form.city}
+                                onChange={(e) => setForm({ ...form, city: e.target.value })}
+                                placeholder='Enter city'
+                                className='settings-input'
+                            />
+                        </div>
+                        <div className='profileinfonaming'>
+                            <p>State</p>
+                            <input
+                                type='text'
+                                value={form.state}
+                                onChange={(e) => setForm({ ...form, state: e.target.value })}
+                                placeholder='Enter state'
+                                className='settings-input'
+                            />
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '10px', padding: '0 20px 20px' }}>
+                        <div className='savechanges' onClick={handleSave} style={{ opacity: saving ? 0.6 : 1 }}>
+                            {saving ? 'Saving...' : 'Save Changes'}
+                        </div>
+                        <div className='savechanges' onClick={() => {
+                            setEditing(false);
+                            setForm({ firstName, lastName, phone: profile?.phone || '', city: profile?.city || '', state: profile?.state || '' });
+                        }} style={{ background: '#eee', color: '#333' }}>
+                            Cancel
+                        </div>
+                    </div>
+                    </>
+                ) : (
+                    <>
+                    <div className='profileinfoname'>
+                        <div className='profileinfonaming'>
+                            <p>First Name</p>
+                            <h3>{firstName || '—'}</h3>
+                        </div>
+                        <div className='profileinfonaming'>
+                            <p>Last Name</p>
+                            <h3>{lastName || '—'}</h3>
+                        </div>
+                    </div>
+                    <div className='profileotherdetails'>
+                        <p>Email Address</p>
+                        <h3><MdOutlineMail />{profile?.email || '—'}</h3>
+                    </div>
+                    <div className='profileotherdetails'>
+                        <p>Phone Number</p>
+                        <h3><LuPhone />{profile?.phone ? `+91 ${profile.phone.replace(/^91/, '').trim()}` : '—'}</h3>
+                    </div>
+                    <div className='profileotherdetails'>
+                        <p>Location</p>
+                        <h3><SlLocationPin />{[profile?.city, profile?.state].filter(Boolean).join(', ') || '—'}</h3>
+                    </div>
+                    <div className='savechanges' onClick={() => setEditing(true)}>Edit Profile</div>
+                    </>
+                )}
+                </>
+                )}
             </div>)}
         {activeTab === "membership" && (<div className='membershipinformation'>
             <div className='currentmemebership'>
@@ -82,11 +220,11 @@ const Settings = () => {
                         <div className='currentmembershipicon'><LuCrown /></div>
                         <div className='currentmembershipplan'>
                             <h3><BsStars />Your Active Plan</h3>
-                            <h2>Pro Seller</h2>
+                            <h2>{profile?.subscriptionStatus === 'ACTIVE' ? 'Pro Seller' : 'Free Plan'}</h2>
                             <p>Unlock premium features and grow your business</p>
                         </div>
                     </div>
-                    <div className='currentmembershipactive'>ACTIVE</div>
+                    <div className='currentmembershipactive'>{profile?.subscriptionStatus || 'INACTIVE'}</div>
                 </div>
                 <div className='plandetails'>
                     <div className='planinfodetails'>
@@ -102,22 +240,22 @@ const Settings = () => {
                             <p>Active Listings</p>
                             <span className='planinfoicon1'><CiCircleCheck /></span>
                         </div>
-                        <h2>18/50</h2>
-                        <p>32 slots available</p>
+                        <h2>—</h2>
+                        <p>—</p>
                     </div>
                     <div className='planinfodetails2'>
                         <div className='planinfodetailstop'>
                             <p>Valid Until</p>
                             <span className='planinfoicon2'><LuCrown /></span>
                         </div>
-                        <h2>156</h2>
-                        <p>days remaining</p>
+                        <h2>—</h2>
+                        <p>—</p>
                     </div>
                 </div>
                 <div className='renewalinformation'>
                     <div className='renewalinfoleft'>
                         <p>Next Renewal Date</p>
-                        <h2>23 July 2026</h2>
+                        <h2>—</h2>
                     </div>
                     <div className='renewbutton'>Renew Now</div>
                 </div>
@@ -253,7 +391,7 @@ const Settings = () => {
                 </div>
                 <div className='profileotherdetails'>
                     <p>Confirm New Password</p>
-                    <h3><IoLockClosedOutline  />Confirm new password</h3>
+                    <h3><IoLockClosedOutline  />Enter new password</h3>
                 </div>
                 <div className='savechanges'><FiShield />Update Password</div>
             </div>)}
