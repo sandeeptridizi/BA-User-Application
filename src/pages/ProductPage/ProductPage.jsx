@@ -37,6 +37,19 @@ const CATEGORY_LABELS = {
   COLLECTABLES: "Collectables",
 };
 
+const LISTING_TYPE_LABELS = {
+  MARKETPLACE: "Marketplace",
+  BUY_NOW: "Buy Now",
+  AUCTIONS: "Auctions",
+  TO_LET: "To-Let",
+};
+
+const TIER_LABELS = {
+  GENERAL: "General",
+  LUXURY: "Luxury",
+  CLASSIC: "Classic",
+};
+
 const statusToLabel = (status) => {
   if (status === "APPROVED") return "active";
   if (status === "REJECTED") return "rejected";
@@ -69,6 +82,25 @@ const formatDate = (d) => {
   if (!d) return "—";
   const date = new Date(d);
   return date.toLocaleDateString("en-IN", { day: "2-digit", month: "2-digit", year: "numeric" });
+};
+
+const camelToLabel = (key) =>
+  key
+    .replace(/([A-Z])/g, " $1")
+    .replace(/([a-z])(\d)/g, "$1 $2")
+    .replace(/^./, (s) => s.toUpperCase())
+    .trim();
+
+const SKIP_META_KEYS = new Set(["views", "features", "keyFeatures", "location", "city", "area", "state", "address"]);
+
+const getMetaDetails = (meta) => {
+  if (!meta || typeof meta !== "object") return [];
+  return Object.entries(meta)
+    .filter(([key, value]) => !SKIP_META_KEYS.has(key) && value !== "" && value !== null && value !== undefined)
+    .map(([key, value]) => ({
+      label: camelToLabel(key),
+      value: typeof value === "object" ? JSON.stringify(value) : String(value),
+    }));
 };
 
 const ProductPage = () => {
@@ -143,6 +175,7 @@ const ProductPage = () => {
   const features = Array.isArray(meta.features) ? meta.features : (meta.keyFeatures ? [meta.keyFeatures] : []);
   const owner = product.owner || {};
   const views = getViews(meta);
+  const metaDetails = getMetaDetails(meta);
 
   return (
     <div className="productpagecontainer">
@@ -196,30 +229,87 @@ const ProductPage = () => {
               {product.description || "No description."}
             </p>
           </div>
+
           <div className="productdescription">
-            <h2 className="producttitle">Key Features</h2>
-            <div className="productfeatures">
-              <ul className="productfeaturesleft">
-                {features.slice(0, 3).map((f, i) => (
-                  <li key={i} className="productfeaturelist">
-                    <LuDot className="featuredoticon" />
-                    {typeof f === "string" ? f : JSON.stringify(f)}
-                  </li>
-                ))}
-                {features.length === 0 && (
-                  <li className="productfeaturelist">—</li>
-                )}
-              </ul>
-              <ul className="productfeaturesright">
-                {features.slice(3, 6).map((f, i) => (
-                  <li key={i} className="productfeaturelist">
-                    <LuDot className="featuredoticon" />
-                    {typeof f === "string" ? f : JSON.stringify(f)}
-                  </li>
-                ))}
-              </ul>
+            <h2 className="producttitle">Basic Information</h2>
+            <div className="productdetails-grid">
+              <div className="productdetail-item">
+                <span className="productdetail-label">Listing Type</span>
+                <span className="productdetail-value">
+                  {LISTING_TYPE_LABELS[product.listingType] || product.listingType}
+                </span>
+              </div>
+              <div className="productdetail-item">
+                <span className="productdetail-label">Category</span>
+                <span className="productdetail-value">
+                  {CATEGORY_LABELS[product.category] || product.category}
+                </span>
+              </div>
+              <div className="productdetail-item">
+                <span className="productdetail-label">Tier</span>
+                <span className="productdetail-value">
+                  {TIER_LABELS[product.tier] || product.tier}
+                </span>
+              </div>
+              <div className="productdetail-item">
+                <span className="productdetail-label">Value</span>
+                <span className="productdetail-value">
+                  {formatCurrency(product.value)}
+                </span>
+              </div>
+              {meta.city && (
+                <div className="productdetail-item">
+                  <span className="productdetail-label">City</span>
+                  <span className="productdetail-value">{meta.city}</span>
+                </div>
+              )}
+              {meta.socialMediaLink && (
+                <div className="productdetail-item">
+                  <span className="productdetail-label">Social Media Link</span>
+                  <span className="productdetail-value">{meta.socialMediaLink}</span>
+                </div>
+              )}
             </div>
           </div>
+
+          {metaDetails.length > 0 && (
+            <div className="productdescription">
+              <h2 className="producttitle">Product Specifications</h2>
+              <div className="productdetails-grid">
+                {metaDetails.map((detail, i) => (
+                  <div className="productdetail-item" key={i}>
+                    <span className="productdetail-label">{detail.label}</span>
+                    <span className="productdetail-value">{detail.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {features.length > 0 && (
+            <div className="productdescription">
+              <h2 className="producttitle">Key Features</h2>
+              <div className="productfeatures">
+                <ul className="productfeaturesleft">
+                  {features.slice(0, 3).map((f, i) => (
+                    <li key={i} className="productfeaturelist">
+                      <LuDot className="featuredoticon" />
+                      {typeof f === "string" ? f : JSON.stringify(f)}
+                    </li>
+                  ))}
+                </ul>
+                <ul className="productfeaturesright">
+                  {features.slice(3, 6).map((f, i) => (
+                    <li key={i} className="productfeaturelist">
+                      <LuDot className="featuredoticon" />
+                      {typeof f === "string" ? f : JSON.stringify(f)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+
           <div className="productowner">
             <h2 className="producttitle">Owner Information</h2>
             <div className="productownerinfo">

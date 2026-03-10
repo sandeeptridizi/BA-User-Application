@@ -35,6 +35,57 @@ const APPROVAL_STATUSES = [
   { value: "REJECTED", label: "Rejected" },
 ];
 
+const camelToLabel = (key) =>
+  key
+    .replace(/([A-Z])/g, " $1")
+    .replace(/([a-z])(\d)/g, "$1 $2")
+    .replace(/^./, (s) => s.toUpperCase())
+    .trim();
+
+const INTERNAL_META_KEYS = new Set(["views", "features", "keyFeatures"]);
+
+const SELECT_OPTIONS = {
+  propertyType: ["House", "Villa", "Apartment", "Flat", "Plot", "Land", "Commercial"],
+  ownershipType: ["Freehold", "Leasehold", "Co-Operative Society", "Power of Attorney"],
+  approvalStatus2: ["RERA Approved", "Authority Approved", "Not Approved", "Under Process"],
+  availability: ["Immediate", "Ready to Move", "Under Construction", "Within 3 Months", "Within 6 Months"],
+  facing: ["North", "East", "West", "South", "North-East", "North-West", "South-East", "South-West"],
+  noOfCarParking: ["1", "2", "3", "4"],
+  furnishing: ["Unfurnished", "Semi-Furnished", "Furnished"],
+  garden: ["Yes", "No"],
+  gatedCommunity: ["Yes", "No"],
+  maintenanceCharges: ["Included", "Excluded", "On Request"],
+  lift: ["Yes", "No"],
+  parkingType: ["No", "Open", "Covered"],
+  approvalType: ["DTCP", "HMDA", "RERA", "Panchayat", "NA"],
+  boundaryWall: ["Yes", "No"],
+  cornerPlot: ["Yes", "No"],
+  electricityAvailable: ["Yes", "No"],
+  waterConnection: ["Municipal", "Borewell", "Both", "None"],
+  commercialType: ["Office", "Shop", "Showroom", "Warehouse", "Industrial"],
+  parking: ["Yes", "No"],
+  suitableFor: ["Office", "Retail", "Clinic", "Restaurant", "Storage"],
+  washroom: ["Private", "Common", "None"],
+  furnishedStatus: ["Unfurnished", "Semi-Furnished", "Furnished"],
+  fireSafetyCompliance: ["Yes", "No"],
+  noOfOwners: ["1st Owner", "2nd Owner", "3rd Owner", "4th Owner"],
+  fuelType: ["Petrol", "Diesel", "CNG", "Electric", "Hybrid"],
+  condition: ["Excellent", "Good", "Fair"],
+  transmission: ["Manual", "Automatic", "AMT"],
+  tyres: ["Brand New", "Used / Part-Own", "Worn Out"],
+  accidentHistory: ["Yes", "No"],
+  serviceHistory: ["Available", "Not Available"],
+  numberOfKeys: ["1", "2", "More"],
+  sellerType: ["Owner", "Dealer"],
+  negotiable: ["Yes", "No"],
+  insuranceValidity: ["Active", "Expired"],
+  rcAvailable: ["Yes/Available", "No/Missing"],
+  ownership: ["Owner", "Agent", "Builder"],
+  rentalType: ["Flat", "Apartment", "Independent House", "Villa", "Studio", "Penthouse"],
+  leaseDuration: ["11 Months", "1 Year", "2 Years", "3 Years"],
+  furnishingStatus: ["Furnished", "Semi Furnished", "Unfurnished", "Other"],
+};
+
 const ProductEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -49,8 +100,8 @@ const ProductEdit = () => {
     tier: "GENERAL",
     value: "",
     approvalStatus: "PENDING",
-    metaJson: "{}",
   });
+  const [metaFields, setMetaFields] = useState({});
 
   useEffect(() => {
     if (!id) {
@@ -76,11 +127,15 @@ const ProductEdit = () => {
           tier: p.tier || "GENERAL",
           value: p.value != null ? String(p.value) : "",
           approvalStatus: p.approvalStatus || "PENDING",
-          metaJson:
-            p.meta != null
-              ? JSON.stringify(p.meta, null, 2)
-              : "{}",
         });
+        if (p.meta && typeof p.meta === "object") {
+          const editableMeta = {};
+          for (const [key, value] of Object.entries(p.meta)) {
+            if (INTERNAL_META_KEYS.has(key)) continue;
+            editableMeta[key] = value != null ? String(value) : "";
+          }
+          setMetaFields(editableMeta);
+        }
       } catch (err) {
         setError(
           err?.response?.data?.message || err?.message || "Failed to load product"
@@ -96,16 +151,21 @@ const ProductEdit = () => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleMetaChange = (key, value) => {
+    setMetaFields((prev) => ({ ...prev, [key]: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!id) return;
-    let meta;
-    try {
-      meta = form.metaJson.trim() ? JSON.parse(form.metaJson) : null;
-    } catch {
-      alert("Invalid JSON in Meta field.");
-      return;
+
+    const meta = {};
+    for (const [key, value] of Object.entries(metaFields)) {
+      if (value !== "") {
+        meta[key] = value;
+      }
     }
+
     const payload = {
       title: form.title.trim(),
       description: form.description.trim() || null,
@@ -129,6 +189,32 @@ const ProductEdit = () => {
     }
   };
 
+  const renderMetaInput = (key, value) => {
+    const options = SELECT_OPTIONS[key];
+    if (options) {
+      return (
+        <select
+          value={value}
+          onChange={(e) => handleMetaChange(key, e.target.value)}
+        >
+          <option value="">Select</option>
+          {options.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
+      );
+    }
+    return (
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => handleMetaChange(key, e.target.value)}
+      />
+    );
+  };
+
   if (loading) {
     return (
       <div className="productcontainer1">
@@ -149,6 +235,8 @@ const ProductEdit = () => {
     );
   }
 
+  const metaKeys = Object.keys(metaFields);
+
   return (
     <div className="productcontainer1">
       <div className="producthead1">
@@ -162,6 +250,7 @@ const ProductEdit = () => {
       </div>
 
       <form className="productedit-form" onSubmit={handleSubmit}>
+        <h3 className="productedit-section-title">Basic Information</h3>
         <div className="productedit-field">
           <label>Title</label>
           <input
@@ -222,7 +311,7 @@ const ProductEdit = () => {
             </select>
           </div>
           <div className="productedit-field">
-            <label>Value (₹)</label>
+            <label>Value (&#8377;)</label>
             <input
               type="number"
               min={0}
@@ -244,16 +333,22 @@ const ProductEdit = () => {
             ))}
           </select>
         </div>
-        <div className="productedit-field">
-          <label>Meta (JSON)</label>
-          <textarea
-            value={form.metaJson}
-            onChange={(e) => handleChange("metaJson", e.target.value)}
-            rows={6}
-            className="productedit-meta"
-            placeholder='{"location": "...", "views": 0}'
-          />
-        </div>
+
+        {metaKeys.length > 0 && (
+          <>
+            <div className="productedit-divider"></div>
+            <h3 className="productedit-section-title">Product Specifications</h3>
+            <div className="productedit-meta-grid">
+              {metaKeys.map((key) => (
+                <div className="productedit-field" key={key}>
+                  <label>{camelToLabel(key)}</label>
+                  {renderMetaInput(key, metaFields[key])}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
         <div className="productedit-actions">
           <button
             type="button"

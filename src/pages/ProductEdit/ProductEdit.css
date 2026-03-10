@@ -77,3 +77,26 @@
   border: 1px solid rgba(0, 0, 0, 0.2);
   color: #0A0A0A;
 }
+
+.productedit-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0A0A0A;
+  margin-bottom: 16px;
+}
+
+.productedit-divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.08);
+  margin: 24px 0;
+}
+
+.productedit-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px 16px;
+}
+
+.productedit-meta-grid .productedit-field {
+  margin-bottom: 0;
+}
