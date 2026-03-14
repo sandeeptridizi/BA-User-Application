@@ -23,6 +23,9 @@ const getFirstLast = (name) => {
   return { first: parts[0] || '', last: '' };
 };
 
+const PLAN_LABELS = { NONE: 'Free Plan', BASIC: 'Basic', PRO: 'Pro Seller', ELITE: 'Elite' };
+const PLAN_PRICES = { BASIC: 2999, PRO: 9999, ELITE: 24999 };
+
 const Settings = () => {
     const [activeTab, setActiveTab] = useState("profile");
     const [profile, setProfile] = useState(null);
@@ -31,6 +34,7 @@ const Settings = () => {
     const [saving, setSaving] = useState(false);
     const [saveMsg, setSaveMsg] = useState('');
     const [form, setForm] = useState({ firstName: '', lastName: '', phone: '', city: '', state: '' });
+    const [paymentLoading, setPaymentLoading] = useState(null); // tracks which plan is being paid for
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -79,6 +83,83 @@ const Settings = () => {
         }
     };
 
+    const handleSubscribe = async (plan) => {
+        if (paymentLoading) return;
+        setPaymentLoading(plan);
+
+        try {
+            // 1. Create order on backend
+            const orderRes = await api.post('/api/subscription/create-order', { plan });
+            const { orderId, amount, currency, keyId } = orderRes.data.data;
+
+            // 2. Open Razorpay checkout
+            const options = {
+                key: keyId || import.meta.env.VITE_RAZORPAY_KEY_ID,
+                amount,
+                currency,
+                name: 'Tridizi',
+                description: `${PLAN_LABELS[plan]} - Annual Subscription`,
+                order_id: orderId,
+                prefill: {
+                    name: profile?.name || '',
+                    email: profile?.email || '',
+                    contact: profile?.phone || '',
+                },
+                handler: async (response) => {
+                    try {
+                        // 3. Verify payment on backend
+                        const verifyRes = await api.post('/api/subscription/verify', {
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                        });
+                        const updatedUser = verifyRes.data.data;
+                        setProfile(updatedUser);
+                        saveUserToStorage(updatedUser);
+                        alert('Subscription activated successfully!');
+                    } catch {
+                        alert('Payment was received but verification failed. Please contact support.');
+                    } finally {
+                        setPaymentLoading(null);
+                    }
+                },
+                modal: {
+                    ondismiss: () => setPaymentLoading(null),
+                },
+                theme: { color: '#000000' },
+            };
+
+            const rzp = new window.Razorpay(options);
+            rzp.on('payment.failed', () => {
+                alert('Payment failed. Please try again.');
+                setPaymentLoading(null);
+            });
+            rzp.open();
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to initiate payment. Please try again.');
+            setPaymentLoading(null);
+        }
+    };
+
+    const currentPlan = profile?.subscriptionPlan || 'NONE';
+    const isActive = profile?.subscriptionStatus === 'ACTIVE';
+
+    const getPlanButtonLabel = (plan) => {
+        if (paymentLoading === plan) return 'Processing...';
+        if (!isActive || currentPlan === 'NONE') return `Subscribe to ${PLAN_LABELS[plan]}`;
+        const planOrder = ['NONE', 'BASIC', 'PRO', 'ELITE'];
+        const currentIndex = planOrder.indexOf(currentPlan);
+        const targetIndex = planOrder.indexOf(plan);
+        if (currentIndex === targetIndex) return null; // current plan
+        if (targetIndex > currentIndex) return `Upgrade to ${PLAN_LABELS[plan]}`;
+        return `Switch to ${PLAN_LABELS[plan]}`;
+    };
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '—';
+        return new Date(dateStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+    };
+
     const { first: firstName, last: lastName } = getFirstLast(profile?.name);
     const memberSince = profile?.createdAt
         ? new Date(profile.createdAt).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
@@ -109,7 +190,7 @@ const Settings = () => {
                     <div className='profileinfodetails'>
                         <h3>{profile?.name || '—'}</h3>
                         <p>Member Since {memberSince}</p>
-                        <span><MdStar />{profile?.subscriptionStatus === 'ACTIVE' ? 'Pro Member' : 'Free Member'}</span>
+                        <span><MdStar />{isActive ? PLAN_LABELS[currentPlan] || 'Pro Member' : 'Free Member'}</span>
                     </div>
                 </div>
                 {saveMsg && <p style={{ padding: '10px 20px', color: saveMsg.includes('success') ? 'green' : 'red' }}>{saveMsg}</p>}
@@ -220,7 +301,7 @@ const Settings = () => {
                         <div className='currentmembershipicon'><LuCrown /></div>
                         <div className='currentmembershipplan'>
                             <h3><BsStars />Your Active Plan</h3>
-                            <h2>{profile?.subscriptionStatus === 'ACTIVE' ? 'Pro Seller' : 'Free Plan'}</h2>
+                            <h2>{isActive ? PLAN_LABELS[currentPlan] || 'Pro Seller' : 'Free Plan'}</h2>
                             <p>Unlock premium features and grow your business</p>
                         </div>
                     </div>
@@ -232,37 +313,45 @@ const Settings = () => {
                             <p>Annual Cost</p>
                             <span className='planinfoicon'><MdStar /></span>
                         </div>
-                        <h2>9,999</h2>
-                        <p>Billed annually</p>
+                        <h2>{isActive && currentPlan !== 'NONE' ? PLAN_PRICES[currentPlan]?.toLocaleString('en-IN') : '—'}</h2>
+                        <p>{isActive ? 'Billed annually' : '—'}</p>
                     </div>
                     <div className='planinfodetails1'>
                         <div className='planinfodetailstop'>
                             <p>Active Listings</p>
                             <span className='planinfoicon1'><CiCircleCheck /></span>
                         </div>
-                        <h2>—</h2>
-                        <p>—</p>
+                        <h2>{currentPlan === 'BASIC' ? '15' : currentPlan === 'PRO' ? '50' : currentPlan === 'ELITE' ? 'Unlimited' : '—'}</h2>
+                        <p>{isActive ? 'Included in plan' : '—'}</p>
                     </div>
                     <div className='planinfodetails2'>
                         <div className='planinfodetailstop'>
                             <p>Valid Until</p>
                             <span className='planinfoicon2'><LuCrown /></span>
                         </div>
-                        <h2>—</h2>
-                        <p>—</p>
+                        <h2>{formatDate(profile?.subscriptionEndDate)}</h2>
+                        <p>{isActive ? 'Auto-renew' : '—'}</p>
                     </div>
                 </div>
                 <div className='renewalinformation'>
                     <div className='renewalinfoleft'>
                         <p>Next Renewal Date</p>
-                        <h2>—</h2>
+                        <h2>{formatDate(profile?.subscriptionEndDate)}</h2>
                     </div>
-                    <div className='renewbutton'>Renew Now</div>
+                    {isActive && currentPlan !== 'NONE' && (
+                        <div
+                            className='renewbutton'
+                            onClick={() => handleSubscribe(currentPlan)}
+                            style={{ opacity: paymentLoading ? 0.6 : 1, cursor: paymentLoading ? 'not-allowed' : 'pointer' }}
+                        >
+                            {paymentLoading === currentPlan ? 'Processing...' : 'Renew Now'}
+                        </div>
+                    )}
                 </div>
             </div>
             <div className='benefits'>
                 <div className='benefitstop'>
-                    <h2>Your Pro Benefits</h2>
+                    <h2>Your {isActive ? PLAN_LABELS[currentPlan] : 'Pro'} Benefits</h2>
                     <p>Everything included in your current plan</p>
                 </div>
                 <div className='benefitsinfo'>
@@ -270,15 +359,15 @@ const Settings = () => {
                         <div className='benefitsinfo1'>
                             <div className='benefitsinfo1icon'><CiCircleCheck /></div>
                             <div className='benefitsinfo1details'>
-                                <h3>50 Active Listings</h3>
-                                <p>List up to 50 properties simultaneously</p>
+                                <h3>{currentPlan === 'BASIC' ? '15' : currentPlan === 'ELITE' ? 'Unlimited' : '50'} Active Listings</h3>
+                                <p>List up to {currentPlan === 'BASIC' ? '15' : currentPlan === 'ELITE' ? 'unlimited' : '50'} properties simultaneously</p>
                             </div>
                         </div>
                         <div className='benefitsinfo2'>
                             <div className='benefitsinfo2icon'><CiCircleCheck /></div>
                             <div className='benefitsinfo1details'>
-                                <h3>Priority Support</h3>
-                                <p>24/7 dedicated customer service</p>
+                                <h3>{currentPlan === 'ELITE' ? 'Dedicated Account Manager' : currentPlan === 'PRO' ? 'Priority Support' : 'Email Support'}</h3>
+                                <p>{currentPlan === 'ELITE' ? 'Personal account manager for your business' : currentPlan === 'PRO' ? '24/7 dedicated customer service' : 'Email-based customer support'}</p>
                             </div>
                         </div>
                     </div>
@@ -286,14 +375,14 @@ const Settings = () => {
                         <div className='benefitsinfo3'>
                             <div className='benefitsinfo3icon'><CiCircleCheck /></div>
                             <div className='benefitsinfo1details'>
-                                <h3>Featured Listings</h3>
+                                <h3>{currentPlan === 'ELITE' ? 'Premium Featured Listings' : 'Featured Listings'}</h3>
                                 <p>Get your properties highlighted</p>
                             </div>
                         </div>
                         <div className='benefitsinfo4'>
                             <div className='benefitsinfo4icon'><CiCircleCheck /></div>
                             <div className='benefitsinfo1details'>
-                                <h3>Verified Badge</h3>
+                                <h3>{currentPlan === 'ELITE' ? 'Elite Verified Badge' : 'Verified Badge'}</h3>
                                 <p>Build trust with buyers instantly</p>
                             </div>
                         </div>
@@ -302,15 +391,15 @@ const Settings = () => {
                         <div className='benefitsinfo5'>
                             <div className='benefitsinfo5icon'><CiCircleCheck /></div>
                             <div className='benefitsinfo1details'>
-                                <h3>Analytics Dashboard</h3>
+                                <h3>{currentPlan === 'ELITE' ? 'Premium Analytics & Reports' : 'Analytics Dashboard'}</h3>
                                 <p>Track views, leads & performance</p>
                             </div>
                         </div>
                         <div className='benefitsinfo6'>
                             <div className='benefitsinfo6icon'><CiCircleCheck /></div>
                             <div className='benefitsinfo1details'>
-                                <h3>Fast Approval</h3>
-                                <p>Listings approved within 2 hours</p>
+                                <h3>{currentPlan === 'ELITE' ? 'Instant Approval' : currentPlan === 'PRO' ? 'Fast Approval' : 'Standard Approval'}</h3>
+                                <p>{currentPlan === 'ELITE' ? 'Listings approved instantly' : currentPlan === 'PRO' ? 'Listings approved within 2 hours' : 'Listings approved within 24 hours'}</p>
                             </div>
                         </div>
                     </div>
@@ -318,7 +407,7 @@ const Settings = () => {
 
             </div>
             <div className='upgradeplans'>
-                <h2>Upgrade Plans</h2>
+                <h2>{isActive ? 'Change Plan' : 'Choose a Plan'}</h2>
                 <p>Choose a plan that fits your business needs</p>
                 <div className='upgradeplandetails'>
                     <div className='basicplan'>
@@ -332,7 +421,17 @@ const Settings = () => {
                             <li><CiCircleCheck className='basicplanlisticon'/>Basic Analytics</li>
                             <li><CiCircleCheck className='basicplanlisticon'/>Standard Approval (24hrs)</li>
                         </ul>
-                        <div className='downgradebutton'>Downgrade to Basic</div>
+                        {currentPlan === 'BASIC' && isActive ? (
+                            <div className='currentbutton'><CiCircleCheck />You're on this plan</div>
+                        ) : (
+                            <div
+                                className='downgradebutton'
+                                onClick={() => handleSubscribe('BASIC')}
+                                style={{ opacity: paymentLoading ? 0.6 : 1, cursor: paymentLoading ? 'not-allowed' : 'pointer' }}
+                            >
+                                {getPlanButtonLabel('BASIC')}
+                            </div>
+                        )}
                     </div>
                     <div className='proplan'>
                         <div className='proplanicon'><LuCrown /></div>
@@ -347,7 +446,17 @@ const Settings = () => {
                             <li><CiCircleCheck className='proplanlisticon'/>Verified Badge</li>
                             <li><CiCircleCheck className='proplanlisticon'/>Advanced Analytics</li>
                         </ul>
-                        <div className='currentbutton'><CiCircleCheck />You're on this plan</div>
+                        {currentPlan === 'PRO' && isActive ? (
+                            <div className='currentbutton'><CiCircleCheck />You're on this plan</div>
+                        ) : (
+                            <div
+                                className='upgradebutton'
+                                onClick={() => handleSubscribe('PRO')}
+                                style={{ opacity: paymentLoading ? 0.6 : 1, cursor: paymentLoading ? 'not-allowed' : 'pointer' }}
+                            >
+                                <GoArrowUpRight />{getPlanButtonLabel('PRO')}
+                            </div>
+                        )}
                     </div>
                     <div className='eliteplan'>
                         <div className='eliteplanicon'><LuCrown /></div>
@@ -363,7 +472,17 @@ const Settings = () => {
                             <li><CiCircleCheck className='eliteplanlisticon'/>Premium Analytics & Reports</li>
                              <li><CiCircleCheck className='eliteplanlisticon'/>Priority Placement</li>
                         </ul>
-                        <div className='upgradebutton'><GoArrowUpRight  />Upgrade to Elite</div>
+                        {currentPlan === 'ELITE' && isActive ? (
+                            <div className='currentbutton'><CiCircleCheck />You're on this plan</div>
+                        ) : (
+                            <div
+                                className='upgradebutton'
+                                onClick={() => handleSubscribe('ELITE')}
+                                style={{ opacity: paymentLoading ? 0.6 : 1, cursor: paymentLoading ? 'not-allowed' : 'pointer' }}
+                            >
+                                <GoArrowUpRight />{getPlanButtonLabel('ELITE')}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
