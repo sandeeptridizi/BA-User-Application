@@ -29,6 +29,21 @@ const TIERS = [
   { value: "CLASSIC", label: "Classic" },
 ];
 
+const COUNTRIES = [
+  { value: "INDIA", label: "India" },
+  { value: "UNITED STATES", label: "United States" },
+  { value: "UNITED KINGDOM", label: "United Kingdom" },
+  { value: "CANADA", label: "Canada" },
+  { value: "AUSTRALIA", label: "Australia" },
+  { value: "SINGAPORE", label: "Singapore" },
+  { value: "DUBAI", label: "Dubai" },
+  { value: "MALAYSIA", label: "Malaysia" },
+  { value: "QATAR", label: "Qatar" },
+  { value: "SAUDI ARABIA", label: "Saudi Arabia" },
+  { value: "SWITZERLAND", label: "Switzerland" },
+  { value: "KUWAIT", label: "Kuwait" },
+];
+
 const APPROVAL_STATUSES = [
   { value: "PENDING", label: "Pending" },
   { value: "APPROVED", label: "Approved" },
@@ -98,6 +113,7 @@ const ProductEdit = () => {
     listingType: "MARKETPLACE",
     category: "REAL_ESTATE",
     tier: "GENERAL",
+    country: "INDIA",
     value: "",
     approvalStatus: "PENDING",
   });
@@ -125,6 +141,7 @@ const ProductEdit = () => {
           listingType: p.listingType || "MARKETPLACE",
           category: p.category || "REAL_ESTATE",
           tier: p.tier || "GENERAL",
+          country: p.country || "INDIA",
           value: p.value != null ? String(p.value) : "",
           approvalStatus: p.approvalStatus || "PENDING",
         });
@@ -172,6 +189,7 @@ const ProductEdit = () => {
       listingType: form.listingType,
       category: form.category,
       tier: form.tier,
+      country: form.country,
       value: form.value.trim() ? parseInt(form.value, 10) : null,
       approvalStatus: form.approvalStatus,
       meta,
@@ -318,6 +336,19 @@ const ProductEdit = () => {
               value={form.value}
               onChange={(e) => handleChange("value", e.target.value)}
             />
+          </div>
+          <div className="productedit-field">
+            <label>Country</label>
+            <select
+              value={form.country}
+              onChange={(e) => handleChange("country", e.target.value)}
+            >
+              {COUNTRIES.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
         <div className="productedit-field">

@@ -257,6 +257,12 @@ const ProductPage = () => {
                   {formatCurrency(product.value)}
                 </span>
               </div>
+              {product.country && (
+                <div className="productdetail-item">
+                  <span className="productdetail-label">Country</span>
+                  <span className="productdetail-value">{product.country}</span>
+                </div>
+              )}
               {meta.city && (
                 <div className="productdetail-item">
                   <span className="productdetail-label">City</span>
