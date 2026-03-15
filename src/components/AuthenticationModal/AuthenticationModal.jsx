@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import companyLogo from '../../assets/company-logo.png';
 import { LuShield } from 'react-icons/lu';
+import { CiMobile2 } from 'react-icons/ci';
+import { MdOutlineEmail } from 'react-icons/md';
 import { FaRegCheckCircle } from 'react-icons/fa';
 import useAppContext from '../../context/AppContext';
 import api from '../../../lib/api';
@@ -23,6 +25,10 @@ const AuthenticationModal = () => {
     setOpenAuthenticationModal,
     pendingOtpPhone,
     setPendingOtpPhone,
+    pendingOtpEmail,
+    setPendingOtpEmail,
+    pendingOtpChannel,
+    setPendingOtpChannel,
     pendingOtpPayload,
     setPendingOtpPayload,
   } = useAppContext();
@@ -31,13 +37,15 @@ const AuthenticationModal = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const isOpen = pendingOtpPhone || pendingOtpEmail;
+
   useEffect(() => {
-    if (!pendingOtpPhone) return;
+    if (!isOpen) return;
     const t = setInterval(() => {
       setResendSec((s) => (s <= 0 ? 0 : s - 1));
     }, 1000);
     return () => clearInterval(t);
-  }, [pendingOtpPhone]);
+  }, [isOpen]);
 
   const otpValue = otp.join('');
   const canResend = resendSec === 0 && pendingOtpPayload;
@@ -68,10 +76,11 @@ const AuthenticationModal = () => {
     setError('');
     try {
       await api.post('/api/user/otp/send', {
-        phone: pendingOtpPayload.phone,
         name: pendingOtpPayload.name,
         email: pendingOtpPayload.email,
+        phone: pendingOtpPayload.phone || undefined,
         businessName: pendingOtpPayload.businessName || undefined,
+        channel: pendingOtpPayload.channel,
       });
       setResendSec(RESEND_COOLDOWN_SEC);
     } catch (err) {
@@ -84,14 +93,17 @@ const AuthenticationModal = () => {
     setError('');
     setLoading(true);
     try {
-      const { data } = await api.post('/api/user/otp/verify', {
-        phone: pendingOtpPhone,
-        otp: otpValue,
-      });
+      const payload =
+        pendingOtpChannel === 'phone'
+          ? { phone: pendingOtpPhone, otp: otpValue, channel: 'phone' }
+          : { email: pendingOtpEmail, otp: otpValue, channel: 'email' };
+      const { data } = await api.post('/api/user/otp/verify', payload);
       setToken(data.token);
       setUser(data.user);
       setOpenAuthenticationModal(false);
       setPendingOtpPhone(null);
+      setPendingOtpEmail(null);
+      setPendingOtpChannel('phone');
       setPendingOtpPayload(null);
       navigate('/');
     } catch (err) {
@@ -101,13 +113,20 @@ const AuthenticationModal = () => {
     }
   };
 
-  const handleChangeNumber = () => {
+  const handleBack = () => {
     setOpenAuthenticationModal(false);
     setPendingOtpPhone(null);
+    setPendingOtpEmail(null);
+    setPendingOtpChannel('phone');
     setPendingOtpPayload(null);
   };
 
-  if (!pendingOtpPhone) return null;
+  if (!isOpen) return null;
+
+  const sentTo =
+    pendingOtpChannel === 'phone'
+      ? formatPhone(pendingOtpPhone)
+      : pendingOtpEmail;
 
   return (
     <div className='modal'>
@@ -126,14 +145,16 @@ const AuthenticationModal = () => {
         </div>
         <div className='modal-otp-container'>
           <div className='modal-mobile-icon-container'>
-            <FaRegCheckCircle />
+            {pendingOtpChannel === 'phone' ? <CiMobile2 /> : <MdOutlineEmail />}
           </div>
           <h3 className='otp-heading'>Verify OTP</h3>
           <div>
             <p className='code'>Enter the 6-digit code sent to</p>
-            <p className='mobile-num'>{formatPhone(pendingOtpPhone)}</p>
+            <p className='mobile-num'>{sentTo}</p>
           </div>
-          <p className='auth-change-num' onClick={handleChangeNumber}>Change number</p>
+          <p className='auth-change-num' onClick={handleBack}>
+            {pendingOtpChannel === 'phone' ? 'Change number' : 'Change email'}
+          </p>
           <div className='otp-numbers-container'>
             {[0, 1, 2, 3, 4, 5].map((i) => (
               <input
@@ -163,10 +184,10 @@ const AuthenticationModal = () => {
           onClick={handleVerify}
           disabled={otpValue.length !== 6 || loading}
         >
-          <FaRegCheckCircle /> {loading ? 'Verifying…' : 'Verify & Create Account'}
+          <FaRegCheckCircle /> {loading ? 'Verifying...' : 'Verify & Create Account'}
         </button>
         <div className='modal-footer'>
-          © 2026 Billionaire Auction. All rights reserved.
+          &copy; 2026 Billionaire Auction. All rights reserved.
         </div>
       </div>
     </div>

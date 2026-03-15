@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LuShield } from 'react-icons/lu';
 import { TbDeviceMobile } from 'react-icons/tb';
+import { MdOutlineEmail } from 'react-icons/md';
 import { BiCheckCircle } from 'react-icons/bi';
 import { FaArrowRight } from 'react-icons/fa6';
 
@@ -13,29 +14,62 @@ import useAppContext from '../../context/AppContext';
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const { setOpenVerificationModal, setPendingOtpPhone } = useAppContext();
+  const {
+    setOpenVerificationModal,
+    setPendingOtpPhone,
+    setPendingOtpEmail,
+    setPendingOtpChannel,
+  } = useAppContext();
+
+  const [tab, setTab] = useState('phone');
   const [phoneDigits, setPhoneDigits] = useState('');
+  const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    const digits = phoneDigits.replace(/\D/g, '');
-    if (digits.length !== 10) {
-      setError('Enter a valid 10-digit mobile number');
-      return;
-    }
-    const phone = '91' + digits;
-    setLoading(true);
-    try {
-      await api.post('/api/user/otp/send-login', { phone });
-      setPendingOtpPhone(phone);
-      setOpenVerificationModal(true);
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed to send OTP');
-    } finally {
-      setLoading(false);
+
+    if (tab === 'phone') {
+      const digits = phoneDigits.replace(/\D/g, '');
+      if (digits.length !== 10) {
+        setError('Enter a valid 10-digit mobile number');
+        return;
+      }
+      const phone = '91' + digits;
+      setLoading(true);
+      try {
+        await api.post('/api/user/otp/send-login', { phone, channel: 'phone' });
+        setPendingOtpPhone(phone);
+        setPendingOtpEmail(null);
+        setPendingOtpChannel('phone');
+        setOpenVerificationModal(true);
+      } catch (err) {
+        setError(err.response?.data?.message || 'Failed to send OTP');
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      if (!email.trim()) {
+        setError('Enter a valid email address');
+        return;
+      }
+      setLoading(true);
+      try {
+        await api.post('/api/user/otp/send-login', {
+          email: email.trim().toLowerCase(),
+          channel: 'email',
+        });
+        setPendingOtpEmail(email.trim().toLowerCase());
+        setPendingOtpPhone(null);
+        setPendingOtpChannel('email');
+        setOpenVerificationModal(true);
+      } catch (err) {
+        setError(err.response?.data?.message || 'Failed to send OTP');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -48,28 +82,67 @@ const SignIn = () => {
             <LuShield className='shield-icon' /> Seller Portal - Sign In
           </div>
         </div>
+
+        <div className='auth-tabs'>
+          <button
+            className={`auth-tab ${tab === 'phone' ? 'auth-tab-active' : ''}`}
+            onClick={() => { setTab('phone'); setError(''); }}
+            type='button'
+          >
+            <TbDeviceMobile /> With Phone
+          </button>
+          <button
+            className={`auth-tab ${tab === 'email' ? 'auth-tab-active' : ''}`}
+            onClick={() => { setTab('email'); setError(''); }}
+            type='button'
+          >
+            <MdOutlineEmail /> With Email
+          </button>
+        </div>
+
         <form className='sign-in-form-container' onSubmit={handleSubmit}>
-          <div className='sign-in-label-container'>
-            <label className='label-name'>Mobile Number</label>
-            <div className='sign-in-icon-container'>
-              <TbDeviceMobile className='mobile-icon' />
-              <p>+91</p>
-              <input
-                type='text'
-                placeholder='Enter 10-digit mobile number'
-                className='sign-in-input'
-                value={phoneDigits}
-                onChange={(e) =>
-                  setPhoneDigits(e.target.value.replace(/\D/g, '').slice(0, 10))
-                }
-                maxLength={10}
-              />
+          {tab === 'phone' ? (
+            <div className='sign-in-label-container'>
+              <label className='label-name'>Mobile Number</label>
+              <div className='sign-in-icon-container'>
+                <TbDeviceMobile className='mobile-icon' />
+                <p>+91</p>
+                <input
+                  type='text'
+                  placeholder='Enter 10-digit mobile number'
+                  className='sign-in-input'
+                  value={phoneDigits}
+                  onChange={(e) =>
+                    setPhoneDigits(e.target.value.replace(/\D/g, '').slice(0, 10))
+                  }
+                  maxLength={10}
+                />
+              </div>
+              <p className='sign-in-text'>
+                We'll send you a 6-digit OTP to verify your number
+              </p>
             </div>
-            <p className='sign-in-text'>
-              We'll send you a 6-digit OTP to verify your number
-            </p>
-          </div>
+          ) : (
+            <div className='sign-in-label-container'>
+              <label className='label-name'>Email Address</label>
+              <div className='sign-in-icon-container'>
+                <MdOutlineEmail className='mobile-icon' />
+                <input
+                  type='email'
+                  placeholder='your.email@example.com'
+                  className='sign-in-input'
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <p className='sign-in-text'>
+                We'll send you a 6-digit OTP to verify your email
+              </p>
+            </div>
+          )}
+
           {error && <p className='sign-in-error'>{error}</p>}
+
           <div className='sign-in-points-container'>
             <div className='points-header'>
               <BiCheckCircle className='points-icon' /> Why OTP Login?
@@ -90,7 +163,7 @@ const SignIn = () => {
             </div>
           </div>
           <button type='submit' className='sign-in-btn' disabled={loading}>
-            {loading ? 'Sending…' : 'Send OTP'} <FaArrowRight />
+            {loading ? 'Sending...' : 'Send OTP'} <FaArrowRight />
           </button>
         </form>
         <p className='sign-in-account'>
@@ -98,7 +171,7 @@ const SignIn = () => {
           <span onClick={() => navigate('/sign-up')}>Sign Up</span>
         </p>
         <p className='sign-in-footer'>
-          © 2026 Billionaire Auction. All rights reserved.
+          &copy; 2026 Billionaire Auction. All rights reserved.
         </p>
       </div>
     </div>

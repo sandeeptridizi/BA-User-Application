@@ -51,6 +51,48 @@
   color: rgba(21, 93, 252, 1);
 }
 
+.auth-tabs {
+  width: 100%;
+  display: flex;
+  gap: 0;
+  background: rgba(243, 243, 245, 1);
+  border-radius: 12px;
+  padding: 4px;
+  margin: 24px 0 0;
+}
+
+.auth-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(113, 113, 123, 1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.auth-tab:hover {
+  color: rgba(63, 63, 71, 1);
+}
+
+.auth-tab-active {
+  background: #fff;
+  color: rgba(21, 93, 252, 1);
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+}
+
+.auth-tab-active-purple {
+  color: rgba(152, 16, 250, 1);
+}
+
 .sign-in-form-container {
   width: 100%;
   display: flex;
