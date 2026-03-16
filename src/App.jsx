@@ -8,6 +8,7 @@ import ProductEdit from './pages/ProductEdit/ProductEdit';
 import MyLeads from './pages/My Leads/MyLeads';
 import Settings from './pages/Settings/Settings';
 import Enquiry from './pages/Enquiry/Enquiry';
+import PricingPlans from './pages/PricingPlans/PricingPlans';
 import MobileNavbar from './components/MobileNavbar/MobileNavbar';
 import SignIn from './pages/SignIn/SignIn';
 import SignUp from './pages/SignUp/SignUp';
@@ -40,6 +41,7 @@ const App = () => {
           <Route path='myleads' element={<MyLeads />} />
           <Route path='settings' element={<Settings />} />
           <Route path='enquiry' element={<Enquiry />} />
+          <Route path='pricing-plans' element={<PricingPlans />} />
         </Route>
         <Route path='sign-in' element={<SignIn />} />
         <Route path='sign-up' element={<SignUp />} />
