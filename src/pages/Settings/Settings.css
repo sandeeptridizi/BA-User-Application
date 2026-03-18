@@ -120,6 +120,41 @@
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #51a2ff, #7c86ff, #2b7fff);
+  overflow: hidden;
+}
+
+.profile-avatar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.profile-pic-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.remove-pic-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  font-family: inherit;
+}
+
+.remove-pic-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .profileinfoicon span {
@@ -136,6 +171,7 @@
   justify-content: center;
   font-size: 16px;
   border-radius: 50%;
+  z-index: 1;
 }
 
 .profileinfodetails {

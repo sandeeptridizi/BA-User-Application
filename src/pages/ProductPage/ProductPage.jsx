@@ -364,7 +364,7 @@ const ProductPage = () => {
               {formatCurrency(product.value)}
             </span>
           </div>
-          <div className="productperformance">
+          {/* <div className="productperformance">
             <h2 className="producttitle">Performance</h2>
             <div className="performanceviews">
               <span className="currentstatus1">
@@ -383,7 +383,7 @@ const ProductPage = () => {
               </span>
               <span className="performancecount">—</span>
             </div>
-          </div>
+          </div> */}
           <div className="productowner1">
             <h2 className="producttitle">Timeline</h2>
             <div className="productownerinfo">

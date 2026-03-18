@@ -21,6 +21,8 @@ import { getUser } from '../../../lib/auth';
 import api from '../../../lib/api';
 import { getMyEnquiries } from '../../../lib/enquiries';
 
+const PLAN_LABELS = { BASIC: 'Premium', PRO: 'Pro', ELITE: 'Enterprise' };
+
 const CATEGORY_LABELS = {
   REAL_ESTATE: 'Real Estate', CARS: 'Cars', BIKES: 'Bikes', FURNITURE: 'Furniture',
   JEWELLERY_AND_WATCHES: 'Jewellery & Watches', ARTS_AND_PAINTINGS: 'Arts & Paintings',
@@ -65,8 +67,13 @@ const DashboardPage = () => {
 
     const [products, setProducts] = useState([]);
     const [enquiries, setEnquiries] = useState([]);
+    const [profile, setProfile] = useState(null);
     const [loadingProducts, setLoadingProducts] = useState(true);
     const [loadingEnquiries, setLoadingEnquiries] = useState(true);
+
+    useEffect(() => {
+      api.get('/api/user/me').then(res => setProfile(res.data?.data)).catch(() => {});
+    }, []);
 
     useEffect(() => {
       if (!userId) return;
@@ -96,6 +103,10 @@ const DashboardPage = () => {
       fetchEnquiries();
     }, [userId]);
 
+    const currentPlan = profile?.subscriptionPlan;
+    const isActive = profile?.subscriptionStatus === 'ACTIVE';
+    const planLabel = isActive && currentPlan && currentPlan !== 'NONE' ? PLAN_LABELS[currentPlan] : null;
+
     const totalListings = products.length;
     const activeListings = products.filter(p => p.approvalStatus === 'APPROVED');
     const totalViews = products.reduce((sum, p) => sum + getViews(p.meta), 0);
@@ -111,7 +122,7 @@ const DashboardPage = () => {
                 <h1>Welcome Back, {displayName}!</h1>
                 <p>Manage your property listings and track buyer inquiries</p>
                 <div className='headertags'>
-                <span className='protag'><FaRegStar /> Pro Seller</span>
+                {planLabel && <span className='protag'><FaRegStar /> {planLabel} Seller</span>}
                 <span className='verifiedtag'><CiCircleCheck />Verified Seller</span></div>
             </div>
             <button className='addnewlisting' onClick={() => navigate('/productcreation/marketplace')}><FaPlus />Add New Listing</button>
@@ -150,7 +161,7 @@ const DashboardPage = () => {
                 <p className='dashboardstatcta' onClick={() => navigate('/products')} style={{cursor:'pointer'}}>View Details <GoArrowUpRight /></p>
             </div>
         </div>
-        <div className='performancemetrics'>
+        {/* <div className='performancemetrics'>
             <div className='performancementricshead'>
                 <p className='performancemetricstitle'><LuAward className='performancemetricsicon'/>Performance Metrics</p>
                 <p className='performancemetricsnote'>Your selling performance this month</p>
@@ -185,7 +196,7 @@ const DashboardPage = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div> */}
         <div className='activelistings'>
             <div className='activelistingshead'>
                 <div className='activelistingsheader'>
@@ -231,7 +242,7 @@ const DashboardPage = () => {
                 ))}
             </div>
         </div>
-        <div className='buyerenquiries'>
+        {/* <div className='buyerenquiries'>
             <div className='activelistingshead1'>
                 <div className='activelistingsheader'>
                 <p className='performancemetricstitle'><FiMessageSquare className='enquiriesicon'/>Recent Buyer Enquiries</p>
@@ -257,8 +268,8 @@ const DashboardPage = () => {
                     </div>
                 ))}
             </div>
-        </div>
-        <div className='supporttickets'>
+        </div> */}
+        {/* <div className='supporttickets'>
             <div className='supportticketsheader'>
                 <p className='performancemetricstitle'><FaRegBell  className='ticketsicon'/>Support Tickets</p>
                 <p className='performancemetricsnote'>Manage your support tickets</p></div>
@@ -294,7 +305,7 @@ const DashboardPage = () => {
                     <span className='ticketviewtag'>View</span>
                 </div>
             </div>
-        </div>
+        </div> */}
         <div className='quickactions'>
             <div className='quickactionsheader'>
                 <p className='performancemetricstitle'><BsLightningCharge className='actionsicon'/>Quick Actions</p>

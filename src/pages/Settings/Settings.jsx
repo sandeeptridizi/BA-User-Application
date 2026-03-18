@@ -1,6 +1,6 @@
 import './Settings.css';
 import { IoSettingsOutline } from "react-icons/io5";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FiUser } from "react-icons/fi";
 import { MdStar } from "react-icons/md";
 import { MdOutlineMail } from "react-icons/md";
@@ -15,6 +15,7 @@ import { IoLockClosedOutline } from "react-icons/io5";
 import { FiShield } from "react-icons/fi";
 import api from '../../../lib/api';
 import { setUser as saveUserToStorage } from '../../../lib/auth';
+import { getFile } from '../../../lib/s3';
 
 const getFirstLast = (name) => {
   if (!name || typeof name !== 'string') return { first: '', last: '' };
@@ -23,8 +24,8 @@ const getFirstLast = (name) => {
   return { first: parts[0] || '', last: '' };
 };
 
-const PLAN_LABELS = { NONE: 'Free Plan', BASIC: 'Basic', PRO: 'Pro Seller', ELITE: 'Elite' };
-const PLAN_PRICES = { BASIC: 2999, PRO: 9999, ELITE: 24999 };
+const PLAN_LABELS = { NONE: 'Basic', BASIC: 'Premium', PRO: 'Pro', ELITE: 'Enterprise' };
+const PLAN_PRICES = { BASIC: 4999, PRO: 6999, ELITE: 14999 };
 
 const Settings = () => {
     const [activeTab, setActiveTab] = useState("profile");
@@ -35,6 +36,8 @@ const Settings = () => {
     const [saveMsg, setSaveMsg] = useState('');
     const [form, setForm] = useState({ firstName: '', lastName: '', phone: '', city: '', state: '' });
     const [paymentLoading, setPaymentLoading] = useState(null); // tracks which plan is being paid for
+    const [uploadingPic, setUploadingPic] = useState(null); // 'uploading' | 'removing' | null
+    const picInputRef = useRef(null);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -80,6 +83,44 @@ const Settings = () => {
             setSaveMsg(err.response?.data?.message || 'Failed to update profile');
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleProfilePicUpload = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file || !profile?.id) return;
+        setUploadingPic('uploading');
+        try {
+            const ext = file.name.split('.').pop();
+            const key = `profiles/${profile.id}_${Date.now()}.${ext}`;
+            const presignedRes = await api.get(`/api/media/presigned?key=${encodeURIComponent(key)}`);
+            const { url, key: s3Key } = presignedRes.data.data;
+            await fetch(url, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } });
+            const updateRes = await api.patch('/api/user/me/profile-picture', { key: s3Key });
+            const updated = updateRes.data?.data;
+            setProfile(updated);
+            saveUserToStorage(updated);
+        } catch {
+            setSaveMsg('Failed to upload profile picture');
+            setTimeout(() => setSaveMsg(''), 3000);
+        } finally {
+            setUploadingPic(null);
+            e.target.value = '';
+        }
+    };
+
+    const handleRemoveProfilePic = async () => {
+        setUploadingPic('removing');
+        try {
+            const res = await api.delete('/api/user/me/profile-picture');
+            const updated = res.data?.data;
+            setProfile(updated);
+            saveUserToStorage(updated);
+        } catch {
+            setSaveMsg('Failed to remove profile picture');
+            setTimeout(() => setSaveMsg(''), 3000);
+        } finally {
+            setUploadingPic(null);
         }
     };
 
@@ -162,7 +203,7 @@ const Settings = () => {
 
     const { first: firstName, last: lastName } = getFirstLast(profile?.name);
     const memberSince = profile?.createdAt
-        ? new Date(profile.createdAt).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
+        ? new Date(profile.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
         : '—';
 
     return <div className='settingscontainer'>
@@ -186,7 +227,32 @@ const Settings = () => {
                 ) : (
                 <>
                 <div className='profileinfo'>
-                    <div className='profileinfoicon'><FiUser /><span><IoSettingsOutline /></span></div>
+                    <div className='profile-avatar-wrap'>
+                        <div className='profileinfoicon'>
+                            {profile?.profilePicture ? (
+                                <img src={getFile(profile.profilePicture)} alt="Profile" className='profile-pic-img' />
+                            ) : (
+                                <FiUser />
+                            )}
+                            <span
+                                onClick={() => !uploadingPic && picInputRef.current?.click()}
+                                style={{ cursor: uploadingPic ? 'not-allowed' : 'pointer' }}
+                                title={uploadingPic === 'uploading' ? 'Uploading...' : 'Change photo'}
+                            >
+                                <IoSettingsOutline />
+                            </span>
+                            <input ref={picInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleProfilePicUpload} />
+                        </div>
+                        {profile?.profilePicture && (
+                            <button
+                                className='remove-pic-btn'
+                                onClick={handleRemoveProfilePic}
+                                disabled={!!uploadingPic}
+                            >
+                                {uploadingPic === 'removing' ? 'Removing...' : 'Remove Photo'}
+                            </button>
+                        )}
+                    </div>
                     <div className='profileinfodetails'>
                         <h3>{profile?.name || '—'}</h3>
                         <p>Member Since {memberSince}</p>
@@ -321,8 +387,8 @@ const Settings = () => {
                             <p>Active Listings</p>
                             <span className='planinfoicon1'><CiCircleCheck /></span>
                         </div>
-                        <h2>{currentPlan === 'BASIC' ? '15' : currentPlan === 'PRO' ? '50' : currentPlan === 'ELITE' ? 'Unlimited' : '—'}</h2>
-                        <p>{isActive ? 'Included in plan' : '—'}</p>
+                        <h2>{currentPlan === 'BASIC' ? '3 / mo' : currentPlan === 'PRO' ? '9 / mo' : currentPlan === 'ELITE' ? 'Custom' : '—'}</h2>
+                        <p>{isActive ? 'After Mar 2027' : '—'}</p>
                     </div>
                     <div className='planinfodetails2'>
                         <div className='planinfodetailstop'>
@@ -359,15 +425,15 @@ const Settings = () => {
                         <div className='benefitsinfo1'>
                             <div className='benefitsinfo1icon'><CiCircleCheck /></div>
                             <div className='benefitsinfo1details'>
-                                <h3>{currentPlan === 'BASIC' ? '15' : currentPlan === 'ELITE' ? 'Unlimited' : '50'} Active Listings</h3>
-                                <p>List up to {currentPlan === 'BASIC' ? '15' : currentPlan === 'ELITE' ? 'unlimited' : '50'} properties simultaneously</p>
+                                <h3>{currentPlan === 'ELITE' ? 'Custom' : currentPlan === 'PRO' ? '9 / month' : currentPlan === 'BASIC' ? '3 / month' : '1 / month'} Listings</h3>
+                                <p>{currentPlan === 'ELITE' ? 'Custom listing quota' : 'After Mar 2027; unlimited till then'}</p>
                             </div>
                         </div>
                         <div className='benefitsinfo2'>
                             <div className='benefitsinfo2icon'><CiCircleCheck /></div>
                             <div className='benefitsinfo1details'>
-                                <h3>{currentPlan === 'ELITE' ? 'Dedicated Account Manager' : currentPlan === 'PRO' ? 'Priority Support' : 'Email Support'}</h3>
-                                <p>{currentPlan === 'ELITE' ? 'Personal account manager for your business' : currentPlan === 'PRO' ? '24/7 dedicated customer service' : 'Email-based customer support'}</p>
+                                <h3>{currentPlan === 'ELITE' ? 'Priority Support' : currentPlan === 'PRO' ? 'Priority Support Line' : 'Email Support'}</h3>
+                                <p>{currentPlan === 'PRO' || currentPlan === 'ELITE' ? 'Dedicated priority customer service' : 'Email-based customer support'}</p>
                             </div>
                         </div>
                     </div>
@@ -375,15 +441,15 @@ const Settings = () => {
                         <div className='benefitsinfo3'>
                             <div className='benefitsinfo3icon'><CiCircleCheck /></div>
                             <div className='benefitsinfo1details'>
-                                <h3>{currentPlan === 'ELITE' ? 'Premium Featured Listings' : 'Featured Listings'}</h3>
-                                <p>Get your properties highlighted</p>
+                                <h3>{currentPlan === 'ELITE' ? '2 / month Featured' : currentPlan === 'PRO' ? '2 Featured Listings' : 'No Featured Listings'}</h3>
+                                <p>{currentPlan === 'PRO' || currentPlan === 'ELITE' ? 'Get your properties highlighted' : 'Upgrade to Pro for featured slots'}</p>
                             </div>
                         </div>
                         <div className='benefitsinfo4'>
                             <div className='benefitsinfo4icon'><CiCircleCheck /></div>
                             <div className='benefitsinfo1details'>
-                                <h3>{currentPlan === 'ELITE' ? 'Elite Verified Badge' : 'Verified Badge'}</h3>
-                                <p>Build trust with buyers instantly</p>
+                                <h3>{currentPlan === 'ELITE' ? '2 / month Recommended' : currentPlan === 'PRO' ? '1 Recommended Listing' : 'No Recommended Slots'}</h3>
+                                <p>{currentPlan === 'PRO' || currentPlan === 'ELITE' ? 'Boosted visibility in search' : 'Upgrade to Pro for recommended slots'}</p>
                             </div>
                         </div>
                     </div>
@@ -391,15 +457,15 @@ const Settings = () => {
                         <div className='benefitsinfo5'>
                             <div className='benefitsinfo5icon'><CiCircleCheck /></div>
                             <div className='benefitsinfo1details'>
-                                <h3>{currentPlan === 'ELITE' ? 'Premium Analytics & Reports' : 'Analytics Dashboard'}</h3>
-                                <p>Track views, leads & performance</p>
+                                <h3>{currentPlan === 'ELITE' ? '40 Leads / listing' : currentPlan === 'PRO' ? '30 Leads / listing' : currentPlan === 'BASIC' ? '20 Leads / listing' : '10 Leads / listing'}</h3>
+                                <p>Buyer contact unlocks per listing</p>
                             </div>
                         </div>
                         <div className='benefitsinfo6'>
                             <div className='benefitsinfo6icon'><CiCircleCheck /></div>
                             <div className='benefitsinfo1details'>
-                                <h3>{currentPlan === 'ELITE' ? 'Instant Approval' : currentPlan === 'PRO' ? 'Fast Approval' : 'Standard Approval'}</h3>
-                                <p>{currentPlan === 'ELITE' ? 'Listings approved instantly' : currentPlan === 'PRO' ? 'Listings approved within 2 hours' : 'Listings approved within 24 hours'}</p>
+                                <h3>{currentPlan === 'PRO' || currentPlan === 'ELITE' ? 'High Search Visibility' : currentPlan === 'BASIC' ? 'Medium Search Visibility' : 'Standard Search Visibility'}</h3>
+                                <p>Your listings rank {currentPlan === 'PRO' || currentPlan === 'ELITE' ? 'higher' : 'as standard'} in search results</p>
                             </div>
                         </div>
                     </div>
@@ -412,14 +478,14 @@ const Settings = () => {
                 <div className='upgradeplandetails'>
                     <div className='basicplan'>
                         <div className='basicplanicon'><FaRegStar /></div>
-                        <h2>Basic</h2>
-                        <p>Perfect for getting started</p>
-                        <h3>₹2,999<span>/year</span></h3>
+                        <h2>Premium</h2>
+                        <p>Great for growing sellers</p>
+                        <h3>₹4,999<span>/year + GST</span></h3>
                         <ul>
-                            <li><CiCircleCheck className='basicplanlisticon'/>15 Active Listings</li>
+                            <li><CiCircleCheck className='basicplanlisticon'/>3 Listings / month (after Mar 2027)</li>
+                            <li><CiCircleCheck className='basicplanlisticon'/>20 Leads / listing</li>
+                            <li><CiCircleCheck className='basicplanlisticon'/>Medium Search Visibility</li>
                             <li><CiCircleCheck className='basicplanlisticon'/>Email Support</li>
-                            <li><CiCircleCheck className='basicplanlisticon'/>Basic Analytics</li>
-                            <li><CiCircleCheck className='basicplanlisticon'/>Standard Approval (24hrs)</li>
                         </ul>
                         {currentPlan === 'BASIC' && isActive ? (
                             <div className='currentbutton'><CiCircleCheck />You're on this plan</div>
@@ -435,16 +501,15 @@ const Settings = () => {
                     </div>
                     <div className='proplan'>
                         <div className='proplanicon'><LuCrown /></div>
-                        <h2>Pro Seller</h2>
+                        <h2>Pro</h2>
                         <p>Most Popular Choice</p>
-                        <h3>₹9,999<span>/year</span></h3>
+                        <h3>₹6,999<span>/year + GST</span></h3>
                         <ul>
-                            <li><CiCircleCheck className='proplanlisticon'/>50 Active Listings</li>
-                            <li><CiCircleCheck className='proplanlisticon'/>Priority 24/7 Support</li>
-                            <li><CiCircleCheck className='proplanlisticon'/>Featured Listings</li>
-                            <li><CiCircleCheck className='proplanlisticon'/>Fast Approval (2hrs)</li>
-                            <li><CiCircleCheck className='proplanlisticon'/>Verified Badge</li>
-                            <li><CiCircleCheck className='proplanlisticon'/>Advanced Analytics</li>
+                            <li><CiCircleCheck className='proplanlisticon'/>9 Listings / month (after Mar 2027)</li>
+                            <li><CiCircleCheck className='proplanlisticon'/>30 Leads / listing</li>
+                            <li><CiCircleCheck className='proplanlisticon'/>2 Featured + 1 Recommended</li>
+                            <li><CiCircleCheck className='proplanlisticon'/>High Search Visibility</li>
+                            <li><CiCircleCheck className='proplanlisticon'/>Priority Support Line</li>
                         </ul>
                         {currentPlan === 'PRO' && isActive ? (
                             <div className='currentbutton'><CiCircleCheck />You're on this plan</div>
@@ -459,18 +524,15 @@ const Settings = () => {
                         )}
                     </div>
                     <div className='eliteplan'>
-                        <div className='eliteplanicon'><LuCrown /></div>
-                        <h2>Elite</h2>
-                        <p>Ultimate seller experience</p>
-                        <h3>₹24,999<span>/year</span></h3>
+                        <div className='eliteplanicon'><BsStars /></div>
+                        <h2>Enterprise</h2>
+                        <p>For high-volume sellers</p>
+                        <h3>₹14,999<span>/year + GST</span></h3>
                         <ul>
-                            <li><CiCircleCheck className='eliteplanlisticon'/>Unlimited Listings</li>
-                            <li><CiCircleCheck className='eliteplanlisticon'/>Dedicated Account Manager</li>
-                            <li><CiCircleCheck className='eliteplanlisticon'/>Premium Featured Listings</li>
-                            <li><CiCircleCheck className='eliteplanlisticon'/>Instant Approval</li>
-                            <li><CiCircleCheck className='eliteplanlisticon'/>Elite Verified Badge</li>
-                            <li><CiCircleCheck className='eliteplanlisticon'/>Premium Analytics & Reports</li>
-                             <li><CiCircleCheck className='eliteplanlisticon'/>Priority Placement</li>
+                            <li><CiCircleCheck className='eliteplanlisticon'/>Custom Listings / month</li>
+                            <li><CiCircleCheck className='eliteplanlisticon'/>40+ Leads / listing</li>
+                            <li><CiCircleCheck className='eliteplanlisticon'/>Featured & Recommended slots</li>
+                            <li><CiCircleCheck className='eliteplanlisticon'/>Priority Support</li>
                         </ul>
                         {currentPlan === 'ELITE' && isActive ? (
                             <div className='currentbutton'><CiCircleCheck />You're on this plan</div>
