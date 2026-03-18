@@ -83,6 +83,18 @@
     margin-top: 14px;
 }
 
+.product-video-wrapper {
+    width: 100%;
+    margin-top: 12px;
+}
+
+.product-video-player {
+    width: 100%;
+    max-height: 400px;
+    border-radius: 12px;
+    background: #000;
+}
+
 .productfeatures{
     height: 82px;
     width: 658px;
