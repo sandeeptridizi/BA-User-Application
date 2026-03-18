@@ -31,6 +31,7 @@ import { LuUsers } from "react-icons/lu";
 const ProductCreation = () => {
 
   const fileInputRef = useRef(null);
+  const videoInputRef = useRef(null);
   const marketplacePreviewsRef = useRef([]);
   const selectedMarketplaceFilesRef = useRef([]);
   const marketplaceFormRef = useRef(null);
@@ -44,9 +45,28 @@ const ProductCreation = () => {
   const [ItemType, setItemType] = useState("");
   const [selectedMarketplaceFiles, setSelectedMarketplaceFiles] = useState([]);
   const [marketplaceFilePreviews, setMarketplaceFilePreviews] = useState([]);
+  const [selectedVideoFile, setSelectedVideoFile] = useState(null);
+  const [videoPreview, setVideoPreview] = useState(null);
   const [isMarketplaceSubmitting, setIsMarketplaceSubmitting] = useState(false);
 
   const handleIconClick = () => { fileInputRef.current.click(); };
+  const handleVideoIconClick = () => { videoInputRef.current.click(); };
+
+  const handleVideoChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (videoPreview) URL.revokeObjectURL(videoPreview);
+    setSelectedVideoFile(file);
+    setVideoPreview(URL.createObjectURL(file));
+    event.target.value = "";
+  };
+
+  const removeVideo = () => {
+    if (videoPreview) URL.revokeObjectURL(videoPreview);
+    setSelectedVideoFile(null);
+    setVideoPreview(null);
+    if (videoInputRef.current) videoInputRef.current.value = "";
+  };
 
   const handleFileChange = (event) => {
     const incomingFiles = Array.from(event.target.files || []);
@@ -109,6 +129,7 @@ const ProductCreation = () => {
 
     React.useEffect(() => () => {
       marketplacePreviewsRef.current.forEach((item) => URL.revokeObjectURL(item.url));
+      if (videoPreview) URL.revokeObjectURL(videoPreview);
     }, []);
 
     React.useEffect(() => {
@@ -317,18 +338,24 @@ const ProductCreation = () => {
           throw new Error("Product ID missing after creation");
         }
 
+        const mediaPatch = {};
+
         if (selectedMarketplaceFiles.length > 0) {
           const uploadedKeys = [];
           for (const file of selectedMarketplaceFiles) {
             const key = await uploadFileWithPresignedUrl(file, productId);
             uploadedKeys.push(key);
           }
+          if (uploadedKeys.length > 0) mediaPatch.media = uploadedKeys;
+        }
 
-          if (uploadedKeys.length > 0) {
-            await api.patch(`/api/product/${productId}/media`, {
-              media: uploadedKeys,
-            });
-          }
+        if (selectedVideoFile) {
+          const videoKey = await uploadFileWithPresignedUrl(selectedVideoFile, productId);
+          mediaPatch.video = videoKey;
+        }
+
+        if (Object.keys(mediaPatch).length > 0) {
+          await api.patch(`/api/product/${productId}/media`, mediaPatch);
         }
 
         alert("Product created successfully.");
@@ -337,6 +364,7 @@ const ProductCreation = () => {
           return [];
         });
         setSelectedMarketplaceFiles([]);
+        removeVideo();
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
         }
@@ -593,13 +621,13 @@ const ProductCreation = () => {
     <div className='basicinfoform'>
         <h3 className='basicinfotitle'>Basic Information</h3>
         <span className='basicinfodesc'>Enter the basic details and upload media for the product</span>
-        <h3 className='basicinfotitle'>Product Images / Video</h3>
+        <h3 className='basicinfotitle'>Product Images</h3>
         <ul className='selectedcategory2'>
                 <li className='selectedcaticon2' onClick={handleIconClick} style={{ cursor: "pointer" }}><FiUpload /></li>
                 <li className='selectedcatname1'>Click to upload or drag and drop</li>
-                <li className='selectedcatdesc'>PNG, JPG, WEBP, MP4 up to 10MB • Maximum 10 files</li>
+                <li className='selectedcatdesc'>PNG, JPG, WEBP up to 10MB • Maximum 10 files</li>
         </ul>
-        <input type="file" ref={fileInputRef} style={{ display: "none" }} multiple accept=".png,.jpg,.jpeg,.webp,.mp4" onChange={handleFileChange}/>
+        <input type="file" ref={fileInputRef} style={{ display: "none" }} multiple accept=".png,.jpg,.jpeg,.webp" onChange={handleFileChange}/>
         {marketplaceFilePreviews.length > 0 && (
           <div className="basicinforow marketplacePreviewsRow">
             {marketplaceFilePreviews.map((file) => (
@@ -614,6 +642,23 @@ const ProductCreation = () => {
             ))}
           </div>
         )}
+        <h3 className='basicinfotitle'>Product Video</h3>
+        {!videoPreview ? (
+          <ul className='selectedcategory2 videoUploadBox' onClick={handleVideoIconClick} style={{ cursor: "pointer" }}>
+                <li className='selectedcaticon2'><FiUpload /></li>
+                <li className='selectedcatname1'>Click to upload a product video</li>
+                <li className='selectedcatdesc'>MP4, WEBM, MOV up to 50MB • 1 video only</li>
+          </ul>
+        ) : (
+          <div className="videoPreviewContainer">
+            <video src={videoPreview} controls style={{ width: "320px", maxHeight: "220px", borderRadius: "8px" }} />
+            <div className="videoPreviewInfo">
+              <span className='selectedcatdesc'>{selectedVideoFile?.name}</span>
+              <button type="button" className="removeVideoBtn" onClick={removeVideo}>Remove</button>
+            </div>
+          </div>
+        )}
+        <input type="file" ref={videoInputRef} style={{ display: "none" }} accept=".mp4,.webm,.mov" onChange={handleVideoChange}/>
         <h3 className='basicinfotitle'>Title</h3>
         <input ref={marketplaceTitleRef} type="text" placeholder="e.g., Luxury 4BHK Penthouse in South Mumbai" className="basicinfoinput" />
         <div className='basicinforow'>
@@ -2101,13 +2146,30 @@ const ProductCreation = () => {
     <div className='basicinfoform'>
         <h3 className='basicinfotitle'>Basic Information</h3>
         <span className='basicinfodesc'>Enter the basic details and upload media for the product</span>
-        <h3 className='basicinfotitle'>Product Images / Video</h3>
+        <h3 className='basicinfotitle'>Product Images</h3>
         <ul className='selectedcategory2'>
                 <li className='selectedcaticon2' onClick={handleIconClick} style={{ cursor: "pointer" }}><FiUpload /></li>
                 <li className='selectedcatname1'>Click to upload or drag and drop</li>
-                <li className='selectedcatdesc'>PNG, JPG, WEBP, MP4 up to 10MB • Maximum 10 files</li>
+                <li className='selectedcatdesc'>PNG, JPG, WEBP up to 10MB • Maximum 10 files</li>
         </ul>
-        <input type="file" ref={fileInputRef} style={{ display: "none" }} multiple accept=".png,.jpg,.jpeg,.webp,.mp4" onChange={handleFileChange}/>
+        <input type="file" ref={fileInputRef} style={{ display: "none" }} multiple accept=".png,.jpg,.jpeg,.webp" onChange={handleFileChange}/>
+        <h3 className='basicinfotitle'>Product Video</h3>
+        {!videoPreview ? (
+          <ul className='selectedcategory2 videoUploadBox' onClick={handleVideoIconClick} style={{ cursor: "pointer" }}>
+                <li className='selectedcaticon2'><FiUpload /></li>
+                <li className='selectedcatname1'>Click to upload a product video</li>
+                <li className='selectedcatdesc'>MP4, WEBM, MOV up to 50MB • 1 video only</li>
+          </ul>
+        ) : (
+          <div className="videoPreviewContainer">
+            <video src={videoPreview} controls style={{ width: "320px", maxHeight: "220px", borderRadius: "8px" }} />
+            <div className="videoPreviewInfo">
+              <span className='selectedcatdesc'>{selectedVideoFile?.name}</span>
+              <button type="button" className="removeVideoBtn" onClick={removeVideo}>Remove</button>
+            </div>
+          </div>
+        )}
+        <input type="file" ref={videoInputRef} style={{ display: "none" }} accept=".mp4,.webm,.mov" onChange={handleVideoChange}/>
         <h3 className='basicinfotitle'>Title</h3>
         <input type="text" placeholder="e.g., Luxury 4BHK Penthouse in South Mumbai" className="basicinfoinput" />
         <div className='basicinforow'>
@@ -3563,13 +3625,30 @@ const ProductCreation = () => {
     <div className='basicinfoform'>
         <h3 className='basicinfotitle'>Basic Information</h3>
         <span className='basicinfodesc'>Enter the basic details and upload media for the product</span>
-        <h3 className='basicinfotitle'>Product Images / Video</h3>
+        <h3 className='basicinfotitle'>Product Images</h3>
         <ul className='selectedcategory2'>
                 <li className='selectedcaticon2'onClick={handleIconClick} style={{ cursor: "pointer" }}><FiUpload /></li>
                 <li className='selectedcatname1'>Click to upload or drag and drop</li>
-                <li className='selectedcatdesc'>PNG, JPG, WEBP, MP4 up to 10MB • Maximum 10 files</li>
+                <li className='selectedcatdesc'>PNG, JPG, WEBP up to 10MB • Maximum 10 files</li>
         </ul>
-        <input type="file" ref={fileInputRef} style={{ display: "none" }} multiple accept=".png,.jpg,.jpeg,.webp,.mp4" onChange={handleFileChange}/>
+        <input type="file" ref={fileInputRef} style={{ display: "none" }} multiple accept=".png,.jpg,.jpeg,.webp" onChange={handleFileChange}/>
+        <h3 className='basicinfotitle'>Product Video</h3>
+        {!videoPreview ? (
+          <ul className='selectedcategory2 videoUploadBox' onClick={handleVideoIconClick} style={{ cursor: "pointer" }}>
+                <li className='selectedcaticon2'><FiUpload /></li>
+                <li className='selectedcatname1'>Click to upload a product video</li>
+                <li className='selectedcatdesc'>MP4, WEBM, MOV up to 50MB • 1 video only</li>
+          </ul>
+        ) : (
+          <div className="videoPreviewContainer">
+            <video src={videoPreview} controls style={{ width: "320px", maxHeight: "220px", borderRadius: "8px" }} />
+            <div className="videoPreviewInfo">
+              <span className='selectedcatdesc'>{selectedVideoFile?.name}</span>
+              <button type="button" className="removeVideoBtn" onClick={removeVideo}>Remove</button>
+            </div>
+          </div>
+        )}
+        <input type="file" ref={videoInputRef} style={{ display: "none" }} accept=".mp4,.webm,.mov" onChange={handleVideoChange}/>
         <h3 className='basicinfotitle'>Title</h3>
         <input type="text" placeholder="e.g., Luxury 4BHK Penthouse in South Mumbai" className="basicinfoinput" />
         <div className='basicinforow'>
@@ -5017,13 +5096,30 @@ const ProductCreation = () => {
     <div className='basicinfoform'>
         <h3 className='basicinfotitle'>Basic Information</h3>
         <span className='basicinfodesc'>Enter the basic details and upload media for the product</span>
-        <h3 className='basicinfotitle'>Product Images / Video</h3>
+        <h3 className='basicinfotitle'>Product Images</h3>
         <ul className='selectedcategory2'>
                 <li className='selectedcaticon2'onClick={handleIconClick} style={{ cursor: "pointer" }}><FiUpload /></li>
                 <li className='selectedcatname1'>Click to upload or drag and drop</li>
-                <li className='selectedcatdesc'>PNG, JPG, WEBP, MP4 up to 10MB • Maximum 10 files</li>
+                <li className='selectedcatdesc'>PNG, JPG, WEBP up to 10MB • Maximum 10 files</li>
         </ul>
-        <input type="file" ref={fileInputRef} style={{ display: "none" }} multiple accept=".png,.jpg,.jpeg,.webp,.mp4" onChange={handleFileChange}/>
+        <input type="file" ref={fileInputRef} style={{ display: "none" }} multiple accept=".png,.jpg,.jpeg,.webp" onChange={handleFileChange}/>
+        <h3 className='basicinfotitle'>Product Video</h3>
+        {!videoPreview ? (
+          <ul className='selectedcategory2 videoUploadBox' onClick={handleVideoIconClick} style={{ cursor: "pointer" }}>
+                <li className='selectedcaticon2'><FiUpload /></li>
+                <li className='selectedcatname1'>Click to upload a product video</li>
+                <li className='selectedcatdesc'>MP4, WEBM, MOV up to 50MB • 1 video only</li>
+          </ul>
+        ) : (
+          <div className="videoPreviewContainer">
+            <video src={videoPreview} controls style={{ width: "320px", maxHeight: "220px", borderRadius: "8px" }} />
+            <div className="videoPreviewInfo">
+              <span className='selectedcatdesc'>{selectedVideoFile?.name}</span>
+              <button type="button" className="removeVideoBtn" onClick={removeVideo}>Remove</button>
+            </div>
+          </div>
+        )}
+        <input type="file" ref={videoInputRef} style={{ display: "none" }} accept=".mp4,.webm,.mov" onChange={handleVideoChange}/>
         <h3 className='basicinfotitle'>Title</h3>
         <input type="text" placeholder="e.g., Luxury 4BHK Penthouse in South Mumbai" className="basicinfoinput" />
         <div className='basicinforow'>
