@@ -827,80 +827,6 @@
   margin-top: 20px;
 }
 
-.newslettersection {
-  width: 1020px;
-  border-radius: 14px;
-  border: 1px solid #e6e5e5;
-  margin-top: 20px;
-}
-
-.newsletterheader {
-  height: 98px;
-  width: 1020px;
-  border-radius: 14px;
-  background: linear-gradient(180deg, #eff6ff, #e0e7ff);
-  padding: 20px;
-}
-
-.newslettericon {
-  color: #155dfc;
-  font-size: 20px;
-}
-
-.newsletterform {
-  display: flex;
-  gap: 12px;
-  padding: 24px;
-}
-
-.newsletterinput {
-  flex: 1;
-  height: 48px;
-  border-radius: 10px;
-  border: 1px solid #d1d5dc;
-  padding: 0 16px;
-  font-size: 15px;
-  color: #18181b;
-  outline: none;
-}
-
-.newsletterinput:focus {
-  border-color: #155dfc;
-  box-shadow: 0 0 0 3px rgba(21, 93, 252, 0.15);
-}
-
-.newsletterbtn {
-  height: 48px;
-  padding: 0 28px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #155dfc, #4f39f6);
-  color: #ffffff;
-  font-size: 15px;
-  font-weight: 700;
-  border: none;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.newsletterbtn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.newslettersuccess {
-  color: #007a55;
-  font-size: 14px;
-  font-weight: 600;
-  padding: 0 24px 20px;
-}
-
-.newslettererror {
-  color: #e7000b;
-  font-size: 14px;
-  font-weight: 600;
-  padding: 0 24px 20px;
-}
-
 @media screen and (max-width: 600px) {
   .dashboardcontainer {
     width: 100%;
@@ -1108,26 +1034,5 @@
   .enquiryinfo1 {
     width: 100%;
     height: auto;
-  }
-
-  .newslettersection {
-    width: 100%;
-  }
-
-  .newsletterheader {
-    width: 100%;
-  }
-
-  .newsletterform {
-    flex-direction: column;
-    padding: 16px;
-  }
-
-  .newsletterinput {
-    width: 100%;
-  }
-
-  .newsletterbtn {
-    width: 100%;
   }
 }

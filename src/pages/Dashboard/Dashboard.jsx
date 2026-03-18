@@ -17,7 +17,6 @@ import { LuUsers } from "react-icons/lu";
 import { FaRegCircleQuestion } from "react-icons/fa6";
 import { LuCrown } from "react-icons/lu";
 import { RxCross2 } from "react-icons/rx";
-import { HiOutlineMail } from "react-icons/hi";
 import { getUser } from '../../../lib/auth';
 import api from '../../../lib/api';
 import { getMyEnquiries } from '../../../lib/enquiries';
@@ -71,9 +70,6 @@ const DashboardPage = () => {
     const [profile, setProfile] = useState(null);
     const [loadingProducts, setLoadingProducts] = useState(true);
     const [loadingEnquiries, setLoadingEnquiries] = useState(true);
-    const [subscribeEmail, setSubscribeEmail] = useState('');
-    const [subscribeStatus, setSubscribeStatus] = useState(null); // { type: 'success' | 'error', message }
-    const [subscribing, setSubscribing] = useState(false);
 
     useEffect(() => {
       api.get('/api/user/me').then(res => setProfile(res.data?.data)).catch(() => {});
@@ -106,23 +102,6 @@ const DashboardPage = () => {
       fetchProducts();
       fetchEnquiries();
     }, [userId]);
-
-    const handleNewsletterSubscribe = async (e) => {
-      e.preventDefault();
-      if (!subscribeEmail.trim()) return;
-      setSubscribing(true);
-      setSubscribeStatus(null);
-      try {
-        const res = await api.post('/api/newsletter/subscribe', { email: subscribeEmail.trim() });
-        setSubscribeStatus({ type: 'success', message: res.data?.message || 'Successfully subscribed!' });
-        setSubscribeEmail('');
-      } catch (err) {
-        const msg = err.response?.data?.message || 'Failed to subscribe. Please try again.';
-        setSubscribeStatus({ type: 'error', message: msg });
-      } finally {
-        setSubscribing(false);
-      }
-    };
 
     const currentPlan = profile?.subscriptionPlan;
     const isActive = profile?.subscriptionStatus === 'ACTIVE';
@@ -420,30 +399,6 @@ const DashboardPage = () => {
                     <span className='benefitstag'>Upgrade</span>
                 </div>
             </div>
-        </div>
-        <div className='newslettersection'>
-            <div className='newsletterheader'>
-                <p className='performancemetricstitle'><HiOutlineMail className='newslettericon'/>Newsletter Subscription</p>
-                <p className='performancemetricsnote'>Stay updated with the latest listings and market insights</p>
-            </div>
-            <form className='newsletterform' onSubmit={handleNewsletterSubscribe}>
-                <input
-                    type='email'
-                    className='newsletterinput'
-                    placeholder='Enter your email address'
-                    value={subscribeEmail}
-                    onChange={(e) => { setSubscribeEmail(e.target.value); setSubscribeStatus(null); }}
-                    required
-                />
-                <button type='submit' className='newsletterbtn' disabled={subscribing}>
-                    {subscribing ? 'Subscribing...' : 'Subscribe'}
-                </button>
-            </form>
-            {subscribeStatus && (
-                <p className={subscribeStatus.type === 'success' ? 'newslettersuccess' : 'newslettererror'}>
-                    {subscribeStatus.message}
-                </p>
-            )}
         </div>
     </div>;
 };
