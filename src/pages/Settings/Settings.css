@@ -1156,6 +1156,31 @@
     width: 100%;
     height: auto;
   }
+
+  .renewalinformation {
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+    gap: 16px;
+    padding-left: 0;
+  }
+
+  .basicplan,
+  .proplan,
+  .eliteplan {
+    width: 100%;
+  }
+
+  .downgradebutton,
+  .currentbutton,
+  .upgradebutton {
+    width: 100%;
+  }
+
+  .needhelp {
+    height: auto;
+    padding-bottom: 16px;
+  }
 }
 
 .settings-input {

@@ -138,7 +138,7 @@ const Settings = () => {
                 key: keyId || import.meta.env.VITE_RAZORPAY_KEY_ID,
                 amount,
                 currency,
-                name: 'Tridizi',
+                name: 'Billionaire Auctions',
                 description: `${PLAN_LABELS[plan]} - Annual Subscription`,
                 order_id: orderId,
                 prefill: {
@@ -167,7 +167,7 @@ const Settings = () => {
                 modal: {
                     ondismiss: () => setPaymentLoading(null),
                 },
-                theme: { color: '#000000' },
+                theme: { color: '#939311' },
             };
 
             const rzp = new window.Razorpay(options);

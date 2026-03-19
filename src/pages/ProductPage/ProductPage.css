@@ -322,3 +322,124 @@
     font-weight: 500;
     word-break: break-word;
 }
+
+/* ── Mobile Responsiveness ── */
+@media (max-width: 768px) {
+    .productpagecontainer,
+    .productpagecontainer1 {
+        min-height: unset;
+        padding: 10px;
+    }
+
+    .productpagedetail {
+        flex-direction: column;
+        padding: 12px;
+        gap: 16px;
+    }
+
+    .productpageleft {
+        width: 100%;
+        min-height: unset;
+    }
+
+    .productpageright {
+        width: 100%;
+        height: auto;
+    }
+
+    .productpageimage {
+        width: 100%;
+        height: auto;
+    }
+
+    .productheaderimage {
+        width: 100%;
+        height: auto;
+        max-height: 280px;
+        object-fit: cover;
+    }
+
+    .productimagescroller {
+        width: 100%;
+        overflow-x: auto;
+        padding: 8px;
+        margin-left: 0;
+    }
+
+    .productimageone {
+        flex-shrink: 0;
+        width: 140px;
+        height: 90px;
+    }
+
+    .productdescription {
+        width: 100%;
+        padding: 16px;
+    }
+
+    .productdescpara {
+        width: 100%;
+    }
+
+    .productfeatures {
+        width: 100%;
+        height: auto;
+        flex-direction: column;
+    }
+
+    .productfeaturesleft,
+    .productfeaturesright {
+        width: 100%;
+    }
+
+    .productowner {
+        width: 100%;
+        height: auto;
+        padding: 16px;
+    }
+
+    .productownerinfo {
+        width: 100%;
+    }
+
+    .productowner1 {
+        width: 100%;
+        height: auto;
+        padding: 16px;
+    }
+
+    .productstatus {
+        width: 100%;
+        height: auto;
+    }
+
+    .productbreakline {
+        width: 100%;
+    }
+
+    .productperformance {
+        width: 100%;
+        height: auto;
+    }
+
+    .productpagebuttons {
+        width: 100%;
+        height: auto;
+        padding: 16px;
+    }
+
+    .editproductbutton,
+    .productsbackbutton {
+        width: 100%;
+    }
+
+    .productdetails-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .productdetails-grid {
+        grid-template-columns: 1fr;
+    }
+}

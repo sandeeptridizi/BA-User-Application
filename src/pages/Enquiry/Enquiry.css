@@ -556,4 +556,27 @@
     padding: 10px;
     margin-bottom: 20px;
   }
+
+  .contactcontainer {
+    height: auto;
+  }
+
+  .previoustickets {
+    height: auto;
+    margin-top: 20px;
+  }
+
+  .ticketdetails {
+    height: auto;
+  }
+
+  .prioritylevel {
+    flex-wrap: wrap;
+  }
+
+  .prioritylevellow,
+  .prioritylevelmedium,
+  .prioritylevelhigh {
+    width: 100%;
+  }
 }

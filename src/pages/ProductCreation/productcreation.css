@@ -512,3 +512,154 @@
     margin-left: 10px;
     border-color: #ffffff;
 }
+
+/* ── Mobile Responsiveness ── */
+/* Prevent media overflowing their containers */
+.videoPreviewContainer video,
+.marketplacePreviewItem img,
+.marketplacePreviewItem video {
+    max-width: 100%;
+}
+
+@media (max-width: 768px) {
+    .productcontainer1 {
+        min-height: unset;
+        padding: 10px;
+    }
+
+    .producthead1 {
+        width: 100%;
+    }
+
+    .categoryselection3 {
+        width: 100%;
+        height: auto;
+        padding-bottom: 16px;
+    }
+
+    .categoryselctionheader {
+        width: 100%;
+        height: auto;
+    }
+
+    .productselection {
+        width: 100%;
+        height: auto;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding-bottom: 12px;
+    }
+
+    .selectedcategory,
+    .selectedcategory1 {
+        width: calc(50% - 20px);
+        min-width: 130px;
+        height: 140px;
+        margin: 8px 0 0 8px;
+    }
+
+    .categoryfilter1 {
+        width: 100%;
+        height: auto;
+        padding: 12px;
+    }
+
+    .categoryselctionheader1 {
+        width: 100%;
+        height: auto;
+    }
+
+    .categoryfilters1 {
+        width: 100%;
+        height: auto;
+        flex-wrap: wrap;
+        margin: 12px 0 0 0;
+        gap: 8px;
+    }
+
+    .categoryselection4,
+    .categoryselection4.active-tab,
+    .categoryselection5,
+    .categoryselection5.active-tab {
+        width: calc(25% - 8px);
+        min-width: 70px;
+        height: 68px;
+        flex-shrink: 0;
+    }
+
+    .basicinfoform {
+        width: 100%;
+        padding: 14px 12px 20px 12px;
+    }
+
+    .selectedcategory2 {
+        width: 100%;
+        height: auto;
+        padding: 16px;
+    }
+
+    .basicinfoinput {
+        width: 100%;
+    }
+
+    .basicinfoinput1,
+    .basicinfoinput2,
+    .basicinfoinput3,
+    .basicinfoinput4 {
+        width: 100%;
+    }
+
+    .basicinforow {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .basiccatinputs,
+    .basiccatinputs1,
+    .basiccarinputs,
+    .basicbikeinputs,
+    .basicjewelinputs,
+    .basicantiqueinputs {
+        width: 100%;
+        height: auto;
+        padding: 14px 12px 20px 12px;
+    }
+
+    .formsubmissiontags {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 480px) {
+    .selectedcategory,
+    .selectedcategory1 {
+        width: calc(50% - 16px);
+        min-width: 120px;
+        height: 130px;
+    }
+
+    .categoryselection4,
+    .categoryselection4.active-tab,
+    .categoryselection5,
+    .categoryselection5.active-tab {
+        width: calc(33% - 8px);
+        font-size: 11px;
+    }
+
+    .submittbutton,
+    .cancelbutton {
+        flex: 1;
+        text-align: center;
+    }
+
+    .videoPreviewContainer {
+        flex-direction: column;
+    }
+
+    .videoPreviewContainer video {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}

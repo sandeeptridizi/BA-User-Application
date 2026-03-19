@@ -100,3 +100,20 @@
 .productedit-meta-grid .productedit-field {
   margin-bottom: 0;
 }
+
+@media (max-width: 768px) {
+  .productedit-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .productedit-meta-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .productedit-meta-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -870,14 +870,14 @@
 
   .dashboardstats {
     width: 100%;
-    flex-direction: column;
+    flex-wrap: wrap;
   }
 
   .mylistings,
   .mylistings1,
   .mylistings2,
   .mylistings3 {
-    width: 100%;
+    width: calc(50% - 10px);
   }
 
   .performancemetrics {
@@ -1034,5 +1034,23 @@
   .enquiryinfo1 {
     width: 100%;
     height: auto;
+  }
+
+  .dashboardcontainer {
+    height: auto;
+  }
+
+  .listingcontainer {
+    height: auto;
+  }
+
+  .listingcontainerbottom {
+    flex-direction: column;
+  }
+
+  .listingproductstat,
+  .listingproductstat1,
+  .listingproductstat2 {
+    width: 100%;
   }
 }
