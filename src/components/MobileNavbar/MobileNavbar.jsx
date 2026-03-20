@@ -5,7 +5,7 @@ import { HiMenu } from 'react-icons/hi';
 import companyLogo from '../../assets/company-logo.png';
 import { useState } from 'react';
 
-import { LuLayoutDashboard } from 'react-icons/lu';
+import { LuLayoutDashboard, LuHouse } from 'react-icons/lu';
 import { FiShoppingBag } from 'react-icons/fi';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { MdLogout } from 'react-icons/md';
@@ -62,11 +62,18 @@ const MobileNavbar = () => {
 
   return (
     <div className='mobile-navbar-container'>
-      <img src={companyLogo} alt='company' className='mobile-logo' />
-      <HiMenu
-        className='mobile-menu-icon'
-        onClick={() => setShowLinks(!showLinks)}
-      />
+      <Link to='/' className='mobile-logo-link' onClick={() => { setActiveLink('dashboard'); setShowLinks(false); }}>
+        <img src={companyLogo} alt='company' className='mobile-logo' />
+      </Link>
+      <div className='mobile-nav-right'>
+        <Link to='/' className='mobile-home-btn' onClick={() => { setActiveLink('dashboard'); setShowLinks(false); }}>
+          <LuHouse />
+        </Link>
+        <HiMenu
+          className='mobile-menu-icon'
+          onClick={() => setShowLinks(!showLinks)}
+        />
+      </div>
       {showLinks && (
         <div
           className='mobile-nav-links-container'

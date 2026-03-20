@@ -18,6 +18,8 @@
   background: linear-gradient(90deg, #fffbeb 0%, #fefce8 100%);
   border-bottom: 1.25px solid rgba(254, 230, 133, 0.5);
   padding: 24px;
+  text-decoration: none;
+  display: block;
 }
 
 .company-logo {

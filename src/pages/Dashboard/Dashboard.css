@@ -295,11 +295,6 @@
   font-size: 20px;
 }
 
-.benefitsicon {
-  color: #e17100;
-  font-size: 20px;
-}
-
 .performancemetricsnote {
   color: #52525c;
   font-size: 16px;
@@ -450,14 +445,6 @@
   width: 1020px;
   border-radius: 14px;
   background: linear-gradient(180deg, #f9fafb, #f9fafb);
-  padding: 20px;
-}
-
-.membershipbenifitsheader {
-  height: 98px;
-  width: 1020px;
-  border-radius: 14px;
-  background: linear-gradient(180deg, #fffbeb, #fffbeb);
   padding: 20px;
 }
 
@@ -689,17 +676,6 @@
   font-weight: bold;
 }
 
-.buyerprofile3 {
-  height: 46px;
-  width: 46px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #ffb900, #fe9a00);
-  color: #ffffff;
-  padding: 12px;
-  font-size: 20px;
-  font-weight: bold;
-}
-
 .buyerdetails {
   list-style: none;
   gap: 12px;
@@ -788,19 +764,6 @@
 .quickactiontag {
   color: #364153;
   border: 1px solid #d1d5dc;
-  width: fit-content;
-  height: 30px;
-  margin: 16px 10px 0 0;
-  display: inline-block;
-  font-size: 14px;
-  font-weight: bold;
-  border-radius: 8px;
-  padding: 6px;
-}
-
-.benefitstag {
-  color: #bb4d00;
-  border: 1px solid #ffd230;
   width: fit-content;
   height: 30px;
   margin: 16px 10px 0 0;
@@ -1020,10 +983,6 @@
   .quickactions {
     width: 100%;
     height: auto;
-  }
-
-  .membershipbenifitsheader {
-    width: 100%;
   }
 
   .enquiriesdetails {

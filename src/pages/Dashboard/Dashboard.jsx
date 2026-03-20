@@ -6,9 +6,7 @@ import { CiCircleCheck } from "react-icons/ci";
 import { FaPlus } from "react-icons/fa";
 import { FiBox } from "react-icons/fi";
 import { GoArrowUpRight } from "react-icons/go";
-import { FaRegEye } from "react-icons/fa6";
 import { FiMessageSquare } from "react-icons/fi";
-import { MdCurrencyRupee } from "react-icons/md";
 import { LuAward } from "react-icons/lu";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { FaRegBell } from "react-icons/fa6";
@@ -16,7 +14,6 @@ import { BsLightningCharge } from "react-icons/bs";
 import { LuUsers } from "react-icons/lu";
 import { FaRegCircleQuestion } from "react-icons/fa6";
 import { LuCrown } from "react-icons/lu";
-import { RxCross2 } from "react-icons/rx";
 import { getUser } from '../../../lib/auth';
 import api from '../../../lib/api';
 import { getMyEnquiries } from '../../../lib/enquiries';
@@ -56,8 +53,6 @@ function daysAgo(dateStr) {
   if (days === 0) return 'Posted today';
   return `Posted ${days} day${days > 1 ? 's' : ''} ago`;
 }
-
-const getViews = (meta) => (meta && typeof meta === 'object' ? Number(meta.views || 0) : 0);
 
 const DashboardPage = () => {
     const user = getUser();
@@ -109,8 +104,6 @@ const DashboardPage = () => {
 
     const totalListings = products.length;
     const activeListings = products.filter(p => p.approvalStatus === 'APPROVED');
-    const totalViews = products.reduce((sum, p) => sum + getViews(p.meta), 0);
-    const totalValue = products.reduce((sum, p) => sum + Number(p.value || 0), 0);
     const activeLeads = enquiries.length;
 
     const recentProducts = activeListings.slice(0, 4);
@@ -134,30 +127,6 @@ const DashboardPage = () => {
                     <span><FiBox /></span>
                 </div>
                 <h2 className='dashboardstatnum'>{loadingProducts ? '...' : totalListings}</h2>
-                <p className='dashboardstatcta' onClick={() => navigate('/products')} style={{cursor:'pointer'}}>View Details <GoArrowUpRight /></p>
-            </div>
-            <div className='mylistings1'>
-                <div className='mylistingstop'>
-                    <p className='mylistingsname'>Total Views</p>
-                    <span><FaRegEye  /></span>
-                </div>
-                <h2 className='dashboardstatnum'>{loadingProducts ? '...' : totalViews.toLocaleString('en-IN')}</h2>
-                <p className='dashboardstatcta' onClick={() => navigate('/products')} style={{cursor:'pointer'}}>View Details <GoArrowUpRight /></p>
-            </div>
-            <div className='mylistings2'>
-                <div className='mylistingstop'>
-                    <p className='mylistingsname'>Active Leads</p>
-                    <span><FiMessageSquare /></span>
-                </div>
-                <h2 className='dashboardstatnum'>{loadingEnquiries ? '...' : activeLeads}</h2>
-                <p className='dashboardstatcta' onClick={() => navigate('/myleads')} style={{cursor:'pointer'}}>View Details <GoArrowUpRight /></p>
-            </div>
-            <div className='mylistings3'>
-                <div className='mylistingstop'>
-                    <p className='mylistingsname'>Total Value</p>
-                    <span><MdCurrencyRupee  /></span>
-                </div>
-                <h2 className='dashboardstatnum'>{loadingProducts ? '...' : formatCurrency(totalValue)}</h2>
                 <p className='dashboardstatcta' onClick={() => navigate('/products')} style={{cursor:'pointer'}}>View Details <GoArrowUpRight /></p>
             </div>
         </div>
@@ -221,7 +190,7 @@ const DashboardPage = () => {
                             </div>
                             <div className='listingcontainerright'>{formatCurrency(product.value)}</div>
                         </div>
-                        <div className='listingcontainerbottom'>
+                        {/* <div className='listingcontainerbottom'>
                             <div className='listingproductstat'>
                                 <span><FaRegEye  /></span>
                                 <h3>{getViews(product.meta).toLocaleString('en-IN')}</h3>
@@ -237,7 +206,7 @@ const DashboardPage = () => {
                                 <h3>—</h3>
                                 <p>Interest</p>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 ))}
             </div>
@@ -350,53 +319,6 @@ const DashboardPage = () => {
                         </ul>
                     </div>
                     <span className='quickactiontag' onClick={() => navigate('/settings')} style={{cursor:'pointer'}}>Go</span>
-                </div>
-            </div>
-        </div>
-        <div className='quickactions'>
-            <div className='membershipbenifitsheader'>
-                <p className='performancemetricstitle'><LuCrown className='benefitsicon'/>Membership Benefits</p>
-                <p className='performancemetricsnote'>Upgrade your plan for more features</p></div>
-            <div className='enquiriesdetails'>
-                <div className='enquiryinfo1'>
-                    <div className='enquiryinfoleft'>
-                        <span className='buyerprofile3'><CiCircleCheck  /></span>
-                        <ul className='buyerdetails'>
-                            <li className='buyername'>Priority Support <span className='respondedtag'>Active</span></li>
-                            <li className='buyertime'>24/7 premium assistance</li>
-                        </ul>
-                    </div>
-                    <span className='benefitstag'>Upgrade</span>
-                </div>
-                <div className='enquiryinfo1'>
-                    <div className='enquiryinfoleft'>
-                        <span className='buyerprofile3'><CiCircleCheck  /></span>
-                        <ul className='buyerdetails'>
-                            <li className='buyername'>Featured Listings <span className='respondedtag'>Active</span></li>
-                            <li className='buyertime'>Top placement on homepage</li>
-                        </ul>
-                    </div>
-                    <span className='benefitstag'>Upgrade</span>
-                </div>
-                <div className='enquiryinfo1'>
-                    <div className='enquiryinfoleft'>
-                        <span className='buyerprofile3'><CiCircleCheck  /></span>
-                        <ul className='buyerdetails'>
-                            <li className='buyername'>Advanced Analytics<span className='respondedtag'>Active</span></li>
-                            <li className='buyertime'>Detailed performance insights</li>
-                        </ul>
-                    </div>
-                    <span className='benefitstag'>Upgrade</span>
-                </div>
-                <div className='enquiryinfo1'>
-                    <div className='enquiryinfoleft'>
-                        <span className='buyerprofile3'><RxCross2 /></span>
-                        <ul className='buyerdetails'>
-                            <li className='buyername'>Unlimited Listings <span className='progresstag'>Inactive</span></li>
-                            <li className='buyertime'>No cap on properties</li>
-                        </ul>
-                    </div>
-                    <span className='benefitstag'>Upgrade</span>
                 </div>
             </div>
         </div>

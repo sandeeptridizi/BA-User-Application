@@ -188,7 +188,7 @@ const ProductEdit = () => {
       description: form.description.trim() || null,
       listingType: form.listingType,
       category: form.category,
-      tier: form.tier,
+      tier: "GENERAL",
       country: form.country,
       value: form.value.trim() ? parseInt(form.value, 10) : null,
       approvalStatus: form.approvalStatus,
@@ -316,20 +316,7 @@ const ProductEdit = () => {
         </div>
         <div className="productedit-row">
           <div className="productedit-field">
-            <label>Tier</label>
-            <select
-              value={form.tier}
-              onChange={(e) => handleChange("tier", e.target.value)}
-            >
-              {TIERS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="productedit-field">
-            <label>Value (&#8377;)</label>
+            <label>Price (&#8377;)</label>
             <input
               type="number"
               min={0}

@@ -15,7 +15,7 @@ import { LuPhone } from "react-icons/lu";
 import { MdOutlineEmail } from "react-icons/md";
 import { IoEyeOutline } from "react-icons/io5";
 import { CiCalendar } from "react-icons/ci";
-import { FiEdit } from "react-icons/fi";
+import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { FaPlayCircle } from "react-icons/fa";
 
 import api from "../../../lib/api";
@@ -111,6 +111,7 @@ const ProductPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [imageQueue, setImageQueue] = useState(PLACEHOLDER_IMAGES);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -151,6 +152,19 @@ const ProductPage = () => {
     }, 3000);
     return () => clearInterval(interval);
   }, [product?.id]);
+
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this product? This action cannot be undone.")) return;
+    try {
+      setDeleting(true);
+      await api.delete(`/api/product/my/${id}`);
+      navigate("/products");
+    } catch (err) {
+      alert(err?.response?.data?.message || "Failed to delete product.");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -270,7 +284,7 @@ const ProductPage = () => {
                 </span>
               </div>
               <div className="productdetail-item">
-                <span className="productdetail-label">Value</span>
+                <span className="productdetail-label">Price</span>
                 <span className="productdetail-value">
                   {formatCurrency(product.value)}
                 </span>
@@ -434,6 +448,14 @@ const ProductPage = () => {
             >
               <FiEdit />
               Edit Product
+            </button>
+            <button
+              className="deleteproductbutton"
+              onClick={handleDelete}
+              disabled={deleting}
+            >
+              <FiTrash2 />
+              {deleting ? "Deleting..." : "Delete Product"}
             </button>
             <button
               className="productsbackbutton"

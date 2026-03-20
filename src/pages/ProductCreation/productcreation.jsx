@@ -39,7 +39,6 @@ const ProductCreation = () => {
   const marketplaceDescriptionRef = useRef(null);
   const marketplaceValueRef = useRef(null);
   const marketplaceStatusRef = useRef(null);
-  const marketplaceTierRef = useRef(null);
   const marketplaceCountryRef = useRef(null);
   const [propertyType, setPropertyType] = useState("");
   const [ItemType, setItemType] = useState("");
@@ -48,6 +47,8 @@ const ProductCreation = () => {
   const [selectedVideoFile, setSelectedVideoFile] = useState(null);
   const [videoPreview, setVideoPreview] = useState(null);
   const [isMarketplaceSubmitting, setIsMarketplaceSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleIconClick = () => { fileInputRef.current.click(); };
   const handleVideoIconClick = () => { videoInputRef.current.click(); };
@@ -55,6 +56,12 @@ const ProductCreation = () => {
   const handleVideoChange = (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
+    const maxSize = 150 * 1024 * 1024; // 150MB
+    if (file.size > maxSize) {
+      alert("Video file size must be under 150MB.");
+      event.target.value = "";
+      return;
+    }
     if (videoPreview) URL.revokeObjectURL(videoPreview);
     setSelectedVideoFile(file);
     setVideoPreview(URL.createObjectURL(file));
@@ -196,7 +203,6 @@ const ProductCreation = () => {
         if (element === marketplaceDescriptionRef.current) continue;
         if (element === marketplaceValueRef.current) continue;
         if (element === marketplaceStatusRef.current) continue;
-        if (element === marketplaceTierRef.current) continue;
         if (element === marketplaceCountryRef.current) continue;
         if (element.type === "file") continue;
         if (!element.value?.trim()) continue;
@@ -295,7 +301,7 @@ const ProductCreation = () => {
       const title = resolveTitle(formRoot);
       const description = resolveDescription(formRoot);
       const rawValue = resolveRawValue(formRoot);
-      const tier = marketplaceTierRef.current?.value || "GENERAL";
+      const tier = "GENERAL";
       const country = marketplaceCountryRef.current?.value || "INDIA";
       const category = listingMode === "tolet" ? "REAL_ESTATE" : categoryByTab[activeTab];
       const parsedValue = rawValue
@@ -319,6 +325,7 @@ const ProductCreation = () => {
 
       try {
         setIsMarketplaceSubmitting(true);
+        setSubmitStatus("Creating product...");
 
         const createPayload = {
           title,
@@ -339,26 +346,29 @@ const ProductCreation = () => {
         }
 
         const mediaPatch = {};
+        const totalMedia = selectedMarketplaceFiles.length + (selectedVideoFile ? 1 : 0);
 
         if (selectedMarketplaceFiles.length > 0) {
           const uploadedKeys = [];
-          for (const file of selectedMarketplaceFiles) {
-            const key = await uploadFileWithPresignedUrl(file, productId);
+          for (let i = 0; i < selectedMarketplaceFiles.length; i++) {
+            setSubmitStatus(`Uploading media: ${i + 1}/${totalMedia}...`);
+            const key = await uploadFileWithPresignedUrl(selectedMarketplaceFiles[i], productId);
             uploadedKeys.push(key);
           }
           if (uploadedKeys.length > 0) mediaPatch.media = uploadedKeys;
         }
 
         if (selectedVideoFile) {
+          setSubmitStatus(`Uploading media: ${totalMedia}/${totalMedia}...`);
           const videoKey = await uploadFileWithPresignedUrl(selectedVideoFile, productId);
           mediaPatch.video = videoKey;
         }
 
         if (Object.keys(mediaPatch).length > 0) {
+          setSubmitStatus("Saving media...");
           await api.patch(`/api/product/${productId}/media`, mediaPatch);
         }
 
-        alert("Product created successfully.");
         setMarketplaceFilePreviews((current) => {
           current.forEach((item) => URL.revokeObjectURL(item.url));
           return [];
@@ -368,7 +378,7 @@ const ProductCreation = () => {
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
         }
-        navigate("/products");
+        setShowSuccessModal(true);
       } catch (error) {
         const message =
           error?.response?.data?.message ||
@@ -377,6 +387,7 @@ const ProductCreation = () => {
         alert(message);
       } finally {
         setIsMarketplaceSubmitting(false);
+        setSubmitStatus("");
       }
     };
 
@@ -647,7 +658,7 @@ const ProductCreation = () => {
           <ul className='selectedcategory2 videoUploadBox' onClick={handleVideoIconClick} style={{ cursor: "pointer" }}>
                 <li className='selectedcaticon2'><FiUpload /></li>
                 <li className='selectedcatname1'>Click to upload a product video</li>
-                <li className='selectedcatdesc'>MP4, WEBM, MOV up to 50MB • 1 video only</li>
+                <li className='selectedcatdesc'>MP4, WEBM, MOV up to 150MB • 1 video only</li>
           </ul>
         ) : (
           <div className="videoPreviewContainer">
@@ -706,14 +717,6 @@ const ProductCreation = () => {
                 <select ref={marketplaceStatusRef} defaultValue="ACTIVE" className="basicinfoinput2">
                     <option value="ACTIVE">Active</option>
                     <option value="INACTIVE">Inactive</option>
-                </select>
-            </div>
-            <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Tier</h3>
-                <select ref={marketplaceTierRef} defaultValue="GENERAL" className="basicinfoinput2">
-                    <option value="GENERAL">General</option>
-                    <option value="LUXURY">Luxury</option>
-                    <option value="CLASSIC">Classic</option>
                 </select>
             </div>
         </div>
@@ -809,12 +812,12 @@ const ProductCreation = () => {
          {propertyType === "House" && (<div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Built-up Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Plot Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
@@ -860,12 +863,12 @@ const ProductCreation = () => {
         )}
         {propertyType === "Villa" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Built-up Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Plot Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
@@ -909,8 +912,8 @@ const ProductCreation = () => {
             </div></div>)}
         {propertyType === "Apartment" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Built-up Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floor Number</h3>
@@ -983,8 +986,8 @@ const ProductCreation = () => {
             </div>)}
         {propertyType === "Flat" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Built-up Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floor Number</h3>
@@ -1061,8 +1064,8 @@ const ProductCreation = () => {
                 <input type="text" placeholder="e.g., 300 x 400" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Plot Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Facing</h3>
@@ -1129,8 +1132,8 @@ const ProductCreation = () => {
                 <input type="text" placeholder="e.g., 300 x 400" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Plot Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Facing</h3>
@@ -1203,8 +1206,8 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Built-up Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floor</h3>
@@ -2059,7 +2062,7 @@ const ProductCreation = () => {
           {isMarketplaceSubmitting ? (
             <>
               <span className="buttonspinner" />
-              Creating...
+              {submitStatus || "Creating..."}
             </>
           ) : (
             "Create Product"
@@ -2158,7 +2161,7 @@ const ProductCreation = () => {
           <ul className='selectedcategory2 videoUploadBox' onClick={handleVideoIconClick} style={{ cursor: "pointer" }}>
                 <li className='selectedcaticon2'><FiUpload /></li>
                 <li className='selectedcatname1'>Click to upload a product video</li>
-                <li className='selectedcatdesc'>MP4, WEBM, MOV up to 50MB • 1 video only</li>
+                <li className='selectedcatdesc'>MP4, WEBM, MOV up to 150MB • 1 video only</li>
           </ul>
         ) : (
           <div className="videoPreviewContainer">
@@ -2297,12 +2300,12 @@ const ProductCreation = () => {
          {propertyType === "House" && (<div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Built-up Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Plot Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
@@ -2348,12 +2351,12 @@ const ProductCreation = () => {
         )}
         {propertyType === "Villa" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Built-up Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Plot Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
@@ -2397,8 +2400,8 @@ const ProductCreation = () => {
             </div></div>)}
         {propertyType === "Apartment" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Built-up Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floor Number</h3>
@@ -2471,8 +2474,8 @@ const ProductCreation = () => {
             </div>)}
         {propertyType === "Flat" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Built-up Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floor Number</h3>
@@ -2549,8 +2552,8 @@ const ProductCreation = () => {
                 <input type="text" placeholder="e.g., 300 x 400" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Plot Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Facing</h3>
@@ -2617,8 +2620,8 @@ const ProductCreation = () => {
                 <input type="text" placeholder="e.g., 300 x 400" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Plot Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Facing</h3>
@@ -2691,8 +2694,8 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Built-up Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floor</h3>
@@ -3543,7 +3546,16 @@ const ProductCreation = () => {
         </div>
     </div>}
     <div className='formsubmissiontags'>
-        <button className='submittbutton' onClick={handleCreateProduct} disabled={isMarketplaceSubmitting}>Create Product</button>
+        <button className='submittbutton' onClick={handleCreateProduct} disabled={isMarketplaceSubmitting}>
+          {isMarketplaceSubmitting ? (
+            <>
+              <span className="buttonspinner" />
+              {submitStatus || "Creating..."}
+            </>
+          ) : (
+            "Create Product"
+          )}
+        </button>
         <button className='cancelbutton' onClick={() => navigate("/products")}>Cancel</button>
     </div>
     </div>}
@@ -3637,7 +3649,7 @@ const ProductCreation = () => {
           <ul className='selectedcategory2 videoUploadBox' onClick={handleVideoIconClick} style={{ cursor: "pointer" }}>
                 <li className='selectedcaticon2'><FiUpload /></li>
                 <li className='selectedcatname1'>Click to upload a product video</li>
-                <li className='selectedcatdesc'>MP4, WEBM, MOV up to 50MB • 1 video only</li>
+                <li className='selectedcatdesc'>MP4, WEBM, MOV up to 150MB • 1 video only</li>
           </ul>
         ) : (
           <div className="videoPreviewContainer">
@@ -3776,12 +3788,12 @@ const ProductCreation = () => {
          {propertyType === "House" && (<div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Built-up Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Plot Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
@@ -3827,12 +3839,12 @@ const ProductCreation = () => {
         )}
         {propertyType === "Villa" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Built-up Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Plot Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
@@ -3876,8 +3888,8 @@ const ProductCreation = () => {
             </div></div>)}
         {propertyType === "Apartment" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Built-up Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floor Number</h3>
@@ -3950,8 +3962,8 @@ const ProductCreation = () => {
             </div>)}
         {propertyType === "Flat" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Built-up Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floor Number</h3>
@@ -4028,8 +4040,8 @@ const ProductCreation = () => {
                 <input type="text" placeholder="e.g., 300 x 400" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Plot Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Facing</h3>
@@ -4096,8 +4108,8 @@ const ProductCreation = () => {
                 <input type="text" placeholder="e.g., 300 x 400" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Plot Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Facing</h3>
@@ -4170,8 +4182,8 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
-                <input type="text" placeholder="e.g., 1200 sq.ft" className="basicinfoinput2" />
+                <h3 className='basicinfotitle'>Built-up Area (in sq. yards)</h3>
+                <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floor</h3>
@@ -5022,7 +5034,16 @@ const ProductCreation = () => {
         </div>
     </div>}
     <div className='formsubmissiontags'>
-        <button className='submittbutton' onClick={handleCreateProduct} disabled={isMarketplaceSubmitting}>Create Product</button>
+        <button className='submittbutton' onClick={handleCreateProduct} disabled={isMarketplaceSubmitting}>
+          {isMarketplaceSubmitting ? (
+            <>
+              <span className="buttonspinner" />
+              {submitStatus || "Creating..."}
+            </>
+          ) : (
+            "Create Product"
+          )}
+        </button>
         <button className='cancelbutton' onClick={() => navigate("/products")}>Cancel</button>
     </div>
     </div>}
@@ -5108,7 +5129,7 @@ const ProductCreation = () => {
           <ul className='selectedcategory2 videoUploadBox' onClick={handleVideoIconClick} style={{ cursor: "pointer" }}>
                 <li className='selectedcaticon2'><FiUpload /></li>
                 <li className='selectedcatname1'>Click to upload a product video</li>
-                <li className='selectedcatdesc'>MP4, WEBM, MOV up to 50MB • 1 video only</li>
+                <li className='selectedcatdesc'>MP4, WEBM, MOV up to 150MB • 1 video only</li>
           </ul>
         ) : (
           <div className="videoPreviewContainer">
@@ -5205,7 +5226,7 @@ const ProductCreation = () => {
                 <input type="text" placeholder="e.g., 3000 sft" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
+                <h3 className='basicinfotitle'>Built-up Area (in sq. yards)</h3>
                 <input type="text" placeholder="e.g., 2500 sft" className="basicinfoinput2" />
             </div>  
         </div>
@@ -5515,10 +5536,29 @@ const ProductCreation = () => {
     </div>
     }
     <div className='formsubmissiontags'>
-        <button className='submittbutton' onClick={handleCreateProduct} disabled={isMarketplaceSubmitting}>Create Product</button>
+        <button className='submittbutton' onClick={handleCreateProduct} disabled={isMarketplaceSubmitting}>
+          {isMarketplaceSubmitting ? (
+            <>
+              <span className="buttonspinner" />
+              {submitStatus || "Creating..."}
+            </>
+          ) : (
+            "Create Product"
+          )}
+        </button>
         <button className='cancelbutton' onClick={() => navigate("/products")}>Cancel</button>
     </div>
     </div>}
+    {showSuccessModal && (
+      <div className="successmodal-overlay" onClick={() => { setShowSuccessModal(false); navigate("/products"); }}>
+        <div className="successmodal" onClick={(e) => e.stopPropagation()}>
+          <div className="successmodal-icon">&#10003;</div>
+          <h2>Product Created Successfully</h2>
+          <p>Your product has been submitted and is now under review.</p>
+          <button className="successmodal-btn" onClick={() => { setShowSuccessModal(false); navigate("/products"); }}>Go to My Products</button>
+        </div>
+      </div>
+    )}
   </div>);
 };
 

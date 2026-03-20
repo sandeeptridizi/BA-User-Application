@@ -67,13 +67,13 @@ const Sidebar = () => {
 
   return (
     <div className='sidebar-container'>
-      <div className='sibebar-logo-container'>
+      <Link to='/' className='sidebar-logo-container' onClick={() => setActiveLink('dashboard')}>
         <img
           src={companyLogo}
           alt='Billionaire Auction'
           className='company-logo'
         />
-      </div>
+      </Link>
       <div className='sidebar-links-container'>
         {linksData.map((item) => {
           const { id, icon, title, link } = item;
