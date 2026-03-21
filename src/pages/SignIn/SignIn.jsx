@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { LuShield } from 'react-icons/lu';
 import { TbDeviceMobile } from 'react-icons/tb';
 import { MdOutlineEmail } from 'react-icons/md';
-import { BiCheckCircle } from 'react-icons/bi';
 import { FaArrowRight } from 'react-icons/fa6';
 import api from '../../../lib/api';
 import useAppContext from '../../context/AppContext';
