@@ -1,0 +1,302 @@
+.sign-in-container {
+  width: 100%;
+  min-height: 100vh;
+  background: url('../../assets/loginScreen.png') no-repeat center center;
+  background-size: cover;
+  background-position: 50% 12%; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px;
+}
+
+.sign-in-main-container {
+  width: 650px;
+  height: auto;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border-radius: 14px;
+  padding: 25px;
+  display: flex;
+  margin-top: 140px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.sign-in-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+}
+
+.company-img {
+  width: 322px;
+  height: 84px;
+}
+
+.sign-in-heading {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: rgba(82, 82, 92, 1);
+}
+
+.shield-icon {
+  width: 16px;
+  height: 16px;
+  color: rgba(21, 93, 252, 1);
+}
+
+.auth-tabs {
+  width: 100%;
+  display: flex;
+  gap: 0;
+  background: rgba(243, 243, 245, 1);
+  border-radius: 12px;
+  padding: 4px;
+  margin: 24px 0 0;
+}
+
+.auth-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(113, 113, 123, 1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.auth-tab:hover {
+  color: rgba(63, 63, 71, 1);
+}
+
+.auth-tab-active {
+  background: #fff;
+  color: rgba(21, 93, 252, 1);
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+}
+
+.auth-tab-active-purple {
+  color: rgba(152, 16, 250, 1);
+}
+
+.sign-in-form-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.sign-in-label-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label-name {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  color: rgba(63, 63, 71, 1);
+}
+
+.sign-in-icon-container {
+  width: 100%;
+  background: rgba(255, 255, 255, 1);
+  border: 1.25px solid rgba(228, 228, 231, 1);
+  padding: 8px 12px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mobile-icon {
+  width: 20px;
+  height: 20px;
+  color: rgba(159, 159, 159, 1);
+}
+
+.sign-in-icon-container p {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  color: rgba(113, 113, 123, 1);
+}
+
+.sign-in-input {
+  width: 100%;
+  border: none;
+  outline: none;
+}
+
+.sign-in-input::placeholder {
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(113, 113, 113, 1);
+}
+
+.sign-in-error {
+  font-size: 14px;
+  color: #b91c1c;
+  margin: -8px 0 0;
+}
+
+.sign-in-text {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  color: rgba(113, 113, 123, 1);
+}
+
+.sign-in-points-container {
+  width: 100%;
+  background: linear-gradient(135deg, #eff6ff 0%, #eef2ff 100%);
+  border: 1.25px solid rgba(219, 234, 254, 1);
+  padding: 18px;
+  border-radius: 16px;
+  margin: 24px auto;
+}
+
+.points-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 20px;
+  color: rgba(24, 24, 27, 1);
+}
+
+.points-icon {
+  width: 20px;
+  height: 20px;
+  color: rgba(21, 93, 252, 1);
+}
+
+.points-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 20px auto;
+}
+
+.point-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 16px;
+  color: rgba(82, 82, 92, 1);
+}
+
+.points-circle {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(21, 93, 252, 1);
+}
+
+.sign-in-btn {
+  width: 100%;
+  background: linear-gradient(90deg, #155dfc 0%, #4f39f6 100%);
+  box-shadow: 0px 4px 6px -4px rgba(43, 127, 255, 0.3);
+  box-shadow: 0px 10px 15px -3px rgba(43, 127, 255, 0.3);
+  border-radius: 14px;
+  border: none;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.sign-in-account {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 20px;
+  color: rgba(82, 82, 92, 1);
+  margin: 20px auto;
+}
+
+.sign-in-account span {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 20px;
+  color: rgba(21, 93, 252, 1);
+  cursor: pointer;
+}
+
+.sign-in-footer {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 20px;
+  color: rgba(82, 82, 92, 1);
+}
+
+@media screen and (max-width: 600px) {
+  .sign-in-container {
+    /* width: 100%; */
+    padding: 20px 12px;
+    background: url('../../assets/loginScreen.png') no-repeat;
+    background-size: 220%;
+    background-position: 50% top;
+    background-repeat: no-repeat;
+    background-color: #f3e7c9;
+
+  }
+
+  .sign-in-main-container {
+    width: 100%;
+    padding: 32px 12px;
+  }
+
+  .company-img {
+    width: 200px;
+    height: 60px;
+  }
+
+  .sign-in-form-container {
+    width: 100%;
+    margin: 24px auto;
+  }
+
+  .mobile-navbar-container{
+    display: none;
+  }
+
+  .sign-in-points-container {
+    width: 100%;
+  }
+
+  .points-header {
+    font-size: 18px;
+  }
+
+  .sign-in-footer {
+    text-align: center;
+    font-size: 13px;
+  }
+}

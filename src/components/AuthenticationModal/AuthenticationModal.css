@@ -1,0 +1,68 @@
+.auth-shield-icon {
+  width: 16px;
+  height: 16px;
+  color: rgba(152, 16, 250, 1);
+}
+
+.auth-tags-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auth-change-num {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  color: rgba(152, 16, 250, 1);
+}
+
+.auth-time {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: rgba(82, 82, 92, 1);
+}
+
+.seconds {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  color: rgba(152, 16, 250, 1);
+}
+
+.otp-numbers-container {
+  width: 80%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.otp-num.otp-input {
+  width: 48px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba(243, 243, 245, 1);
+  border: 1.25px solid rgba(228, 228, 231, 1);
+  text-align: center;
+  font-size: 1.25rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.otp-num.otp-input:focus {
+  border-color: rgba(152, 16, 250, 1);
+}
+
+.modal-error {
+  font-size: 14px;
+  color: #b91c1c;
+  margin: -8px 0 0;
+}
+
+.auth-resend {
+  cursor: pointer;
+  color: rgba(152, 16, 250, 1);
+  font-weight: 600;
+}

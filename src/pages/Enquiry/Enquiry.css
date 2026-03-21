@@ -1,0 +1,582 @@
+.contactcontainer {
+  height: 895px;
+  width: 1020px;
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.contactcontainerleft {
+  height: 895px;
+  width: 690px;
+  border-radius: 14px;
+  border: 1px solid #e6e5e5;
+}
+
+.contactcontainerright {
+  height: 640px;
+  width: 310px;
+  border-radius: 14px;
+  border: 1px solid #e6e5e5;
+}
+
+.contactcontainerleftheader {
+  width: 688px;
+  height: 100px;
+  background: linear-gradient(180deg, #f8fafc, #fafafa);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.contactcontainerrightheader {
+  width: 310px;
+  height: 100px;
+  background: linear-gradient(180deg, #f8fafc, #fafafa);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.contactcontainerleftheader h3,
+.contactcontainerrightheader h3 {
+  color: #18181b;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.contactcontainerleftheader p,
+.contactcontainerrightheader p {
+  color: #52525c;
+  font-size: 16px;
+  font-weight: 400;
+  margin-top: 14px;
+}
+
+.accountinformation {
+  background-color: #eff6ff;
+  border: 1px solid #bedbff;
+  width: 640px;
+  height: 110px;
+  border-radius: 14px;
+  padding: 20px;
+  margin: 30px 0 0 20px;
+}
+
+.accountformdiv {
+  margin: 30px 0 0 20px;
+  gap: 14px;
+}
+
+.accountinfo {
+  display: flex;
+  gap: 160px;
+}
+
+.accountinformationtitle {
+  color: #1c398e;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.accountinformationleft p {
+  color: #1447e6;
+  font-size: 14px;
+  font-weight: 400;
+  margin-top: 14px;
+}
+
+.accountformdiv h3 {
+  color: #3f3f47;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.accountformtext {
+  color: #717182;
+  height: 36px;
+  width: 640px;
+  background-color: #f3f3f5;
+  padding: 4px;
+  border: none;
+  margin-top: 12px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.accountformtext1 {
+  color: #717182;
+  height: 180px;
+  width: 640px;
+  background-color: #f3f3f5;
+  padding: 14px;
+  border: none;
+  font-family: 'Arimo', sans-serif;
+  margin-top: 12px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.accountformdiv p {
+  color: #71717b;
+  font-size: 12px;
+  font-weight: 400;
+  margin-top: 8px;
+}
+
+.prioritylevel {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  color: #3f3f47;
+  font-size: 14px;
+  font-weight: 400;
+  margin: 10px 0 0 20px;
+}
+
+.prioritylevellow {
+  height: 50px;
+  width: 200px;
+  border: 1px solid #a4f4cf;
+  background-color: #ecfdf5;
+  color: #007a55;
+  border-radius: 14px;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  display: inline-flex;
+  font-weight: bold;
+}
+
+.prioritylevelmedium {
+  height: 50px;
+  width: 200px;
+  border: 1px solid #fee685;
+  background-color: #fffbeb;
+  color: #bb4d00;
+  border-radius: 14px;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  display: inline-flex;
+  font-weight: bold;
+}
+
+.prioritylevelhigh {
+  height: 50px;
+  width: 200px;
+  border: 1px solid #ffc9c9;
+  background-color: #fef2f2;
+  color: #c10007;
+  border-radius: 14px;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  display: inline-flex;
+  font-weight: bold;
+}
+
+.prioritylevelnote {
+  color: #3f3f47;
+  font-size: 14px;
+  font-weight: 400;
+  margin: 20px 0 0 20px;
+}
+
+.ticketsubmitbutton {
+  height: 46px;
+  width: 640px;
+  border-radius: 14px;
+  background-color: #009966;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px;
+}
+
+.supportcontactinfo {
+  height: 100px;
+  width: 260px;
+  border-radius: 14px;
+  border: 1px solid #e6e5e5;
+  margin: 30px 0 0 20px;
+  padding: 20px;
+  display: flex;
+  gap: 14px;
+}
+
+.supportcontacticon {
+  height: 36px;
+  width: 36px;
+  border-radius: 10px;
+  background-color: #dbeafe;
+  color: #155dfc;
+  padding: 9px;
+}
+
+.supportcontacticon1 {
+  height: 36px;
+  width: 36px;
+  border-radius: 10px;
+  background-color: #d0fae5;
+  color: #009966;
+  padding: 9px;
+}
+
+.supportcontacticon2 {
+  height: 36px;
+  width: 36px;
+  border-radius: 10px;
+  background-color: #fef3c6;
+  color: #e17100;
+  padding: 9px;
+}
+
+.supportcontacticon3 {
+  height: 36px;
+  width: 36px;
+  border-radius: 10px;
+  background-color: #f3e8ff;
+  color: #9810fa;
+  padding: 9px;
+}
+
+.supportcontactdetails h3 {
+  color: #18181b;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.supportcontactdetails p {
+  color: #52525c;
+  font-size: 13px;
+  font-weight: 400;
+  margin-top: 4px;
+}
+
+.previoustickets {
+  height: 1666px;
+  width: 1020px;
+}
+
+.previousticketsheader {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.previousticketsheader h2 {
+  color: #18181b;
+  font-size: 30px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.previousticketsheader p {
+  height: 34px;
+  width: 110px;
+  background-color: #f3e8ff;
+  border-radius: 8px;
+  border: 1px solid #e9d4ff;
+  color: #8200db;
+  font-size: 12px;
+  font-weight: bold;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+.previousticketsicon {
+  color: #9810fa;
+  font-size: 24px;
+}
+
+.ticketdetails {
+  height: 400px;
+  width: 1020px;
+  border-radius: 14px;
+  border: 1px solid #e9d4ff;
+  margin-top: 20px;
+}
+
+.ticketdetailstop {
+  height: 148px;
+  width: 1018px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #f8fafc, #fafafa);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ticketdetailstags {
+  list-style: none;
+  display: flex;
+  gap: 14px;
+}
+
+.ticketdetailstop h2 {
+  font-size: 20px;
+  color: #18181b;
+  font-weight: 400;
+  margin-top: 12px;
+}
+
+.ticketdetailstop p {
+  color: #52525c;
+  font-size: 14px;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.ticketdetailicon {
+  color: #009966;
+}
+
+.responsetime {
+  height: 22px;
+  width: 148px;
+  background-color: #dcfce7;
+  border: 1px solid #b9f8cf;
+  color: #008236;
+  font-size: 12px;
+  justify-content: center;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+}
+
+.yourquery {
+  padding: 24px;
+}
+
+.yourquery1 {
+  padding-left: 24px;
+}
+
+.yourquery h2 {
+  font-size: 14px;
+  font-weight: bold;
+  color: #3f3f47;
+  margin-top: 12px;
+}
+
+.yourquery1 h2 {
+  font-size: 14px;
+  font-weight: bold;
+  color: #007a55;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.yourquery p {
+  height: 58px;
+  width: 960px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  color: #3f3f47;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 20px;
+  margin-top: 12px;
+}
+
+.yourquery1 p {
+  height: 58px;
+  width: 960px;
+  border-radius: 14px;
+  border: 1px solid #a4f4cf;
+  background: linear-gradient(135deg, #ecfdf5, #f0fdf4);
+  color: #004f3b;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 20px;
+  margin-top: 12px;
+}
+
+@media screen and (max-width: 600px) {
+  .enquirycontainer {
+    width: 100%;
+    height: auto;
+    padding: 0px 12px;
+  }
+
+  .leadheader {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .contactcontainer {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .contactcontainerleft {
+    width: 100%;
+    height: auto;
+  }
+
+  .contactcontainerleftheader {
+    width: 100%;
+  }
+
+  .accountinformation {
+    width: 90%;
+    height: auto;
+    padding: 12px;
+  }
+
+  .accountinfo {
+    width: 100%;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .accountformdiv {
+    width: 100%;
+  }
+
+  .accountformtext {
+    width: 90%;
+    border-radius: 4px;
+  }
+
+  .accountformdiv {
+    width: 100%;
+  }
+
+  .accountformtext1 {
+    width: 90%;
+  }
+
+  .prioritylevel {
+    width: 90%;
+  }
+
+  .ticketsubmitbutton {
+    width: 90%;
+  }
+
+  .contactcontainerright {
+    display: none;
+  }
+
+  .previoustickets {
+    width: 100%;
+    margin-top: 80px;
+  }
+
+  .previousticketsheader {
+    width: 100%;
+  }
+
+  .previousticketsheader h2 {
+    font-size: 16px;
+  }
+
+  .previousticketsheader p {
+    width: fit-content;
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .ticketdetails {
+    width: 100%;
+    height: auto;
+  }
+
+  .ticketdetailstop {
+    width: 100%;
+    height: auto;
+  }
+
+  .buyerenquiryid {
+    font-size: 6px;
+  }
+
+  .buyerenquirystage3 {
+    gap: 3px;
+    font-size: 10px;
+  }
+
+  .buyerenquirytag {
+    width: fit-content;
+    height: auto;
+    padding: 4px 8px;
+    font-size: 8px;
+  }
+
+  .buyerenquirystage2 {
+    font-size: 6px;
+  }
+
+  .ticketdetailstop h2 {
+    font-size: 18px;
+  }
+
+  .ticketdetailstop p {
+    font-size: 8px;
+  }
+
+  .responsetime {
+    padding: 4px 8px;
+    width: fit-content;
+    font-size: 8px;
+  }
+
+  .yourquery {
+    width: 100%;
+  }
+
+  .yourquery p {
+    width: 100%;
+    height: auto;
+    padding: 10px;
+  }
+
+  .yourquery1 {
+    width: 100%;
+  }
+
+  .yourquery1 p {
+    width: 90%;
+    height: auto;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+
+  .contactcontainer {
+    height: auto;
+  }
+
+  .previoustickets {
+    height: auto;
+    margin-top: 20px;
+  }
+
+  .ticketdetails {
+    height: auto;
+  }
+
+  .prioritylevel {
+    flex-wrap: wrap;
+  }
+
+  .prioritylevellow,
+  .prioritylevelmedium,
+  .prioritylevelhigh {
+    width: 100%;
+  }
+}

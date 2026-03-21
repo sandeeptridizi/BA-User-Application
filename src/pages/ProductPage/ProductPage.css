@@ -1,0 +1,471 @@
+.productpagecontainer,
+.productpagecontainer1{
+    min-height: 1400px;
+    width: auto;
+    margin: 0;
+    padding: 14px;
+    background-color: #FEF7E4;
+}
+
+.productheaddesc1{
+    font-size: 16px;
+    color: #52525C;
+    display: inline-flex;
+    margin:14px 12px 0 0 ;
+    gap: 8px;
+}
+
+.productpagedetail{
+    gap: 12px;
+    padding: 26px;
+    display: flex;
+}
+
+.productpageleft{
+    width: 678px;
+    min-height: 1246px;
+}
+
+.productpageright{
+    width: 300px;
+    height: 1246px;
+}
+
+.productpageimage{
+    height: 578px;
+    width: 678px;
+    box-shadow: inset 0 0 0 1.25px rgba(0, 0, 0, 0.1);
+    border-radius: 14px;
+}
+
+.productheaderimage{
+    height: 396px;
+    width: 678px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.productimagescroller{
+    list-style: none;
+    display: flex;
+    height: 154px;
+    width: 678px;
+    padding: 10px;
+    gap: 10px;
+    margin-left: 10px;
+}
+
+.productimageone{
+    height: 122px;
+    width: 208px;
+    border-radius: 10px;
+}
+
+.productdescription{
+    min-height: 174px;
+    width: 678px;
+    padding: 32px;
+    box-shadow: inset 0 0 0 1.25px rgba(0, 0, 0, 0.1);
+    border-radius: 14px;
+    margin-top: 14px;
+}
+
+.producttitle{
+    color:#0A0A0A;
+    font-size: 16px;
+}
+
+.productdescpara{
+    color: #3F3F47;
+    font-size: 16px;
+    width: 640px;
+    line-height: 26px;
+    margin-top: 14px;
+}
+
+.product-video-wrapper {
+    width: 100%;
+    margin-top: 12px;
+}
+
+.product-video-player {
+    width: 100%;
+    max-height: 400px;
+    border-radius: 12px;
+    background: #000;
+}
+
+.productfeatures{
+    height: 82px;
+    width: 658px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.productfeaturesleft{
+    list-style: none;
+    width: 320px;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.productfeaturelist{
+    color: #0A0A0A;
+    font-size: 14px;
+    display: flex;   
+    align-items: center;  
+    margin-top: 4px;
+    gap: 6px;             
+}
+
+.featuredoticon{
+    color: #D4AF37;
+    font-size: 24px;
+}
+
+.productfeaturesright{
+    list-style: none;
+    gap: 12px;
+    width: 320px;
+    margin-top: 14px;
+}
+
+.productowner{
+    height: 240px;
+    width: 678px;
+    padding: 32px;
+    box-shadow: inset 0 0 0 1.25px rgba(0, 0, 0, 0.1);
+    border-radius: 14px;
+    margin-top: 14px;
+}
+
+.productowner1{
+    height: 188px;
+    width: 342px;
+    padding: 32px;
+    box-shadow: inset 0 0 0 1.25px rgba(0, 0, 0, 0.1);
+    border-radius: 14px;
+    margin-top: 14px;
+}
+
+.productownerinfo{
+    height: 40px;
+    width: 658px;
+    display: flex;
+    margin-top: 14px;
+}
+
+.productownericon{
+    height: 32px;
+    width: 32px;
+    border-radius: 10px;
+    padding: 6px;
+    color: #52525C;
+    background-color: #F4F4F5;
+    font-size: 20px;
+    margin: 6px 8px 0 0 ;
+}
+
+.productownedetails{
+    list-style: none;
+    gap: 6px;
+    display: flex;
+    flex-direction: column;
+}
+
+.productownerdata{
+    color: #71717B;
+    font-size: 14px;
+}
+
+.productownername{
+    color: #0A0A0A;
+    font-size: 14px;
+}
+
+.productstatus{
+    height: 262px;
+    width: 342px;
+    border-radius: 14px;
+    box-shadow: inset 0 0 0 1.25px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    padding-left: 25px;
+}
+
+.currentstatus{
+    font-size: 14px;
+    color: #71717B;
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.currentstatus1{
+    font-size: 14px;
+    color: #71717B;
+    display: inline-flex;
+    margin-top: 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+}
+
+.productpageactivetag{
+    font-size: 12px;
+    color: #ffffff;
+    border-radius: 8px;
+    background-color: #0A0A0A;
+    padding: 4px;
+    width: fit-content;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.productpagepricetag{
+    color: #D4AF37;
+    font-size: 24px;
+    margin-top: 16px;
+}
+
+.productbreakline{
+    height: 1px;
+    background-color: #c6c6c7;
+    width: 290px;
+    margin-top: 14px;
+}
+
+.productperformance{
+    width: 342px;
+    height: 184px;
+    border-radius: 14px;
+    box-shadow: inset 0 0 0 1.25px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    padding-left: 25px;
+    margin-top: 20px;
+}
+
+.performanceviews{
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 20px 0 0 ;
+}
+
+.performancecount{
+    color: #0A0A0A;
+    font-size: 18px;
+    margin-top: 20px;
+}
+
+.productpagebuttons{
+    height: auto;
+    padding: 16px 0;
+    width: 342px;
+    border-radius: 14px;
+    box-shadow: inset 0 0 0 1.25px rgba(0, 0, 0, 0.1);
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.editproductbutton{
+    height: 36px;
+    width: 292px;
+    border-radius: 8px;
+    background-color: #D4AF37;
+    color: #0A0A0A;
+    border-color: #D4AF37;
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.deleteproductbutton{
+    height: 36px;
+    width: 292px;
+    border-radius: 8px;
+    background-color: #dc2626;
+    color: #fff;
+    border: none;
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.deleteproductbutton:hover{
+    background-color: #b91c1c;
+}
+
+.deleteproductbutton:disabled{
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.productsbackbutton{
+    height: 36px;
+    width: 292px;
+    border-radius: 8px;
+    box-shadow: inset 0 0 0 1.25px rgba(0, 0, 0, 0.1);
+    color: #0A0A0A;
+    border-color: 1.25px rgba(153, 153, 153, 0.1);
+    font-size: 14px;
+}
+
+.productdetails-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.productdetail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px;
+    background: #FEFCF3;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.productdetail-label {
+    font-size: 13px;
+    color: #71717B;
+    font-weight: 500;
+}
+
+.productdetail-value {
+    font-size: 14px;
+    color: #0A0A0A;
+    font-weight: 500;
+    word-break: break-word;
+}
+
+/* ── Mobile Responsiveness ── */
+@media (max-width: 768px) {
+    .productpagecontainer,
+    .productpagecontainer1 {
+        min-height: unset;
+        padding: 10px;
+    }
+
+    .productpagedetail {
+        flex-direction: column;
+        padding: 12px;
+        gap: 16px;
+    }
+
+    .productpageleft {
+        width: 100%;
+        min-height: unset;
+    }
+
+    .productpageright {
+        width: 100%;
+        height: auto;
+    }
+
+    .productpageimage {
+        width: 100%;
+        height: auto;
+    }
+
+    .productheaderimage {
+        width: 100%;
+        height: auto;
+        max-height: 280px;
+        object-fit: cover;
+    }
+
+    .productimagescroller {
+        width: 100%;
+        overflow-x: auto;
+        padding: 8px;
+        margin-left: 0;
+    }
+
+    .productimageone {
+        flex-shrink: 0;
+        width: 140px;
+        height: 90px;
+    }
+
+    .productdescription {
+        width: 100%;
+        padding: 16px;
+    }
+
+    .productdescpara {
+        width: 100%;
+    }
+
+    .productfeatures {
+        width: 100%;
+        height: auto;
+        flex-direction: column;
+    }
+
+    .productfeaturesleft,
+    .productfeaturesright {
+        width: 100%;
+    }
+
+    .productowner {
+        width: 100%;
+        height: auto;
+        padding: 16px;
+    }
+
+    .productownerinfo {
+        width: 100%;
+    }
+
+    .productowner1 {
+        width: 100%;
+        height: auto;
+        padding: 16px;
+    }
+
+    .productstatus {
+        width: 100%;
+        height: auto;
+    }
+
+    .productbreakline {
+        width: 100%;
+    }
+
+    .productperformance {
+        width: 100%;
+        height: auto;
+    }
+
+    .productpagebuttons {
+        width: 100%;
+        height: auto;
+        padding: 16px;
+    }
+
+    .editproductbutton,
+    .deleteproductbutton,
+    .productsbackbutton {
+        width: 100%;
+    }
+
+    .productdetails-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .productdetails-grid {
+        grid-template-columns: 1fr;
+    }
+}

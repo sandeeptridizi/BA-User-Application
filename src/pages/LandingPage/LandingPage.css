@@ -1,0 +1,14 @@
+.landing-page-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  gap: 16px;
+}
+
+@media screen and (max-width: 510px) {
+  .landing-page-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+}
