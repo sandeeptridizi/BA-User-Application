@@ -1,5 +1,7 @@
 import './PricingPlans.css';
 import { useState, useEffect, useRef } from "react";
+import api from '../../../lib/api';
+import { getUser, setUser as saveUserToStorage } from '../../../lib/auth';
 
 import { LuStar } from 'react-icons/lu';
 import { LuCrown } from 'react-icons/lu';
@@ -14,133 +16,185 @@ import { FaCheck } from 'react-icons/fa6';
 import { GoPeople } from 'react-icons/go';
 import { FiCamera } from 'react-icons/fi';
 
-const advertisementData = [
-  {
-    id: 1,
-    icon: <HiOutlineSpeakerphone />,
-    title: 'In Listings Banner',
-    cost: '5,999',
-  },
-  {
-    id: 2,
-    icon: <HiOutlineSpeakerphone />,
-    title: 'Pop-Up Banner',
-    cost: '8,999',
-  },
-  {
-    id: 3,
-    icon: <HiOutlineSpeakerphone />,
-    title: 'HomePage Banner',
-    cost: '9,999',
-  },
-];
-
-const packagesData = [
-  {
-    id: 1,
-    duration: "1 week",
-    price: "2,500",
-  },
-  {
-    id: 2,
-    duration: "2 weeks",
-    price: "4,500",
-  },
-  {
-    id: 3,
-    duration: "1 month",
-    price: "8,000",
-  },
-];
-
-const enterprisePlans = [
-  {
-    id: 1,
-    name: "Enterprise Starter",
-    price: "14,999",
-    listings: "Custom",
-    featured: "2 / Month",
-    recommended: "2 / Month",
-    leads: "40 Leads",
-    support: "Priority"
-  },
-  {
-    id: 2,
-    name: "Enterprise Growth",
-    price: "30,000",
-    listings: "35 Listings",
-    featured: "3 / Month",
-    recommended: "3 / Month",
-    leads: "60 Leads",
-    support: "Priority"
-  },
-  {
-    id: 3,
-    name: "Enterprise Pro",
-    price: "50,000",
-    listings: "60 Listings",
-    featured: "4 / Month",
-    recommended: "4 / Month",
-    leads: "70 Leads",
-    support: "Priority"
-  },
-  {
-    id: 4,
-    name: "Enterprise Elite",
-    price: "1,00,000",
-    listings: "Unlimited Listings",
-    featured: "5 / Month",
-    recommended: "5 / Month",
-    leads: "Unlimited Leads",
-    support: "Dedicated Support"
+function parseFeatures(features) {
+  const map = {};
+  for (const f of features) {
+    const idx = f.indexOf(':');
+    if (idx !== -1) {
+      map[f.slice(0, idx)] = f.slice(idx + 1);
+    } else {
+      map[f] = true;
+    }
   }
-];
+  return map;
+}
 
-const leadsData = [
-  { id: 0, leads: "10", plan: "Basic", price: "Free", free: true },
-  { id: 1, leads: "20", plan: "Extra", price: "299" },
-  { id: 2, leads: "30", plan: "Plus", price: "499" },
-  { id: 3, leads: "50+", plan: "Premium", price: "999" }
-];
+function formatPrice(num) {
+  return num.toLocaleString('en-IN');
+}
 
 const PricingPlans = () => {
+  const [subscriptionPlans, setSubscriptionPlans] = useState([]);
+  const [bannerAds, setBannerAds] = useState([]);
+  const [featuredListings, setFeaturedListings] = useState([]);
+  const [leadUnlocks, setLeadUnlocks] = useState([]);
+  const [digitalMedia, setDigitalMedia] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [paymentLoading, setPaymentLoading] = useState(null);
+  const [profile, setProfile] = useState(null);
 
-  const [selectedAd, setSelectedAd] = useState(advertisementData[0]);
-  const [selectedPackage, setSelectedPackage] = useState(packagesData[0]);
-  const [selectedEnterprise, setSelectedEnterprise] = useState(enterprisePlans[0]);
+  const mainPlans = subscriptionPlans.filter(p => !p.title.startsWith('Enterprise'));
+  const enterprisePlans = subscriptionPlans.filter(p => p.title.startsWith('Enterprise'));
+
+  const [selectedAd, setSelectedAd] = useState(null);
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [selectedEnterprise, setSelectedEnterprise] = useState(null);
   const [step, setStep] = useState(0);
-  const selectedPlan = leadsData[step];
 
   const sliderRef = useRef(null);
 
   useEffect(() => {
+    async function fetchData() {
+      try {
+        const [subRes, bannerRes, featuredRes, leadRes, digitalRes, profileRes] = await Promise.all([
+          api.get('/api/package/public?category=SUBSCRIPTION_PLAN'),
+          api.get('/api/package/public?category=BANNER_AD'),
+          api.get('/api/package/public?category=FEATURED_LISTING'),
+          api.get('/api/package/public?category=LEAD_UNLOCK'),
+          api.get('/api/package/public?category=DIGITAL_MEDIA'),
+          api.get('/api/user/me').catch(() => null),
+        ]);
+
+        setSubscriptionPlans(subRes.data.data || []);
+        setBannerAds(bannerRes.data.data || []);
+        setFeaturedListings(featuredRes.data.data || []);
+        setLeadUnlocks(leadRes.data.data || []);
+
+        const dm = digitalRes.data.data;
+        if (dm && dm.length > 0) setDigitalMedia(dm[0]);
+
+        if (profileRes?.data?.data) setProfile(profileRes.data.data);
+
+        const banners = bannerRes.data.data || [];
+        if (banners.length) setSelectedAd(banners[0]);
+
+        const featured = featuredRes.data.data || [];
+        if (featured.length) setSelectedPackage(featured[0]);
+
+        const subs = subRes.data.data || [];
+        const ent = subs.filter(p => p.title.startsWith('Enterprise'));
+        if (ent.length) setSelectedEnterprise(ent[0]);
+      } catch (err) {
+        console.error('Failed to fetch pricing data:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  useEffect(() => {
     const container = sliderRef.current;
+    if (!container) return;
+
     const cards = container.querySelectorAll(
       ".pricing-page-grid-item-container, .pricing-page-grid-item-two-container"
     );
 
     const handleScroll = () => {
       const center = container.offsetWidth / 2;
-
       cards.forEach((card) => {
         const rect = card.getBoundingClientRect();
         const cardCenter = rect.left + rect.width / 2;
         const distance = Math.abs(center - cardCenter);
-
-        if (distance < 120) {
-          card.style.transform = "scale(1)";
-        } else {
-          card.style.transform = "scale(0.9)";
-        }
+        card.style.transform = distance < 120 ? "scale(1)" : "scale(0.9)";
       });
     };
 
     container.addEventListener("scroll", handleScroll);
-
     handleScroll();
-
     return () => container.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [loading]);
+
+  const handleSubscribe = async (pkg) => {
+    if (paymentLoading || pkg.price === 0) return;
+    setPaymentLoading(pkg.id);
+
+    try {
+      const orderRes = await api.post('/api/subscription/create-order', { packageId: pkg.id });
+      const { orderId, amount, currency, keyId } = orderRes.data.data;
+
+      const options = {
+        key: keyId || import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount,
+        currency,
+        name: 'Billionaire Auctions',
+        description: `${pkg.title} - Annual Subscription`,
+        order_id: orderId,
+        prefill: {
+          name: profile?.name || '',
+          email: profile?.email || '',
+          contact: profile?.phone || '',
+        },
+        handler: async (response) => {
+          try {
+            const verifyRes = await api.post('/api/subscription/verify', {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+            const updatedUser = verifyRes.data.data;
+            setProfile(updatedUser);
+            saveUserToStorage(updatedUser);
+            alert('Subscription activated successfully!');
+          } catch {
+            alert('Payment was received but verification failed. Please contact support.');
+          } finally {
+            setPaymentLoading(null);
+          }
+        },
+        modal: {
+          ondismiss: () => setPaymentLoading(null),
+        },
+        theme: { color: '#939311' },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', () => {
+        alert('Payment failed. Please try again.');
+        setPaymentLoading(null);
+      });
+      rzp.open();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to initiate payment. Please try again.');
+      setPaymentLoading(null);
+    }
+  };
+
+  const selectedLead = leadUnlocks[step] || null;
+
+  const planIcons = {
+    'Basic': <LuStar className='pricing-star-icon' />,
+    'Premium': <LuCrown className='pricing-star-icon' />,
+    'PRO': <TiFlashOutline className='pricing-crown-icon' />,
+  };
+
+  const getButtonLabel = (pkg) => {
+    if (paymentLoading === pkg.id) return 'Processing...';
+    if (pkg.price === 0) return 'Current Plan';
+    return 'Subscribe';
+  };
+
+  if (loading) {
+    return (
+      <div className='pricing-page-container'>
+        <div className='pricing-page-background'>
+          <h1 className='pricing-page-heading'>Flexible Pricing Plans</h1>
+        </div>
+        <p style={{ textAlign: 'center', padding: '2rem' }}>Loading pricing plans...</p>
+      </div>
+    );
+  }
 
   return (
     <div className='pricing-page-container'>
@@ -156,205 +210,103 @@ const PricingPlans = () => {
       </div>
       <div className='pricing-page-plans-container'>
         <div className='pricing-page-grid-container' ref={sliderRef}>
-          <div className='pricing-page-grid-item-container'>
-            <div className='pricing-page-header'>
-              <LuStar className='pricing-star-icon' />
-              <h3 className='pricing-heading'>Basic</h3>
-              <h3 className='plan-price'>
-                <BsCurrencyRupee /> 0
-              </h3>
-              <p className='pricing-text'>Free</p>
-            </div>
-            <div className='pricing-page-list-container'>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Till Sep 1, 2026</p>
-                <span className='pricing-time'>Unlimited</span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Till Mar 1, 2027</p>
-                <span className='pricing-time'>3 / Month</span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>After Mar 1, 2027</p>
-                <span className='pricing-time'>1 / Month</span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Featured Listings</p>
-                <RxCross2 className='cross-icon' />
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Recommended</p>
-                <RxCross2 className='cross-icon' />
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Search Visibility</p>
-                <span className='pricing-time'>Standard</span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Leads</p>
-                <span className='pricing-time'>10 / listing</span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Support</p>
-                <span className='pricing-time'>Email</span>
-              </div>
-            </div>
-            <button className='pricing-btn'>Get Started</button>
-          </div>
-          <div className='pricing-page-grid-item-container'>
-            <div className='pricing-page-header'>
-              <LuCrown className='pricing-star-icon' />
-              <h3 className='pricing-heading'>Premium</h3>
-              <h3 className='plan-price'>
-                <BsCurrencyRupee /> 4,999
-              </h3>
-              <p className='pricing-text'>+ GST</p>
-            </div>
-            <div className='pricing-page-list-container'>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Till Sep 1, 2026</p>
-                <span className='pricing-time'>Unlimited</span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Till Mar 1, 2027</p>
-                <span className='pricing-time'>3 / Month</span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>After Mar 1, 2027</p>
-                <span className='pricing-time'>3 / Month</span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Featured Listings</p>
-                <RxCross2 className='cross-icon' />
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Recommended</p>
-                <RxCross2 className='cross-icon' />
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Search Visibility</p>
-                <span className='pricing-time'>Medium</span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Leads</p>
-                <span className='pricing-time'>20 / listing</span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Support</p>
-                <span className='pricing-time'>Email</span>
-              </div>
-            </div>
-            <button className='pricing-btn'>Get Started</button>
-          </div>
-          <div className='pricing-page-grid-item-two-container'>
-            <div className='pricing-page-header'>
-              <TiFlashOutline className='pricing-crown-icon' />
-              <h3 className='pricing-heading'>PRO</h3>
-              <h3 className='plan-price'>
-                <BsCurrencyRupee /> 6,999
-              </h3>
-              <p className='pricing-text'>+ GST</p>
-            </div>
-            <div className='pricing-page-list-container'>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Till Sep 1, 2026</p>
-                <span className='pricing-time'>Unlimited</span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Till Mar 1, 2027</p>
-                <span className='pricing-time'>3 / Month</span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>After Mar 1, 2027</p>
-                <span className='pricing-time'>9 / Month</span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Featured Listings</p>
-                <span className='pricing-time'>2 Listings</span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Recommended</p>
-                <span className='pricing-time'>1 Listing</span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Search Visibility</p>
-                <span className='pricing-time'>High</span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Leads</p>
-                <span className='pricing-time'>30 / listing</span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Support</p>
-                <span className='pricing-time'>Priority Line</span>
-              </div>
-            </div>
-            <button className='pricing-popular-btn'>Get Started</button>
-            <div className='most-poplular-container'>MOST POPULAR</div>
-          </div>
-          <div className='pricing-page-grid-item-container'>
-            <div className="enterprise-options">
-              {enterprisePlans.map((plan) => (
-                <label key={plan.id} className="enterprise-option">
-                  <input
-                    type="radio"
-                    name="enterprisePlan"
-                    checked={selectedEnterprise.id === plan.id}
-                    onChange={() => setSelectedEnterprise(plan)}
-                  />
-                  {plan.name}
-                </label>
-              ))}
-            </div>
-            <div className='pricing-page-header'>
-              <LuShield className='pricing-star-icon' />
-              <h3 className='pricing-heading'>
-                {selectedEnterprise.name}
-              </h3>
-              <h3 className='plan-price'>
-                <BsCurrencyRupee /> {selectedEnterprise.price}
-              </h3>
-              <p className='pricing-text'>+ GST</p>
-            </div>
-            <div className='pricing-page-list-container'>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Listings / Month</p>
-                <span className='pricing-time'>
-                  {selectedEnterprise.listings}
-                </span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Featured Listings</p>
-                <span className='pricing-time'>
-                  {selectedEnterprise.featured}
-                </span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Recommended Listings</p>
-                <span className='pricing-time'>
-                  {selectedEnterprise.recommended}
-                </span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Leads Provided</p>
-                <span className='pricing-time'>
-                  {selectedEnterprise.leads}
-                </span>
-              </div>
-              <div className='pricing-page-list-item-container'>
-                <p className='pricing-date'>Support</p>
-                <span className='pricing-time'>
-                  {selectedEnterprise.support}
-                </span>
-              </div>
-            </div>
 
-            <button className='pricing-btn'>Get Started</button>
+          {mainPlans.map((plan) => {
+            const isPro = plan.title === 'PRO';
+            const isFree = plan.price === 0;
+            return (
+              <div
+                key={plan.id}
+                className={isPro ? 'pricing-page-grid-item-two-container' : 'pricing-page-grid-item-container'}
+              >
+                <div className='pricing-page-header'>
+                  {planIcons[plan.title] || <LuStar className='pricing-star-icon' />}
+                  <h3 className='pricing-heading'>{plan.title}</h3>
+                  <h3 className='plan-price'>
+                    <BsCurrencyRupee /> {formatPrice(plan.price)}
+                  </h3>
+                  <p className='pricing-text'>{isFree ? 'Free' : '+ GST'}</p>
+                </div>
+                <div className='pricing-page-list-container'>
+                  {plan.features.map((f, i) => {
+                    const idx = f.indexOf(':');
+                    if (idx === -1) return null;
+                    const label = f.slice(0, idx);
+                    const value = f.slice(idx + 1);
+                    return (
+                      <div key={i} className='pricing-page-list-item-container'>
+                        <p className='pricing-date'>{label}</p>
+                        {value === 'None'
+                          ? <RxCross2 className='cross-icon' />
+                          : <span className='pricing-time'>{value}</span>
+                        }
+                      </div>
+                    );
+                  })}
+                </div>
+                <button
+                  className={isPro ? 'pricing-popular-btn' : 'pricing-btn'}
+                  onClick={() => !isFree && handleSubscribe(plan)}
+                  disabled={paymentLoading === plan.id || isFree}
+                  style={isFree ? { opacity: 0.6, cursor: 'default' } : {}}
+                >
+                  {getButtonLabel(plan)}
+                </button>
+                {isPro && <div className='most-poplular-container'>MOST POPULAR</div>}
+              </div>
+            );
+          })}
 
-          </div>
-
+          {enterprisePlans.length > 0 && selectedEnterprise && (
+            <div className='pricing-page-grid-item-container'>
+              <div className="enterprise-options">
+                {enterprisePlans.map((plan) => (
+                  <label key={plan.id} className="enterprise-option">
+                    <input
+                      type="radio"
+                      name="enterprisePlan"
+                      checked={selectedEnterprise.id === plan.id}
+                      onChange={() => setSelectedEnterprise(plan)}
+                    />
+                    {plan.title}
+                  </label>
+                ))}
+              </div>
+              <div className='pricing-page-header'>
+                <LuShield className='pricing-star-icon' />
+                <h3 className='pricing-heading'>{selectedEnterprise.title}</h3>
+                <h3 className='plan-price'>
+                  <BsCurrencyRupee /> {formatPrice(selectedEnterprise.price)}
+                </h3>
+                <p className='pricing-text'>+ GST</p>
+              </div>
+              <div className='pricing-page-list-container'>
+                {selectedEnterprise.features.map((f, i) => {
+                  const idx = f.indexOf(':');
+                  if (idx === -1) return null;
+                  const label = f.slice(0, idx);
+                  const value = f.slice(idx + 1);
+                  return (
+                    <div key={i} className='pricing-page-list-item-container'>
+                      <p className='pricing-date'>{label}</p>
+                      <span className='pricing-time'>{value}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <button
+                className='pricing-btn'
+                onClick={() => handleSubscribe(selectedEnterprise)}
+                disabled={!!paymentLoading}
+                style={paymentLoading ? { opacity: 0.6 } : {}}
+              >
+                {getButtonLabel(selectedEnterprise)}
+              </button>
+            </div>
+          )}
         </div>
       </div>
+
       <div className="pricing-options-flex">
         <div className='website-advertising-container'>
           <div className='website-advertising-header'>
@@ -370,40 +322,37 @@ const PricingPlans = () => {
             </p>
           </div>
 
-          <div className="website-advertising-selector">
-            <div className="ad-options">
-              {advertisementData.map((item) => (
-                <label key={item.id} className="ad-option">
-                  <input
-                    type="radio"
-                    name="advertisement"
-                    checked={selectedAd.id === item.id}
-                    onChange={() => setSelectedAd(item)}
-                  />
-                  {item.title}
-                </label>
-              ))}
-            </div>
-
-            <div className="website-grid-item-container">
-              <div className="website-grid-item-icon-container">
-                {selectedAd.icon}
+          {selectedAd && (
+            <div className="website-advertising-selector">
+              <div className="ad-options">
+                {bannerAds.map((item) => (
+                  <label key={item.id} className="ad-option">
+                    <input
+                      type="radio"
+                      name="advertisement"
+                      checked={selectedAd.id === item.id}
+                      onChange={() => setSelectedAd(item)}
+                    />
+                    {item.title}
+                  </label>
+                ))}
               </div>
 
-              <h3 className="website-grid-item-title">{selectedAd.title}</h3>
-
-              <h2 className="website-grid-item-cost">
-                <MdCurrencyRupee />
-                {selectedAd.cost}
-              </h2>
-
-              <p className="month">/ month + GST</p>
-
-              <button className="book-now-btn">Book Now</button>
+              <div className="website-grid-item-container">
+                <div className="website-grid-item-icon-container">
+                  <HiOutlineSpeakerphone />
+                </div>
+                <h3 className="website-grid-item-title">{selectedAd.title}</h3>
+                <h2 className="website-grid-item-cost">
+                  <MdCurrencyRupee />
+                  {formatPrice(selectedAd.price)}
+                </h2>
+                <p className="month">/ month + GST</p>
+                <button className="book-now-btn">Book Now</button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
-
 
         <div className='packages-container'>
           <div className='packages-header'>
@@ -415,160 +364,141 @@ const PricingPlans = () => {
             </p>
           </div>
 
-          <div className="packages-selector">
-            <div className="package-options">
-              {packagesData.map((item) => (
-                <label key={item.id} className="package-option">
-                  <input
-                    type="radio"
-                    name="package"
-                    checked={selectedPackage.id === item.id}
-                    onChange={() => setSelectedPackage(item)}
-                  />
-                  {item.duration}
-                </label>
-              ))}
-            </div>
-
-            <div className="packages-grid-item-container">
-              <div className="number-container">{selectedPackage.id}</div>
-
-              <h3 className="package-item-heading">{selectedPackage.duration}</h3>
-
-              <h2 className="package-price">
-                <MdCurrencyRupee />
-                {selectedPackage.price}
-              </h2>
-
-              <p className="gst">+ GST</p>
-
-              <div className="package-list-container">
-                <div className="package-item-container">
-                  <FaCheck className="package-check-icon" /> Priority Placement
-                </div>
-                <div className="package-item-container">
-                  <FaCheck className="package-check-icon" /> 10x More Visibility
-                </div>
-                <div className="package-item-container">
-                  <FaCheck className="package-check-icon" /> More Leads
-                </div>
+          {selectedPackage && (
+            <div className="packages-selector">
+              <div className="package-options">
+                {featuredListings.map((item) => (
+                  <label key={item.id} className="package-option">
+                    <input
+                      type="radio"
+                      name="package"
+                      checked={selectedPackage.id === item.id}
+                      onChange={() => setSelectedPackage(item)}
+                    />
+                    {item.title}
+                  </label>
+                ))}
               </div>
 
-              <button className="select-package-btn">Select Package</button>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <div className='leads-container'>
-        <div className='packages-header'>
-          <GoPeople className='packages-award-icon' />
-          <h2 className='packages-heading'>Lead Contacts Unlock</h2>
-          <p className='packages-text'>
-            Need more leads? Purchase additional contact unlocks
-          </p>
-        </div>
-        <div className="leads-selector-container">
-          <div className="slider-wrapper">
-
-            <input
-              type="range"
-              min="0"
-              max="3"
-              step="1"
-              value={step}
-              onChange={(e) => setStep(Number(e.target.value))}
-              className="leads-slider"
-            />
-
-            <div className="slider-labels">
-              {leadsData.map((item, index) => (
-                <span
-                  key={item.id}
-                  className={index === step ? "slider-label active" : "slider-label"}
-                >
-                  {item.leads}
-                </span>
-              ))}
-            </div>
-
-          </div>
-
-          {/* Plan Card */}
-          <div className="leads-card">
-
-            {selectedPlan.free && (
-              <div className="free-container">FREE</div>
-            )}
-
-            <p className="plan">{selectedPlan.plan}</p>
-
-            <h3 className="leads-heading">
-              {selectedPlan.leads} Leads
-            </h3>
-
-            <h2 className="leads-cost">
-              {selectedPlan.price === "Free"
-                ? "Free"
-                : <>
-                    <MdCurrencyRupee /> {selectedPlan.price}
-                  </>
-              } {!selectedPlan.free && <p className="leads-gst">+ GST</p>}
-            </h2>
-            <button className="leads-purchase-btn">
-              {selectedPlan.free ? "Included" : "Purchase"}
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-      <div className='digital-media-container'>
-        <div className='digital-media-icon-content-container'>
-          <div className='digital-media-icon-container'>
-            <FiCamera />
-          </div>
-          <div className='digital-media-content-container'>
-            <h1 className='digital-media-heading'>Digital Media Package</h1>
-            <h2 className='digital-media-price'>₹5,999 + GST</h2>
-            <div className='digital-media-justify-container'>
-              <div className='package-list-container'>
-                <div className='package-item-container'>
-                  <FaCheck className='package-check-icon' /> On-site visit for
-                  content creation
+              <div className="packages-grid-item-container">
+                <div className="number-container">{featuredListings.indexOf(selectedPackage) + 1}</div>
+                <h3 className="package-item-heading">{selectedPackage.title}</h3>
+                <h2 className="package-price">
+                  <MdCurrencyRupee />
+                  {formatPrice(selectedPackage.price)}
+                </h2>
+                <p className="gst">+ GST</p>
+                <div className="package-list-container">
+                  <div className="package-item-container">
+                    <FaCheck className="package-check-icon" /> Priority Placement
+                  </div>
+                  <div className="package-item-container">
+                    <FaCheck className="package-check-icon" /> 10x More Visibility
+                  </div>
+                  <div className="package-item-container">
+                    <FaCheck className="package-check-icon" /> More Leads
+                  </div>
                 </div>
-                <div className='package-item-container'>
-                  <FaCheck className='package-check-icon' /> Social media
-                  promotion
-                </div>
-                <div className='package-item-container'>
-                  <FaCheck className='package-check-icon' /> Listing promotion
-                  on our website
-                </div>
-              </div>
-              <div className='package-list-container'>
-                <div className='package-item-container'>
-                  <FaCheck className='package-check-icon' /> Professional photo
-                  and video shoot
-                </div>
-                <div className='package-item-container'>
-                  <FaCheck className='package-check-icon' /> Paid advertising on
-                  Meta platforms
-                </div>
-                <div className='package-item-container'>
-                  <FaCheck className='package-check-icon' /> Valid for Telangana
-                  & Andhra Pradesh; extra charges for other locations
-                </div>
+                <button className="select-package-btn">Select Package</button>
               </div>
             </div>
-            <button className='digital-media-btn'>
-              Book Digital Media Package
-            </button>
-          </div>
+          )}
         </div>
       </div>
+
+      {leadUnlocks.length > 0 && (
+        <div className='leads-container'>
+          <div className='packages-header'>
+            <GoPeople className='packages-award-icon' />
+            <h2 className='packages-heading'>Lead Contacts Unlock</h2>
+            <p className='packages-text'>
+              Need more leads? Purchase additional contact unlocks
+            </p>
+          </div>
+          <div className="leads-selector-container">
+            <div className="slider-wrapper">
+              <input
+                type="range"
+                min="0"
+                max={leadUnlocks.length - 1}
+                step="1"
+                value={step}
+                onChange={(e) => setStep(Number(e.target.value))}
+                className="leads-slider"
+              />
+              <div className="slider-labels">
+                {leadUnlocks.map((item, index) => {
+                  const feat = parseFeatures(item.features);
+                  return (
+                    <span
+                      key={item.id}
+                      className={index === step ? "slider-label active" : "slider-label"}
+                    >
+                      {feat.Leads || item.title}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+
+            {selectedLead && (() => {
+              const feat = parseFeatures(selectedLead.features);
+              const isFree = selectedLead.price === 0;
+              return (
+                <div className="leads-card">
+                  {isFree && <div className="free-container">FREE</div>}
+                  <p className="plan">{selectedLead.title}</p>
+                  <h3 className="leads-heading">{feat.Leads || '—'} Leads</h3>
+                  <h2 className="leads-cost">
+                    {isFree
+                      ? "Free"
+                      : <><MdCurrencyRupee /> {formatPrice(selectedLead.price)}</>
+                    }
+                    {!isFree && <p className="leads-gst">+ GST</p>}
+                  </h2>
+                  <button className="leads-purchase-btn">
+                    {isFree ? "Included" : "Purchase"}
+                  </button>
+                </div>
+              );
+            })()}
+          </div>
+        </div>
+      )}
+
+      {digitalMedia && (
+        <div className='digital-media-container'>
+          <div className='digital-media-icon-content-container'>
+            <div className='digital-media-icon-container'>
+              <FiCamera />
+            </div>
+            <div className='digital-media-content-container'>
+              <h1 className='digital-media-heading'>{digitalMedia.title}</h1>
+              <h2 className='digital-media-price'>₹{formatPrice(digitalMedia.price)} {digitalMedia.tag}</h2>
+              <div className='digital-media-justify-container'>
+                <div className='package-list-container'>
+                  {digitalMedia.features.slice(0, 3).map((f, i) => (
+                    <div key={i} className='package-item-container'>
+                      <FaCheck className='package-check-icon' /> {f}
+                    </div>
+                  ))}
+                </div>
+                <div className='package-list-container'>
+                  {digitalMedia.features.slice(3).map((f, i) => (
+                    <div key={i} className='package-item-container'>
+                      <FaCheck className='package-check-icon' /> {f}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button className='digital-media-btn'>
+                Book Digital Media Package
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className='pricing-page-footer-container'>
         <h2 className='pricing-page-footer-heading'>Ready to Get Started?</h2>
         <p className='pricing-page-footer-text'>

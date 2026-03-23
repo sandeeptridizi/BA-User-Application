@@ -11,8 +11,6 @@ import { BsStars } from "react-icons/bs";
 import { CiCircleCheck } from "react-icons/ci";
 import { FaRegStar } from "react-icons/fa6";
 import { GoArrowUpRight } from "react-icons/go";
-import { IoLockClosedOutline } from "react-icons/io5";
-import { FiShield } from "react-icons/fi";
 import api from '../../../lib/api';
 import { setUser as saveUserToStorage } from '../../../lib/auth';
 import { getFile } from '../../../lib/s3';
@@ -25,12 +23,12 @@ const getFirstLast = (name) => {
 };
 
 const PLAN_LABELS = { NONE: 'Basic', BASIC: 'Premium', PRO: 'Pro', ELITE: 'Enterprise' };
-const PLAN_PRICES = { BASIC: 4999, PRO: 6999, ELITE: 14999 };
 
 const Settings = () => {
     const [activeTab, setActiveTab] = useState("profile");
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [planPackages, setPlanPackages] = useState([]);
     const [editing, setEditing] = useState(false);
     const [saving, setSaving] = useState(false);
     const [saveMsg, setSaveMsg] = useState('');
@@ -40,10 +38,13 @@ const Settings = () => {
     const picInputRef = useRef(null);
 
     useEffect(() => {
-        const fetchProfile = async () => {
+        const fetchData = async () => {
             try {
-                const res = await api.get('/api/user/me');
-                const user = res.data?.data;
+                const [profileRes, pkgRes] = await Promise.all([
+                    api.get('/api/user/me'),
+                    api.get('/api/package/public?category=SUBSCRIPTION_PLAN'),
+                ]);
+                const user = profileRes.data?.data;
                 setProfile(user);
                 const { first, last } = getFirstLast(user?.name);
                 setForm({
@@ -53,13 +54,14 @@ const Settings = () => {
                     city: user?.city || '',
                     state: user?.state || '',
                 });
+                setPlanPackages(pkgRes.data?.data || []);
             } catch {
                 // fallback silent
             } finally {
                 setLoading(false);
             }
         };
-        fetchProfile();
+        fetchData();
     }, []);
 
     const handleSave = async () => {
@@ -124,16 +126,27 @@ const Settings = () => {
         }
     };
 
+    // Find a package by title from the loaded planPackages
+    const findPkg = (title) => planPackages.find(p => p.title === title);
+    const getPlanPrice = (enumVal) => {
+        const titleMap = { BASIC: 'Premium', PRO: 'PRO', ELITE: 'Enterprise Starter' };
+        const pkg = findPkg(titleMap[enumVal]);
+        return pkg?.price || 0;
+    };
+
     const handleSubscribe = async (plan) => {
         if (paymentLoading) return;
         setPaymentLoading(plan);
 
+        // Resolve packageId from plan enum
+        const titleMap = { BASIC: 'Premium', PRO: 'PRO', ELITE: 'Enterprise Starter' };
+        const pkg = findPkg(titleMap[plan]);
+
         try {
-            // 1. Create order on backend
-            const orderRes = await api.post('/api/subscription/create-order', { plan });
+            const body = pkg ? { packageId: pkg.id } : { plan };
+            const orderRes = await api.post('/api/subscription/create-order', body);
             const { orderId, amount, currency, keyId } = orderRes.data.data;
 
-            // 2. Open Razorpay checkout
             const options = {
                 key: keyId || import.meta.env.VITE_RAZORPAY_KEY_ID,
                 amount,
@@ -148,7 +161,6 @@ const Settings = () => {
                 },
                 handler: async (response) => {
                     try {
-                        // 3. Verify payment on backend
                         const verifyRes = await api.post('/api/subscription/verify', {
                             razorpay_order_id: response.razorpay_order_id,
                             razorpay_payment_id: response.razorpay_payment_id,
@@ -214,7 +226,6 @@ const Settings = () => {
         <ul className='activitycat1'>
             <li className={`catmenu4 ${activeTab === "profile" ? "active-profile" : ""}`}onClick={() => setActiveTab("profile")}>Profile</li>
             <li className={`catmenu4 ${activeTab === "membership" ? "active-membership" : ""}`}onClick={() => setActiveTab("membership")}>Membership</li>
-            <li className={`catmenu4 ${activeTab === "security" ? "active-security" : ""}`}onClick={() => setActiveTab("security")}>Security</li>
         </ul>
         {activeTab === "profile" && (
             <div className='profileinformation'>
@@ -376,11 +387,11 @@ const Settings = () => {
                 <div className='plandetails'>
                     <div className='planinfodetails'>
                         <div className='planinfodetailstop'>
-                            <p>Annual Cost</p>
+                            <p>Monthly Cost</p>
                             <span className='planinfoicon'><MdStar /></span>
                         </div>
-                        <h2>{isActive && currentPlan !== 'NONE' ? PLAN_PRICES[currentPlan]?.toLocaleString('en-IN') : '—'}</h2>
-                        <p>{isActive ? 'Billed annually' : '—'}</p>
+                        <h2>{isActive && currentPlan !== 'NONE' ? `₹${getPlanPrice(currentPlan).toLocaleString('en-IN')}` : '—'}</h2>
+                        <p>{isActive ? 'Billed monthly' : '—'}</p>
                     </div>
                     <div className='planinfodetails1'>
                         <div className='planinfodetailstop'>
@@ -476,76 +487,43 @@ const Settings = () => {
                 <h2>{isActive ? 'Change Plan' : 'Choose a Plan'}</h2>
                 <p>Choose a plan that fits your business needs</p>
                 <div className='upgradeplandetails'>
-                    <div className='basicplan'>
-                        <div className='basicplanicon'><FaRegStar /></div>
-                        <h2>Premium</h2>
-                        <p>Great for growing sellers</p>
-                        <h3>₹4,999<span>/year + GST</span></h3>
-                        <ul>
-                            <li><CiCircleCheck className='basicplanlisticon'/>3 Listings / month (after Mar 2027)</li>
-                            <li><CiCircleCheck className='basicplanlisticon'/>20 Leads / listing</li>
-                            <li><CiCircleCheck className='basicplanlisticon'/>Medium Search Visibility</li>
-                            <li><CiCircleCheck className='basicplanlisticon'/>Email Support</li>
-                        </ul>
-                        {currentPlan === 'BASIC' && isActive ? (
-                            <div className='currentbutton'><CiCircleCheck />You're on this plan</div>
-                        ) : (
-                            <div
-                                className='downgradebutton'
-                                onClick={() => handleSubscribe('BASIC')}
-                                style={{ opacity: paymentLoading ? 0.6 : 1, cursor: paymentLoading ? 'not-allowed' : 'pointer' }}
-                            >
-                                {getPlanButtonLabel('BASIC')}
+                    {planPackages.filter(p => p.price > 0).map((pkg) => {
+                        const planEnum = ({ Premium: 'BASIC', PRO: 'PRO', 'Enterprise Starter': 'ELITE', 'Enterprise Growth': 'ELITE', 'Enterprise Pro': 'ELITE', 'Enterprise Elite': 'ELITE' })[pkg.title];
+                        if (!planEnum) return null;
+                        const isCurrent = currentPlan === planEnum && isActive;
+                        const planStyles = { Premium: 'basicplan', PRO: 'proplan' };
+                        const iconStyles = { Premium: 'basicplanicon', PRO: 'proplanicon' };
+                        const listStyles = { Premium: 'basicplanlisticon', PRO: 'proplanlisticon' };
+                        const cardClass = planStyles[pkg.title] || 'eliteplan';
+                        const iconClass = iconStyles[pkg.title] || 'eliteplanicon';
+                        const listClass = listStyles[pkg.title] || 'eliteplanlisticon';
+                        const icons = { Premium: <FaRegStar />, PRO: <LuCrown /> };
+
+                        return (
+                            <div key={pkg.id} className={cardClass}>
+                                <div className={iconClass}>{icons[pkg.title] || <BsStars />}</div>
+                                <h2>{pkg.title}</h2>
+                                <p>{pkg.tag === 'Most Popular' ? 'Most Popular Choice' : pkg.tag || ''}</p>
+                                <h3>₹{pkg.price.toLocaleString('en-IN')}<span>/month + GST</span></h3>
+                                <ul>
+                                    {pkg.features.map((f, i) => (
+                                        <li key={i}><CiCircleCheck className={listClass}/>{f.includes(':') ? `${f.split(':')[0]}: ${f.split(':')[1]}` : f}</li>
+                                    ))}
+                                </ul>
+                                {isCurrent ? (
+                                    <div className='currentbutton'><CiCircleCheck />You're on this plan</div>
+                                ) : (
+                                    <div
+                                        className={cardClass === 'basicplan' ? 'downgradebutton' : 'upgradebutton'}
+                                        onClick={() => handleSubscribe(planEnum)}
+                                        style={{ opacity: paymentLoading ? 0.6 : 1, cursor: paymentLoading ? 'not-allowed' : 'pointer' }}
+                                    >
+                                        {cardClass !== 'basicplan' && <GoArrowUpRight />}{getPlanButtonLabel(planEnum)}
+                                    </div>
+                                )}
                             </div>
-                        )}
-                    </div>
-                    <div className='proplan'>
-                        <div className='proplanicon'><LuCrown /></div>
-                        <h2>Pro</h2>
-                        <p>Most Popular Choice</p>
-                        <h3>₹6,999<span>/year + GST</span></h3>
-                        <ul>
-                            <li><CiCircleCheck className='proplanlisticon'/>9 Listings / month (after Mar 2027)</li>
-                            <li><CiCircleCheck className='proplanlisticon'/>30 Leads / listing</li>
-                            <li><CiCircleCheck className='proplanlisticon'/>2 Featured + 1 Recommended</li>
-                            <li><CiCircleCheck className='proplanlisticon'/>High Search Visibility</li>
-                            <li><CiCircleCheck className='proplanlisticon'/>Priority Support Line</li>
-                        </ul>
-                        {currentPlan === 'PRO' && isActive ? (
-                            <div className='currentbutton'><CiCircleCheck />You're on this plan</div>
-                        ) : (
-                            <div
-                                className='upgradebutton'
-                                onClick={() => handleSubscribe('PRO')}
-                                style={{ opacity: paymentLoading ? 0.6 : 1, cursor: paymentLoading ? 'not-allowed' : 'pointer' }}
-                            >
-                                <GoArrowUpRight />{getPlanButtonLabel('PRO')}
-                            </div>
-                        )}
-                    </div>
-                    <div className='eliteplan'>
-                        <div className='eliteplanicon'><BsStars /></div>
-                        <h2>Enterprise</h2>
-                        <p>For high-volume sellers</p>
-                        <h3>₹14,999<span>/year + GST</span></h3>
-                        <ul>
-                            <li><CiCircleCheck className='eliteplanlisticon'/>Custom Listings / month</li>
-                            <li><CiCircleCheck className='eliteplanlisticon'/>40+ Leads / listing</li>
-                            <li><CiCircleCheck className='eliteplanlisticon'/>Featured & Recommended slots</li>
-                            <li><CiCircleCheck className='eliteplanlisticon'/>Priority Support</li>
-                        </ul>
-                        {currentPlan === 'ELITE' && isActive ? (
-                            <div className='currentbutton'><CiCircleCheck />You're on this plan</div>
-                        ) : (
-                            <div
-                                className='upgradebutton'
-                                onClick={() => handleSubscribe('ELITE')}
-                                style={{ opacity: paymentLoading ? 0.6 : 1, cursor: paymentLoading ? 'not-allowed' : 'pointer' }}
-                            >
-                                <GoArrowUpRight />{getPlanButtonLabel('ELITE')}
-                            </div>
-                        )}
-                    </div>
+                        );
+                    })}
                 </div>
             </div>
             <div className='needhelp'>
@@ -557,25 +535,6 @@ const Settings = () => {
                 </div>
             </div>
         </div>)}
-        {activeTab === "security" && (<div className='securityinformation'>
-                <div className='profileinformationtop'>
-                    <h2>Security Settings</h2>
-                    <p>Manage your password and security preferences</p>
-                </div>
-                <div className='profileotherdetails'>
-                    <p>Current Password</p>
-                    <h3><IoLockClosedOutline  />Enter current password</h3>
-                </div>
-                <div className='profileotherdetails'>
-                    <p>New Password</p>
-                    <h3><IoLockClosedOutline  />Enter new password</h3>
-                </div>
-                <div className='profileotherdetails'>
-                    <p>Confirm New Password</p>
-                    <h3><IoLockClosedOutline  />Enter new password</h3>
-                </div>
-                <div className='savechanges'><FiShield />Update Password</div>
-            </div>)}
     </div>;
 };
 

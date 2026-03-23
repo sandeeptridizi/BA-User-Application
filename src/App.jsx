@@ -14,12 +14,11 @@ import MobileNavbar from './components/MobileNavbar/MobileNavbar';
 import SignIn from './pages/SignIn/SignIn';
 import SignUp from './pages/SignUp/SignUp';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
-import OTPVerificationModal from './components/OTPVerificationModal/OTPVerificationModal';
 import useAppContext from './context/AppContext';
 import AuthenticationModal from './components/AuthenticationModal/AuthenticationModal';
 
 const App = () => {
-  const { openVerificationModel, openAuthenticationModal } = useAppContext();
+  const { openAuthenticationModal } = useAppContext();
 
   return (
     <BrowserRouter>
@@ -48,7 +47,6 @@ const App = () => {
         <Route path='sign-in' element={<SignIn />} />
         <Route path='sign-up' element={<SignUp />} />
       </Routes>
-      {openVerificationModel && <OTPVerificationModal />}
       {openAuthenticationModal && <AuthenticationModal />}
     </BrowserRouter>
   );

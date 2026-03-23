@@ -5,10 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import { LuShield } from 'react-icons/lu';
 import { TbDeviceMobile } from 'react-icons/tb';
 import { FaArrowRight } from 'react-icons/fa6';
-import { BiCheckCircle } from 'react-icons/bi';
 import { GoPerson } from 'react-icons/go';
 import { MdOutlineEmail } from 'react-icons/md';
 import { LuBuilding2 } from 'react-icons/lu';
+import { FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
 
 import companyLogo from '../../assets/company-logo.png';
 import api from '../../../lib/api';
@@ -27,6 +27,8 @@ const SignUp = () => {
   const [tab, setTab] = useState('phone');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [businessName, setBusinessName] = useState('');
   const [phoneDigits, setPhoneDigits] = useState('');
   const [error, setError] = useState('');
@@ -44,6 +46,10 @@ const SignUp = () => {
       setError('Email is required');
       return;
     }
+    if (!password || password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
 
     if (tab === 'phone') {
       const digits = phoneDigits.replace(/\D/g, '');
@@ -58,6 +64,7 @@ const SignUp = () => {
           phone,
           name: name.trim(),
           email: email.trim().toLowerCase(),
+          password,
           businessName: businessName.trim() || undefined,
           channel: 'phone',
         });
@@ -65,6 +72,7 @@ const SignUp = () => {
           phone,
           name: name.trim(),
           email: email.trim(),
+          password,
           businessName: businessName.trim(),
           channel: 'phone',
         });
@@ -86,6 +94,7 @@ const SignUp = () => {
         await api.post('/api/user/otp/send', {
           name: name.trim(),
           email: email.trim().toLowerCase(),
+          password,
           businessName: businessName.trim() || undefined,
           phone,
           channel: 'email',
@@ -93,6 +102,7 @@ const SignUp = () => {
         setPendingOtpPayload({
           name: name.trim(),
           email: email.trim().toLowerCase(),
+          password,
           businessName: businessName.trim(),
           phone,
           channel: 'email',
@@ -167,6 +177,28 @@ const SignUp = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
+            </div>
+          </div>
+
+          <div className='sign-in-label-container'>
+            <label className='label-name'>Password *</label>
+            <div className='sign-in-icon-container'>
+              <FiLock className='mobile-icon' />
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder='Enter your password (min 6 characters)'
+                className='sign-in-input'
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type='button'
+                className='password-toggle-btn'
+                onClick={() => setShowPassword(!showPassword)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 8px' }}
+              >
+                {showPassword ? <FiEyeOff /> : <FiEye />}
+              </button>
             </div>
           </div>
 
