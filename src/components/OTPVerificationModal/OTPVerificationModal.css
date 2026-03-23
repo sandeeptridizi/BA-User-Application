@@ -57,7 +57,7 @@
 .modal-shield-icon {
   width: 16px;
   height: 16px;
-  color: rgba(21, 93, 252, 1);
+  color: #d4af37;
 }
 
 .modal-otp-container {
@@ -74,9 +74,9 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #05df72 0%, #00bc7d 100%);
-  box-shadow: 0px 4px 6px -4px rgba(0, 201, 80, 0.3);
-  box-shadow: 0px 10px 15px -3px rgba(0, 201, 80, 0.3);
+  background: linear-gradient(90deg, #b8962e, #d4af37, #f1d77a, #d4af37, #b8962e);
+  box-shadow: 0px 4px 6px -4px rgba(212, 175, 55, 0.4),
+              0px 10px 15px -3px rgba(212, 175, 55, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -144,7 +144,7 @@
 
 .resend-link {
   cursor: pointer;
-  color: rgba(21, 93, 252, 1);
+  color: #d4af37;
   font-weight: 600;
 }
 
@@ -168,9 +168,9 @@
 
 .modal-btn {
   width: 100%;
-  background: linear-gradient(90deg, #00a63e 0%, #009966 100%);
-  box-shadow: 0px 4px 6px -4px rgba(0, 201, 80, 0.3);
-  box-shadow: 0px 10px 15px -3px rgba(0, 201, 80, 0.3);
+  background: linear-gradient(90deg, #b8962e, #d4af37, #f1d77a, #d4af37, #b8962e);
+  box-shadow: 0px 4px 6px -4px rgba(212, 175, 55, 0.4),
+              0px 10px 15px -3px rgba(212, 175, 55, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;

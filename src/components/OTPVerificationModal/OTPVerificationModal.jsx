@@ -131,7 +131,7 @@ const OTPVerificationModal = () => {
         <div className='modal-header'>
           <img src={companyLogo} alt='company' className='modal-logo' />
           <div className='modal-text'>
-            <LuShield className='modal-shield-icon' /> Seller Portal - Sign In
+            <LuShield className='modal-shield-icon' /> Log In
           </div>
         </div>
         <div className='modal-otp-container'>
