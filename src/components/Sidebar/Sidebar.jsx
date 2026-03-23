@@ -11,7 +11,7 @@ import { FiShoppingBag } from 'react-icons/fi';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { MdLogout } from 'react-icons/md';
 import { FiTarget } from 'react-icons/fi';
-import { FiMessageSquare } from 'react-icons/fi';
+import { FiMessageSquare, FiHeart } from 'react-icons/fi';
 
 const linksData = [
   {
@@ -40,6 +40,12 @@ const linksData = [
   },
   {
     id: 5,
+    icon: <FiHeart />,
+    title: 'Wishlist',
+    link: 'wishlist',
+  },
+  {
+    id: 6,
     icon: <IoSettingsOutline />,
     title: 'Settings',
     link: 'settings',
