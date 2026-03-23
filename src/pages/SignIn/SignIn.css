@@ -50,7 +50,7 @@
 .shield-icon {
   width: 16px;
   height: 16px;
-  color: rgba(21, 93, 252, 1);
+  color: #d4af37;
 }
 
 .auth-tabs {
@@ -86,13 +86,13 @@
 
 .auth-tab-active {
   background: #fff;
-  color: rgba(21, 93, 252, 1);
+  color: #d4af37;
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
   font-weight: 600;
 }
 
 .auth-tab-active-purple {
-  color: rgba(152, 16, 250, 1);
+  color: #d4af37;
 }
 
 .sign-in-form-container {
@@ -216,9 +216,10 @@
 
 .sign-in-btn {
   width: 100%;
-  background: linear-gradient(90deg, #155dfc 0%, #4f39f6 100%);
-  box-shadow: 0px 4px 6px -4px rgba(43, 127, 255, 0.3);
-  box-shadow: 0px 10px 15px -3px rgba(43, 127, 255, 0.3);
+  background: linear-gradient(90deg, #b8962e, #d4af37, #f1d77a, #d4af37, #b8962e);
+  background-size: 300% 100%;
+  box-shadow: 0px 4px 6px -4px rgba(212, 175, 55, 0.4),
+              0px 10px 15px -3px rgba(212, 175, 55, 0.4);
   border-radius: 14px;
   border: none;
   padding: 16px 24px;
@@ -228,9 +229,51 @@
   gap: 8px;
   font-size: 16px;
   font-weight: 600;
-  line-height: 24px;
   color: #fff;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.sign-in-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.6),
+    transparent
+  );
+
+  transform: skewX(-20deg);
+}
+
+.sign-in-btn:hover::before {
+  animation: shine 0.8s ease forwards;
+}
+
+@keyframes shine {
+  100% {
+    left: 125%;
+  }
+}
+
+.sign-in-btn:hover {
+  background-position: right center;
+  transform: translateY(-2px) scale(1.02);
+  
+  box-shadow: 0px 8px 20px rgba(212, 175, 55, 0.5);
+}
+
+.sign-in-btn:active {
+  transform: scale(0.97);
+  box-shadow: 0px 4px 10px rgba(212, 175, 55, 0.4);
 }
 
 .sign-in-account {
@@ -245,7 +288,7 @@
   font-size: 16px;
   font-weight: 600;
   line-height: 20px;
-  color: rgba(21, 93, 252, 1);
+  color: #d4af37;
   cursor: pointer;
 }
 

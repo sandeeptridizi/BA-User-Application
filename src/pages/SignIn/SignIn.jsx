@@ -75,7 +75,7 @@ const SignIn = () => {
       <div className='sign-in-main-container'>
         <div className='sign-in-header'>
           <div className='sign-in-heading'>
-            <LuShield className='shield-icon' /> Seller Portal - Log In
+            <LuShield className='shield-icon' /> Log In
           </div>
         </div>
 

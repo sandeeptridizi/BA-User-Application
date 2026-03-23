@@ -116,7 +116,7 @@ const SignUp = () => {
           <img src={companyLogo} alt='company' className='company-logo-img' />
           <p className='sign-up-text'>
             <LuShield className='sign-up-shield-icon' /> Start Selling Luxury
-            Properties
+            Products
           </p>
           <div className='sign-up-tags-container'>
             <div className='tag1'></div>
@@ -205,26 +205,6 @@ const SignUp = () => {
           </div>
 
           {error && <p className='sign-up-error'>{error}</p>}
-
-          <div className='sign-up-points-container'>
-            <div className='sign-up-points-header'>
-              <BiCheckCircle className='sign-up-points-icon' /> Seller Benefits
-            </div>
-            <div className='points-container'>
-              <div className='point-container'>
-                <div className='sign-up-points-circle'></div> Secure &
-                passwordless authentication
-              </div>
-              <div className='point-container'>
-                <div className='sign-up-points-circle'></div> Quick access to your
-                seller dashboard
-              </div>
-              <div className='point-container'>
-                <div className='sign-up-points-circle'></div> No need to remember
-                passwords
-              </div>
-            </div>
-          </div>
 
           <button type='submit' className='sign-up-btn' disabled={loading}>
             {loading ? 'Sending...' : 'Send OTP'}{' '}

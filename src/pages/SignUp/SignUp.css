@@ -47,7 +47,7 @@
 .sign-up-shield-icon {
   width: 16px;
   height: 16px;
-  color: rgba(152, 16, 250, 1);
+  color: #d4af37;
 }
 
 .sign-up-tags-container {
@@ -60,7 +60,7 @@
   width: 64px;
   height: 8px;
   border-radius: 32px;
-  background: rgba(152, 16, 250, 1);
+  background: #d4af37;
   cursor: pointer;
 }
 
@@ -113,9 +113,9 @@
 
 .sign-up-btn {
   width: 100%;
-  background: linear-gradient(90deg, #9810fa 0%, #e60076 100%);
-  box-shadow: 0px 4px 6px -4px rgba(173, 70, 255, 0.3);
-  box-shadow: 0px 10px 15px -3px rgba(173, 70, 255, 0.3);
+  background: linear-gradient(90deg, #d4af37 0%, #f1d77a 50%, #b8962e 100%);
+  box-shadow: 0px 4px 6px -4px rgba(212, 175, 55, 0.35),
+            0px 10px 15px -3px rgba(212, 175, 55, 0.35);
   border-radius: 14px;
   border: none;
   padding: 16px 24px;
@@ -142,7 +142,7 @@
   font-size: 16px;
   font-weight: 600;
   line-height: 20px;
-  color: rgba(152, 16, 250, 1);
+  color: #d4af37;
   cursor: pointer;
 }
 
