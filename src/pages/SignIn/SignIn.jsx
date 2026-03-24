@@ -13,7 +13,7 @@ import { setToken, setUser } from '../../../lib/auth';
 const SignIn = () => {
   const navigate = useNavigate();
 
-  const [tab, setTab] = useState('phone');
+  const [tab, setTab] = useState('email');
   const [phoneDigits, setPhoneDigits] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -70,18 +70,18 @@ const SignIn = () => {
 
         <div className='auth-tabs'>
           <button
-            className={`auth-tab ${tab === 'phone' ? 'auth-tab-active' : ''}`}
-            onClick={() => { setTab('phone'); setError(''); }}
-            type='button'
-          >
-            <TbDeviceMobile /> With Phone
-          </button>
-          <button
             className={`auth-tab ${tab === 'email' ? 'auth-tab-active' : ''}`}
             onClick={() => { setTab('email'); setError(''); }}
             type='button'
           >
             <MdOutlineEmail /> With Email
+          </button>
+          <button
+            className={`auth-tab ${tab === 'phone' ? 'auth-tab-active' : ''}`}
+            onClick={() => { setTab('phone'); setError(''); }}
+            type='button'
+          >
+            <TbDeviceMobile /> With Phone
           </button>
         </div>
 
@@ -143,6 +143,9 @@ const SignIn = () => {
           </div>
 
           {error && <p className='sign-in-error'>{error}</p>}
+          <p className='forgot-password-link'>
+            <span onClick={() => navigate('/forgot-password')}>Forgot Password?</span>
+          </p>
           <button type='submit' className='sign-in-btn' disabled={loading}>
             {loading ? 'Logging in...' : 'Log In'} <FaArrowRight />
           </button>

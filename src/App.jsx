@@ -13,6 +13,7 @@ import Wishlist from './pages/Wishlist/Wishlist';
 import MobileNavbar from './components/MobileNavbar/MobileNavbar';
 import SignIn from './pages/SignIn/SignIn';
 import SignUp from './pages/SignUp/SignUp';
+import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import useAppContext from './context/AppContext';
 import AuthenticationModal from './components/AuthenticationModal/AuthenticationModal';
@@ -46,6 +47,7 @@ const App = () => {
         </Route>
         <Route path='sign-in' element={<SignIn />} />
         <Route path='sign-up' element={<SignUp />} />
+        <Route path='forgot-password' element={<ForgotPassword />} />
       </Routes>
       {openAuthenticationModal && <AuthenticationModal />}
     </BrowserRouter>

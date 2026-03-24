@@ -158,6 +158,22 @@
   margin: -8px 0 0;
 }
 
+.forgot-password-link {
+  text-align: right;
+  margin: -12px 0 0;
+}
+
+.forgot-password-link span {
+  font-size: 13px;
+  font-weight: 500;
+  color: #d4af37;
+  cursor: pointer;
+}
+
+.forgot-password-link span:hover {
+  text-decoration: underline;
+}
+
 .sign-in-text {
   font-size: 12px;
   font-weight: 400;
