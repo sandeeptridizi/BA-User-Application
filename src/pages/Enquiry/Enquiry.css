@@ -183,6 +183,26 @@
   margin: 20px 0 0 20px;
 }
 
+.priorityactive {
+  outline: 2px solid currentColor;
+  outline-offset: -2px;
+  font-weight: 700;
+}
+
+.enquiry-error-msg {
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0 20px;
+}
+
+.enquiry-success-msg {
+  color: #009966;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0 20px;
+}
+
 .ticketsubmitbutton {
   height: 46px;
   width: 640px;

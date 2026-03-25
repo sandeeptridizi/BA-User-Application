@@ -12,8 +12,15 @@ import { IoSettingsOutline } from 'react-icons/io5';
 import { MdLogout } from 'react-icons/md';
 import { FiTarget } from 'react-icons/fi';
 import { FiMessageSquare, FiHeart } from 'react-icons/fi';
+import { BiHome } from 'react-icons/bi';
 
 const linksData = [
+  {
+    id: 1,
+    icon: <BiHome />,
+    title: 'Home',
+    link: 'https://billionaireauction.com/',
+  },
   {
     id: 1,
     icon: <LuLayoutDashboard />,
@@ -73,7 +80,7 @@ const Sidebar = () => {
 
   return (
     <div className='sidebar-container'>
-      <Link to='/' className='sidebar-logo-container' onClick={() => setActiveLink('dashboard')}>
+      <Link to='https://billionaireauction.com' className='sidebar-logo-container' onClick={() => setActiveLink('dashboard')}>
         <img
           src={companyLogo}
           alt='Billionaire Auction'

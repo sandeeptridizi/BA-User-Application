@@ -12,7 +12,8 @@ import { LuPhone } from "react-icons/lu";
 import { MdOutlineMail } from "react-icons/md";
 import { CiCalendar } from "react-icons/ci";
 import { FiBox } from "react-icons/fi";
-import { getMyEnquiries } from '../../../lib/enquiries';
+import { getMyEnquiries, deleteMyEnquiry } from '../../../lib/enquiries';
+import { FiTrash2 } from "react-icons/fi";
 
 const statusClass = { NEW: 'buyerenquirystage', IN_PROGRESS: 'buyerenquirystage1', RESOLVED: 'buyerenquirystage2', CLOSED: 'buyerenquirystage3' };
 const statusIcon = { NEW: <CiCircleAlert />, IN_PROGRESS: <IoMdTime />, RESOLVED: <FiMessageSquare />, CLOSED: <CiCircleCheck /> };
@@ -41,6 +42,20 @@ const MyLeads = () => {
     const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
     const [loading, setLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState('');
+    const [deletingId, setDeletingId] = useState(null);
+
+    const handleDelete = async (id) => {
+      if (!window.confirm("Are you sure you want to delete this inquiry?")) return;
+      try {
+        setDeletingId(id);
+        await deleteMyEnquiry(id);
+        setEnquiries((prev) => prev.filter((e) => e.id !== id));
+      } catch (err) {
+        alert(err?.response?.data?.message || "Failed to delete inquiry.");
+      } finally {
+        setDeletingId(null);
+      }
+    };
 
     const statusCounts = {
       NEW: enquiries.filter(e => e.status === 'NEW').length,
@@ -121,7 +136,12 @@ const MyLeads = () => {
                     <li className='buyerenquiryid'>{enq.id.slice(0, 8)}</li>
                     <li className={statusClass[enq.status] || 'buyerenquirystage'}>{statusIcon[enq.status]}{statusText[enq.status]}</li>
                   </ul>
-                  <div className='respondbutton' onClick={() => setSelectedEnquiry(enq)}><FiMessageSquare />Respond</div>
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <div className='respondbutton' onClick={() => setSelectedEnquiry(enq)}><FiMessageSquare />Respond</div>
+                    <div className='deletebutton' onClick={() => handleDelete(enq.id)} style={{ height: "36px", width: "36px", borderRadius: "8px", backgroundColor: "#fee2e2", color: "#dc2626", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", cursor: "pointer" }}>
+                      {deletingId === enq.id ? "..." : <FiTrash2 />}
+                    </div>
+                  </div>
                 </div>
                 <div className='buyerenquirynext'>
                   <div className='buyerenquiryprofile'>{enq.visitorName?.charAt(0).toUpperCase()}</div>

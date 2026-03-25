@@ -430,7 +430,7 @@ const ProductCreation = () => {
         </li>
 
         <li className="selectedcatdesc">
-            General listing for all products
+            List and connect directly with buyers.
         </li>
 
         {listingMode === "marketplace" && (
@@ -468,7 +468,7 @@ const ProductCreation = () => {
         </li>
 
         <li className="selectedcatdesc">
-            Instant purchase with fixed price
+            We manage the sale for you, end-to-end.
         </li>
 
         {listingMode === "buynow" && (
@@ -506,7 +506,7 @@ const ProductCreation = () => {
         </li>
 
         <li className="selectedcatdesc">
-            Bidding-based auction listing
+            List items for competitive offline bidding.
         </li>
 
         {listingMode === "auction" && (
@@ -544,7 +544,7 @@ const ProductCreation = () => {
             </li>
 
             <li className="selectedcatdesc">
-                Rental property listing
+                List your property and find tenants easily
             </li>
 
             {listingMode === "tolet" && (

@@ -1,21 +1,67 @@
 import './Enquiry.css';
+import { useState } from 'react';
 import { LuMessageSquare } from "react-icons/lu";
 import { IoIosSend } from "react-icons/io";
 import { LuPhone } from "react-icons/lu";
 import { MdOutlineMail } from "react-icons/md";
 import { CiLocationOn } from "react-icons/ci";
 import { IoMdTime } from "react-icons/io";
-import { GiBackwardTime } from "react-icons/gi";
-import { CiCircleCheck } from "react-icons/ci";
-import { RxCrossCircled } from "react-icons/rx";
-import { FiAlertCircle } from "react-icons/fi";
 import { getUser } from '../../../lib/auth';
+import { submitSupportTicket } from '../../../lib/enquiries';
 
 const Enquiry = () => {
     const user = getUser();
     const displayName = user?.name || '—';
     const displayEmail = user?.email || '—';
     const displayPhone = user?.phone ? `+91 ${user.phone.replace(/^91/, '').trim()}` : '—';
+
+    const [category, setCategory] = useState('');
+    const [subject, setSubject] = useState('');
+    const [description, setDescription] = useState('');
+    const [priority, setPriority] = useState('Low');
+    const [submitting, setSubmitting] = useState(false);
+    const [successMsg, setSuccessMsg] = useState('');
+    const [errorMsg, setErrorMsg] = useState('');
+
+    const handleSubmit = async () => {
+        setSuccessMsg('');
+        setErrorMsg('');
+
+        if (!category || category === 'Select issue category') {
+            setErrorMsg('Please select an issue category');
+            return;
+        }
+        if (!subject.trim()) {
+            setErrorMsg('Please enter a subject');
+            return;
+        }
+        if (!description.trim()) {
+            setErrorMsg('Please describe your issue');
+            return;
+        }
+
+        setSubmitting(true);
+        try {
+            await submitSupportTicket({
+                category,
+                subject: subject.trim(),
+                message: description.trim(),
+                priority,
+                visitorName: user?.name || 'User',
+                visitorEmail: user?.email || '',
+                visitorPhone: user?.phone || '',
+            });
+            setSuccessMsg('Support ticket submitted successfully!');
+            setCategory('');
+            setSubject('');
+            setDescription('');
+            setPriority('Low');
+        } catch {
+            setErrorMsg('Failed to submit ticket. Please try again.');
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     return <div className='enquirycontainer'>
         <div className='leadheader'>
@@ -31,7 +77,7 @@ const Enquiry = () => {
                 <p>Submit your query and our support team will assist you within 24 hours</p>
             </div>
             <div className='accountinformation'>
-               <h2 className='accountinformationtitle'>Your Account Information</h2> 
+               <h2 className='accountinformationtitle'>Your Account Information</h2>
                <div className='accountinfo'>
                <div className='accountinformationleft'>
                     <p>Name:<span className='accountinformationtitle'>{displayName}</span></p>
@@ -45,7 +91,7 @@ const Enquiry = () => {
             </div>
             <div className='accountformdiv'>
                 <h3>Issue Category *</h3>
-                <select className='accountformtext'>
+                <select className='accountformtext' value={category} onChange={(e) => setCategory(e.target.value)}>
                     <option>Select issue category</option>
                     <option>Listing Issue</option>
                     <option>Buyer Inquiry Question</option>
@@ -59,20 +105,24 @@ const Enquiry = () => {
             </div>
             <div className='accountformdiv'>
                 <h3>Subject *</h3>
-                <input type='text' placeholder='Brief subject of your query' className='accountformtext'></input>
+                <input type='text' placeholder='Brief subject of your query' className='accountformtext' value={subject} onChange={(e) => setSubject(e.target.value)}></input>
             </div>
             <div className='accountformdiv'>
                 <h3>Describe Your Issue *</h3>
-                <textarea type='textarea' placeholder='Please provide detailed information about your query or issue..' className='accountformtext1'></textarea>
+                <textarea placeholder='Please provide detailed information about your query or issue..' className='accountformtext1' value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
                 <p>Be as specific as possible to help us assist you better</p>
             </div>
             <p className='prioritylevelnote'>Priority Level</p>
             <ul className='prioritylevel'>
-                <li className='prioritylevellow'>Low</li>
-                <li className='prioritylevelmedium'>Medium</li>
-                <li className='prioritylevelhigh'>High</li>
+                <li className={`prioritylevellow${priority === 'Low' ? ' priorityactive' : ''}`} onClick={() => setPriority('Low')}>Low</li>
+                <li className={`prioritylevelmedium${priority === 'Medium' ? ' priorityactive' : ''}`} onClick={() => setPriority('Medium')}>Medium</li>
+                <li className={`prioritylevelhigh${priority === 'High' ? ' priorityactive' : ''}`} onClick={() => setPriority('High')}>High</li>
             </ul>
-            <div className='ticketsubmitbutton'> <IoIosSend />Submit Support Ticket</div>
+            {errorMsg && <p className='enquiry-error-msg'>{errorMsg}</p>}
+            {successMsg && <p className='enquiry-success-msg'>{successMsg}</p>}
+            <div className='ticketsubmitbutton' onClick={handleSubmit} style={{ opacity: submitting ? 0.6 : 1, pointerEvents: submitting ? 'none' : 'auto' }}>
+                <IoIosSend />{submitting ? 'Submitting...' : 'Submit Support Ticket'}
+            </div>
         </div>
         <div className='contactcontainerright'>
             <div className='contactcontainerrightheader'>
@@ -114,93 +164,7 @@ const Enquiry = () => {
             </div>
         </div>
         </div>
-        <div className='previoustickets'>
-            <div className='previousticketsheader'>
-                <h2><GiBackwardTime className='previousticketsicon'/>Previous Support Tickets</h2>
-                <p>4 Total Tickets</p>
-            </div>
-            <div className='ticketdetails'>
-                <div className='ticketdetailstop'>
-                    <ul className='ticketdetailstags'>
-                        <li className='buyerenquiryid'>TKT-8921</li>
-                        <li className='buyerenquirystage3'><CiCircleCheck />Resolved</li>
-                        <li className='buyerenquirytag'>High Priority</li>
-                        <li className='buyerenquirystage2'>Payment & Billing</li>
-                    </ul>
-                    <h2>Payment gateway issue for listing</h2>
-                    <p><IoMdTime />Created: 15 Feb 2026 <CiCircleCheck className='ticketdetailicon'/> Resolved: 15 Feb 2026 <span className='responsetime'>Response Time: 2 hours</span></p>
-                </div>
-                <div className='yourquery'>
-                    <h2>Your Query:</h2>
-                    <p>I am unable to complete payment for upgrading my listing to premium. The payment page shows an error.</p>
-                </div>
-                <div className='yourquery1'>
-                    <h2><CiCircleCheck />Support Team Response:</h2>
-                    <p>We've resolved the payment gateway issue. Your premium upgrade has been processed successfully. Thank you for your patience.</p>
-                </div>
-            </div>
-            <div className='ticketdetails'>
-                <div className='ticketdetailstop'>
-                    <ul className='ticketdetailstags'>
-                        <li className='buyerenquiryid'>TKT-8845</li>
-                        <li className='buyerenquiryid'><RxCrossCircled  />Closed</li>
-                        <li className='buyerenquirystage1'>Medium Priority</li>
-                        <li className='buyerenquirystage2'>Account Verification</li>
-                    </ul>
-                    <h2>How to verify my property documents?</h2>
-                    <p><IoMdTime />Created: 12 Feb 2026 <CiCircleCheck className='ticketdetailicon'/> Resolved: 13 Feb 2026 <span className='responsetime'>Response Time: 18 hours</span></p>
-                </div>
-                <div className='yourquery'>
-                    <h2>Your Query:</h2>
-                    <p>I want to get my property documents verified for the luxury villa listing. What is the process?</p>
-                </div>
-                <div className='yourquery1'>
-                    <h2><CiCircleCheck />Support Team Response:</h2>
-                    <p>Please upload your property documents in Settings, Verification section. Our team will review within 48 hours.</p>
-                </div>
-            </div>
-            <div className='ticketdetails'>
-                <div className='ticketdetailstop'>
-                    <ul className='ticketdetailstags'>
-                        <li className='buyerenquiryid'>TKT-8723</li>
-                        <li className='buyerenquirystage1'><IoMdTime  />In Progress</li>
-                        <li className='buyerenquirytag'>High Priority</li>
-                        <li className='buyerenquirystage2'>Technical Support</li>
-                    </ul>
-                    <h2>Buyer inquiry not showing correctly</h2>
-                    <p><IoMdTime />Created: 16 Feb 2026</p>
-                </div>
-                <div className='yourquery'>
-                    <h2>Your Query:</h2>
-                    <p>I received a buyer inquiry notification but it's not visible in my Leads section.</p>
-                </div>
-                <div className='yourquery1'>
-                    <h2><CiCircleCheck />Support Team Response:</h2>
-                    <p>Our technical team is investigating this issue. We'll update you within 24 hours.</p>
-                </div>
-            </div>
-            <div className='ticketdetails'>
-                <div className='ticketdetailstop'>
-                    <ul className='ticketdetailstags'>
-                        <li className='buyerenquiryid'>TKT-8654</li>
-                        <li className='buyerenquirystage'><FiAlertCircle  />Open</li>
-                        <li className='buyerenquiryid'>Low Priority</li>
-                        <li className='buyerenquirystage2'>Feature Request</li>
-                    </ul>
-                    <h2>Request for featured listing placement</h2>
-                    <p><IoMdTime />Created: 17 Feb 2026</p>
-                </div>
-                <div className='yourquery'>
-                    <h2>Your Query:</h2>
-                    <p>Can I get my BMW X7 listing featured on the homepage? I'm a Pro member.</p>
-                </div>
-                <div className='yourquery1'>
-                    <h2><CiCircleCheck />Support Team Response:</h2>
-                    <p><IoMdTime  />Waiting for support team response...</p>
-                </div>
-            </div>
-        </div>
     </div>;
 };
 
-export default Enquiry; 
+export default Enquiry;
