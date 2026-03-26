@@ -1200,3 +1200,124 @@
     font-size: 22px;
   }
 }
+
+/* ── Coupon Section ── */
+
+.coupon-section {
+  max-width: 520px;
+  margin: 0 auto 28px auto;
+  padding: 0 16px;
+}
+
+.coupon-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1.5px solid #e4e4e7;
+  border-radius: 10px;
+  padding: 6px 10px;
+}
+
+.coupon-icon {
+  font-size: 20px;
+  color: #a1a1aa;
+  flex-shrink: 0;
+}
+
+.coupon-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-family: inherit;
+  padding: 8px 4px;
+  letter-spacing: 1px;
+  background: transparent;
+  color: #0a0a0a;
+}
+
+.coupon-input::placeholder {
+  letter-spacing: 0;
+  color: #a1a1aa;
+}
+
+.coupon-apply-btn {
+  padding: 8px 20px;
+  background: #0a0a0a;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.coupon-apply-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.coupon-remove-btn {
+  padding: 8px 16px;
+  background: transparent;
+  color: #c10007;
+  border: 1.5px solid #fecaca;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.coupon-error {
+  color: #c10007;
+  font-size: 12px;
+  margin: 8px 0 0 0;
+}
+
+.coupon-success {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+}
+
+.coupon-success-badge {
+  background: #16a34a;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.coupon-success-text {
+  font-size: 13px;
+  color: #166534;
+}
+
+.pricing-original-price {
+  font-size: 14px;
+  color: #a1a1aa;
+  text-decoration: line-through;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .coupon-section {
+    max-width: 100%;
+  }
+}

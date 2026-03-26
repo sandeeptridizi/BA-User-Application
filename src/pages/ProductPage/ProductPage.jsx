@@ -384,9 +384,15 @@ const ProductPage = () => {
           <div className="productstatus">
             <h2 className="producttitle">Product Status</h2>
             <span className="currentstatus">Current Status</span>
-            <p className="productpageactivetag">
+            <p className={`productpageactivetag ${product.approvalStatus === "REJECTED" ? "productpagerejectedtag" : ""}`}>
               {statusToLabel(product.approvalStatus)}
             </p>
+            {product.approvalStatus === "REJECTED" && product.rejectionReason && (
+              <div className="productpagerejectionreason">
+                <span className="rejectionreasontitle">Rejection Reason</span>
+                <p className="rejectionreasontext">{product.rejectionReason}</p>
+              </div>
+            )}
             <div className="productbreakline"></div>
             <span className="currentstatus">Listed Price</span>
             <p className="productpagepricetag">

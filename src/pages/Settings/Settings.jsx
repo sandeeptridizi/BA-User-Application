@@ -11,6 +11,7 @@ import { BsStars } from "react-icons/bs";
 import { CiCircleCheck } from "react-icons/ci";
 import { FaRegStar } from "react-icons/fa6";
 import { GoArrowUpRight } from "react-icons/go";
+import { RiCoupon3Line } from "react-icons/ri";
 import api from '../../../lib/api';
 import { setUser as saveUserToStorage } from '../../../lib/auth';
 import { getFile } from '../../../lib/s3';
@@ -36,6 +37,12 @@ const Settings = () => {
     const [paymentLoading, setPaymentLoading] = useState(null); // tracks which plan is being paid for
     const [uploadingPic, setUploadingPic] = useState(null); // 'uploading' | 'removing' | null
     const picInputRef = useRef(null);
+
+    // Coupon state
+    const [couponCode, setCouponCode] = useState('');
+    const [couponApplied, setCouponApplied] = useState(null);
+    const [couponError, setCouponError] = useState('');
+    const [couponLoading, setCouponLoading] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -134,6 +141,29 @@ const Settings = () => {
         return pkg?.price || 0;
     };
 
+    const handleApplyCoupon = async () => {
+        if (!couponCode.trim()) return;
+        setCouponError('');
+        setCouponLoading(true);
+        try {
+            const price = getPlanPrice('PRO') || getPlanPrice('BASIC') || 1000;
+            const res = await api.post('/api/coupon/validate', { code: couponCode.trim(), amount: price });
+            setCouponApplied(res.data.data);
+            setCouponError('');
+        } catch (err) {
+            setCouponApplied(null);
+            setCouponError(err.response?.data?.message || 'Invalid coupon code');
+        } finally {
+            setCouponLoading(false);
+        }
+    };
+
+    const handleRemoveCoupon = () => {
+        setCouponApplied(null);
+        setCouponCode('');
+        setCouponError('');
+    };
+
     const handleSubscribe = async (plan) => {
         if (paymentLoading) return;
         setPaymentLoading(plan);
@@ -144,6 +174,7 @@ const Settings = () => {
 
         try {
             const body = pkg ? { packageId: pkg.id } : { plan };
+            if (couponApplied) body.couponCode = couponApplied.code;
             const orderRes = await api.post('/api/subscription/create-order', body);
             const { orderId, amount, currency, keyId } = orderRes.data.data;
 
@@ -169,6 +200,7 @@ const Settings = () => {
                         const updatedUser = verifyRes.data.data;
                         setProfile(updatedUser);
                         saveUserToStorage(updatedUser);
+                        handleRemoveCoupon();
                         alert('Subscription activated successfully!');
                     } catch {
                         alert('Payment was received but verification failed. Please contact support.');
@@ -486,6 +518,50 @@ const Settings = () => {
             <div className='upgradeplans'>
                 <h2>{isActive ? 'Change Plan' : 'Choose a Plan'}</h2>
                 <p>Choose a plan that fits your business needs</p>
+
+                <div className='settings-coupon-section'>
+                    <div className='settings-coupon-row'>
+                        <RiCoupon3Line className='settings-coupon-icon' />
+                        <input
+                            type='text'
+                            className='settings-coupon-input'
+                            placeholder='Enter coupon code'
+                            value={couponCode}
+                            onChange={(e) => {
+                                setCouponCode(e.target.value.toUpperCase());
+                                if (couponApplied) handleRemoveCoupon();
+                                setCouponError('');
+                            }}
+                            disabled={!!couponApplied}
+                        />
+                        {couponApplied ? (
+                            <button className='settings-coupon-remove' onClick={handleRemoveCoupon}>Remove</button>
+                        ) : (
+                            <button
+                                className='settings-coupon-apply'
+                                onClick={handleApplyCoupon}
+                                disabled={!couponCode.trim() || couponLoading}
+                            >
+                                {couponLoading ? 'Checking...' : 'Apply'}
+                            </button>
+                        )}
+                    </div>
+                    {couponError && <p className='settings-coupon-error'>{couponError}</p>}
+                    {couponApplied && (
+                        <div className='settings-coupon-success'>
+                            <span className='settings-coupon-badge'>
+                                {couponApplied.discountType === 'PERCENTAGE'
+                                    ? `${couponApplied.discountValue}% OFF`
+                                    : `₹${couponApplied.discountValue.toLocaleString('en-IN')} OFF`
+                                }
+                            </span>
+                            <span className='settings-coupon-text'>
+                                Coupon <strong>{couponApplied.code}</strong> applied successfully
+                            </span>
+                        </div>
+                    )}
+                </div>
+
                 <div className='upgradeplandetails'>
                     {planPackages.filter(p => p.price > 0).map((pkg) => {
                         const planEnum = ({ Premium: 'BASIC', PRO: 'PRO', 'Enterprise Starter': 'ELITE', 'Enterprise Growth': 'ELITE', 'Enterprise Pro': 'ELITE', 'Enterprise Elite': 'ELITE' })[pkg.title];
@@ -504,7 +580,21 @@ const Settings = () => {
                                 <div className={iconClass}>{icons[pkg.title] || <BsStars />}</div>
                                 <h2>{pkg.title}</h2>
                                 <p>{pkg.tag === 'Most Popular' ? 'Most Popular Choice' : pkg.tag || ''}</p>
-                                <h3>₹{pkg.price.toLocaleString('en-IN')}<span>/month + GST</span></h3>
+                                {couponApplied ? (() => {
+                                    let d = 0;
+                                    if (couponApplied.discountType === 'PERCENTAGE') {
+                                        d = Math.round((pkg.price * couponApplied.discountValue) / 100);
+                                        if (couponApplied.maxDiscount && d > couponApplied.maxDiscount) d = couponApplied.maxDiscount;
+                                    } else { d = couponApplied.discountValue; }
+                                    if (d > pkg.price) d = pkg.price;
+                                    const final = pkg.price - d;
+                                    return <>
+                                        <h3>₹{final.toLocaleString('en-IN')}<span>/month + GST</span></h3>
+                                        <p className='settings-original-price'>₹{pkg.price.toLocaleString('en-IN')}</p>
+                                    </>;
+                                })() : (
+                                    <h3>₹{pkg.price.toLocaleString('en-IN')}<span>/month + GST</span></h3>
+                                )}
                                 <ul>
                                     {pkg.features.map((f, i) => (
                                         <li key={i}><CiCircleCheck className={listClass}/>{f.includes(':') ? `${f.split(':')[0]}: ${f.split(':')[1]}` : f}</li>

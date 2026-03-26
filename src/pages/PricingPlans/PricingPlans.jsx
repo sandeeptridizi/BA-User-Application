@@ -15,6 +15,7 @@ import { FiAward } from 'react-icons/fi';
 import { FaCheck } from 'react-icons/fa6';
 import { GoPeople } from 'react-icons/go';
 import { FiCamera } from 'react-icons/fi';
+import { RiCoupon3Line } from 'react-icons/ri';
 
 function parseFeatures(features) {
   const map = {};
@@ -50,6 +51,13 @@ const PricingPlans = () => {
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [selectedEnterprise, setSelectedEnterprise] = useState(null);
   const [step, setStep] = useState(0);
+
+  // Coupon state
+  const [couponCode, setCouponCode] = useState('');
+  const [couponApplied, setCouponApplied] = useState(null); // { code, discount, finalAmount, originalAmount, discountType, discountValue }
+  const [couponError, setCouponError] = useState('');
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponTarget, setCouponTarget] = useState(null); // package to apply coupon to
 
   const sliderRef = useRef(null);
 
@@ -116,12 +124,44 @@ const PricingPlans = () => {
     return () => container.removeEventListener("scroll", handleScroll);
   }, [loading]);
 
+  const handleApplyCoupon = async (pkg) => {
+    if (!couponCode.trim()) return;
+    setCouponError('');
+    setCouponLoading(true);
+    try {
+      const res = await api.post('/api/coupon/validate', {
+        code: couponCode.trim(),
+        amount: pkg.price,
+      });
+      setCouponApplied(res.data.data);
+      setCouponTarget(pkg);
+      setCouponError('');
+    } catch (err) {
+      setCouponApplied(null);
+      setCouponTarget(null);
+      setCouponError(err.response?.data?.message || 'Invalid coupon code');
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setCouponApplied(null);
+    setCouponTarget(null);
+    setCouponCode('');
+    setCouponError('');
+  };
+
   const handleSubscribe = async (pkg) => {
     if (paymentLoading || pkg.price === 0) return;
     setPaymentLoading(pkg.id);
 
     try {
-      const orderRes = await api.post('/api/subscription/create-order', { packageId: pkg.id });
+      const body = { packageId: pkg.id };
+      if (couponApplied && couponTarget?.id === pkg.id) {
+        body.couponCode = couponApplied.code;
+      }
+      const orderRes = await api.post('/api/subscription/create-order', body);
       const { orderId, amount, currency, keyId } = orderRes.data.data;
 
       const options = {
@@ -146,6 +186,7 @@ const PricingPlans = () => {
             const updatedUser = verifyRes.data.data;
             setProfile(updatedUser);
             saveUserToStorage(updatedUser);
+            handleRemoveCoupon();
             alert('Subscription activated successfully!');
           } catch {
             alert('Payment was received but verification failed. Please contact support.');
@@ -208,12 +249,71 @@ const PricingPlans = () => {
           Unlimited listings as of now
         </p>
       </div>
+
+      <div className='coupon-section'>
+        <div className='coupon-input-row'>
+          <RiCoupon3Line className='coupon-icon' />
+          <input
+            type='text'
+            className='coupon-input'
+            placeholder='Enter coupon code'
+            value={couponCode}
+            onChange={(e) => {
+              setCouponCode(e.target.value.toUpperCase());
+              if (couponApplied) handleRemoveCoupon();
+              setCouponError('');
+            }}
+            disabled={!!couponApplied}
+          />
+          {couponApplied ? (
+            <button className='coupon-remove-btn' onClick={handleRemoveCoupon}>Remove</button>
+          ) : (
+            <button
+              className='coupon-apply-btn'
+              onClick={() => {
+                const target = mainPlans.find(p => p.price > 0) || enterprisePlans[0];
+                if (target) handleApplyCoupon(target);
+              }}
+              disabled={!couponCode.trim() || couponLoading}
+            >
+              {couponLoading ? 'Checking...' : 'Apply'}
+            </button>
+          )}
+        </div>
+        {couponError && <p className='coupon-error'>{couponError}</p>}
+        {couponApplied && (
+          <div className='coupon-success'>
+            <span className='coupon-success-badge'>
+              {couponApplied.discountType === 'PERCENTAGE'
+                ? `${couponApplied.discountValue}% OFF`
+                : `₹${formatPrice(couponApplied.discountValue)} OFF`
+              }
+            </span>
+            <span className='coupon-success-text'>
+              Coupon <strong>{couponApplied.code}</strong> applied successfully
+            </span>
+          </div>
+        )}
+      </div>
+
       <div className='pricing-page-plans-container'>
         <div className='pricing-page-grid-container' ref={sliderRef}>
 
           {mainPlans.map((plan) => {
             const isPro = plan.title === 'PRO';
             const isFree = plan.price === 0;
+            const hasDiscount = couponApplied && !isFree;
+            let planDiscount = 0;
+            if (hasDiscount) {
+              if (couponApplied.discountType === 'PERCENTAGE') {
+                planDiscount = Math.round((plan.price * couponApplied.discountValue) / 100);
+                if (couponApplied.maxDiscount && planDiscount > couponApplied.maxDiscount) planDiscount = couponApplied.maxDiscount;
+              } else {
+                planDiscount = couponApplied.discountValue;
+              }
+              if (planDiscount > plan.price) planDiscount = plan.price;
+            }
+            const discountedPrice = hasDiscount ? plan.price - planDiscount : plan.price;
             return (
               <div
                 key={plan.id}
@@ -223,8 +323,13 @@ const PricingPlans = () => {
                   {planIcons[plan.title] || <LuStar className='pricing-star-icon' />}
                   <h3 className='pricing-heading'>{plan.title}</h3>
                   <h3 className='plan-price'>
-                    <BsCurrencyRupee /> {formatPrice(plan.price)}
+                    <BsCurrencyRupee /> {hasDiscount ? formatPrice(discountedPrice) : formatPrice(plan.price)}
                   </h3>
+                  {hasDiscount && (
+                    <p className='pricing-original-price'>
+                      <BsCurrencyRupee /> {formatPrice(plan.price)}
+                    </p>
+                  )}
                   <p className='pricing-text'>{isFree ? 'Free' : '+ GST'}</p>
                 </div>
                 <div className='pricing-page-list-container'>

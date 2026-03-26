@@ -525,3 +525,22 @@
         font-size: 11px;
     }
 }
+
+.productrejectedtag {
+    background-color: #c10007 !important;
+}
+
+.productrejectionreason {
+    margin-top: 8px;
+    padding: 8px 10px;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #991b1b;
+    line-height: 1.4;
+}
+
+.rejectionlabel {
+    font-weight: 600;
+}

@@ -430,10 +430,15 @@ const Products = () => {
                         <h3 className="productprice">
                           {formatCurrency(product.value)}
                         </h3>
-                        <span className="productactivetag">
+                        <span className={`productactivetag ${product.approvalStatus === "REJECTED" ? "productrejectedtag" : ""}`}>
                           {statusToLabel(product.approvalStatus)}
                         </span>
                       </div>
+                      {product.approvalStatus === "REJECTED" && product.rejectionReason && (
+                        <div className="productrejectionreason">
+                          <span className="rejectionlabel">Rejection Reason:</span> {product.rejectionReason}
+                        </div>
+                      )}
                       <div className="productviewtag">
                         <h3 className="productviews">
                           <IoEyeOutline />

@@ -292,10 +292,12 @@
   height: 38px;
   background-color: #F3F3F5;
   color: #717182;
-  width: 968px;
+  width: 100%;
+  max-width: 968px;
   margin-top: 8px;
   font-size: 14px;
   border: none;
+  box-sizing: border-box;
 }
 
 textarea.basicinfoinput {
@@ -310,10 +312,11 @@ textarea.basicinfoinput {
   height: 38px;
   background-color: #F3F3F5;
   color: #717182;
-  width: 244px;
+  width: 100%;
   margin-top: 8px;
   font-size: 14px;
   border: none;
+  box-sizing: border-box;
 }
 
 .basicinfoinput2 {
@@ -404,6 +407,8 @@ textarea.basicinfoinput {
 }
 
 .basicinfoinputdiv{
+    flex: 1;
+    min-width: 0;
     gap: 12px;
 }
 

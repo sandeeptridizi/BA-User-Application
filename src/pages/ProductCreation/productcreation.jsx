@@ -710,7 +710,7 @@ const ProductCreation = () => {
             </div>
         </div>
         <h3 className='basicinfotitle'>Description</h3>
-        <input ref={marketplaceDescriptionRef} type="text" placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
+        <textarea ref={marketplaceDescriptionRef} rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
         <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Status</h3>
@@ -2156,6 +2156,20 @@ const ProductCreation = () => {
                 <li className='selectedcatdesc'>PNG, JPG, WEBP up to 10MB • Maximum 10 files</li>
         </ul>
         <input type="file" ref={fileInputRef} style={{ display: "none" }} multiple accept=".png,.jpg,.jpeg,.webp" onChange={handleFileChange}/>
+        {marketplaceFilePreviews.length > 0 && (
+          <div className="basicinforow marketplacePreviewsRow">
+            {marketplaceFilePreviews.map((file) => (
+              <div className='basicinfoinputdiv marketplacePreviewItem' key={file.url}>
+                {file.isVideo ? (
+                  <video src={file.url} controls style={{ width: "180px", maxHeight: "140px", borderRadius: "8px" }} />
+                ) : (
+                  <img src={file.url} alt={file.name} style={{ width: "180px", maxHeight: "140px", objectFit: "cover", borderRadius: "8px" }} />
+                )}
+                <span className='selectedcatdesc'>{file.name}</span>
+              </div>
+            ))}
+          </div>
+        )}
         <h3 className='basicinfotitle'>Product Video</h3>
         {!videoPreview ? (
           <ul className='selectedcategory2 videoUploadBox' onClick={handleVideoIconClick} style={{ cursor: "pointer" }}>
@@ -2207,7 +2221,7 @@ const ProductCreation = () => {
             </div>
         </div>
         <h3 className='basicinfotitle'>Description</h3>
-        <input type="text" placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
+        <textarea rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
     </div>
     {activeTab === "realestate" &&
         <div className='basiccatinputs'>
@@ -3644,6 +3658,20 @@ const ProductCreation = () => {
                 <li className='selectedcatdesc'>PNG, JPG, WEBP up to 10MB • Maximum 10 files</li>
         </ul>
         <input type="file" ref={fileInputRef} style={{ display: "none" }} multiple accept=".png,.jpg,.jpeg,.webp" onChange={handleFileChange}/>
+        {marketplaceFilePreviews.length > 0 && (
+          <div className="basicinforow marketplacePreviewsRow">
+            {marketplaceFilePreviews.map((file) => (
+              <div className='basicinfoinputdiv marketplacePreviewItem' key={file.url}>
+                {file.isVideo ? (
+                  <video src={file.url} controls style={{ width: "180px", maxHeight: "140px", borderRadius: "8px" }} />
+                ) : (
+                  <img src={file.url} alt={file.name} style={{ width: "180px", maxHeight: "140px", objectFit: "cover", borderRadius: "8px" }} />
+                )}
+                <span className='selectedcatdesc'>{file.name}</span>
+              </div>
+            ))}
+          </div>
+        )}
         <h3 className='basicinfotitle'>Product Video</h3>
         {!videoPreview ? (
           <ul className='selectedcategory2 videoUploadBox' onClick={handleVideoIconClick} style={{ cursor: "pointer" }}>
@@ -3695,7 +3723,7 @@ const ProductCreation = () => {
             </div>
         </div>
         <h3 className='basicinfotitle'>Description</h3>
-        <input type="text" placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
+        <textarea rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
     </div>
     {activeTab === "realestate" &&
         <div className='basiccatinputs'>
@@ -5124,6 +5152,20 @@ const ProductCreation = () => {
                 <li className='selectedcatdesc'>PNG, JPG, WEBP up to 10MB • Maximum 10 files</li>
         </ul>
         <input type="file" ref={fileInputRef} style={{ display: "none" }} multiple accept=".png,.jpg,.jpeg,.webp" onChange={handleFileChange}/>
+        {marketplaceFilePreviews.length > 0 && (
+          <div className="basicinforow marketplacePreviewsRow">
+            {marketplaceFilePreviews.map((file) => (
+              <div className='basicinfoinputdiv marketplacePreviewItem' key={file.url}>
+                {file.isVideo ? (
+                  <video src={file.url} controls style={{ width: "180px", maxHeight: "140px", borderRadius: "8px" }} />
+                ) : (
+                  <img src={file.url} alt={file.name} style={{ width: "180px", maxHeight: "140px", objectFit: "cover", borderRadius: "8px" }} />
+                )}
+                <span className='selectedcatdesc'>{file.name}</span>
+              </div>
+            ))}
+          </div>
+        )}
         <h3 className='basicinfotitle'>Product Video</h3>
         {!videoPreview ? (
           <ul className='selectedcategory2 videoUploadBox' onClick={handleVideoIconClick} style={{ cursor: "pointer" }}>
@@ -5175,7 +5217,7 @@ const ProductCreation = () => {
             </div>
         </div>
         <h3 className='basicinfotitle'>Description</h3>
-        <input type="text" placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
+        <textarea rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
     </div>
     {activeTab === "residential" &&
         <div className='basiccatinputs'>

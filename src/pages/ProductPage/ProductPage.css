@@ -469,3 +469,28 @@
         grid-template-columns: 1fr;
     }
 }
+
+.productpagerejectedtag {
+    background-color: #c10007 !important;
+}
+
+.productpagerejectionreason {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+}
+
+.rejectionreasontitle {
+    font-size: 12px;
+    font-weight: 600;
+    color: #991b1b;
+}
+
+.rejectionreasontext {
+    font-size: 13px;
+    color: #7f1d1d;
+    margin: 6px 0 0 0;
+    line-height: 1.5;
+}
