@@ -38,7 +38,7 @@ const ProductCreation = () => {
   const marketplaceTitleRef = useRef(null);
   const marketplaceDescriptionRef = useRef(null);
   const marketplaceValueRef = useRef(null);
-  const marketplaceStatusRef = useRef(null);
+
   const marketplaceCountryRef = useRef(null);
   const [propertyType, setPropertyType] = useState("");
   const [ItemType, setItemType] = useState("");
@@ -202,7 +202,7 @@ const ProductCreation = () => {
         if (element === marketplaceTitleRef.current) continue;
         if (element === marketplaceDescriptionRef.current) continue;
         if (element === marketplaceValueRef.current) continue;
-        if (element === marketplaceStatusRef.current) continue;
+
         if (element === marketplaceCountryRef.current) continue;
         if (element.type === "file") continue;
         if (!element.value?.trim()) continue;
@@ -314,7 +314,7 @@ const ProductCreation = () => {
       }
 
       if (rawValue && Number.isNaN(parsedValue)) {
-        alert("Value must contain numbers only.");
+        alert("Price must contain numbers only.");
         return;
       }
 
@@ -670,11 +670,11 @@ const ProductCreation = () => {
           </div>
         )}
         <input type="file" ref={videoInputRef} style={{ display: "none" }} accept=".mp4,.webm,.mov" onChange={handleVideoChange}/>
-        <h3 className='basicinfotitle'>Title</h3>
+        <h3 className='basicinfotitle'>Title<span className="required-star">*</span></h3>
         <input ref={marketplaceTitleRef} type="text" placeholder="e.g., Luxury 4BHK Penthouse in South Mumbai" className="basicinfoinput" />
         <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Value</h3>
+                <h3 className='basicinfotitle'>Price<span className="required-star">*</span></h3>
                 <input
                   ref={marketplaceValueRef}
                   type="number"
@@ -704,22 +704,11 @@ const ProductCreation = () => {
                     <option value="KUWAIT">Kuwait</option>
                 </select>
             </div>
-            <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Social Media Link</h3>
-                <input type="text" placeholder="Youtube, Instagram url" className="basicinfoinput1" />
-            </div>
         </div>
+        <h3 className='basicinfotitle'>Social Media Link</h3>
+        <input type="text" placeholder="Youtube, Instagram url" className="basicinfoinput" />
         <h3 className='basicinfotitle'>Description</h3>
         <textarea ref={marketplaceDescriptionRef} rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
-        <div className='basicinforow'>
-            <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Status</h3>
-                <select ref={marketplaceStatusRef} defaultValue="ACTIVE" className="basicinfoinput2">
-                    <option value="ACTIVE">Active</option>
-                    <option value="INACTIVE">Inactive</option>
-                </select>
-            </div>
-        </div>
     </div>
     {activeTab === "realestate" &&
         <div className='basiccatinputs'>
@@ -2187,11 +2176,11 @@ const ProductCreation = () => {
           </div>
         )}
         <input type="file" ref={videoInputRef} style={{ display: "none" }} accept=".mp4,.webm,.mov" onChange={handleVideoChange}/>
-        <h3 className='basicinfotitle'>Title</h3>
+        <h3 className='basicinfotitle'>Title<span className="required-star">*</span></h3>
         <input type="text" placeholder="e.g., Luxury 4BHK Penthouse in South Mumbai" className="basicinfoinput" />
         <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Value</h3>
+                <h3 className='basicinfotitle'>Price<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 5,50,00,000" className="basicinfoinput1" />
             </div>
             <div className='basicinfoinputdiv'>
@@ -2215,11 +2204,9 @@ const ProductCreation = () => {
                     <option value="KUWAIT">Kuwait</option>
                 </select>
             </div>
-            <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Social Media Link</h3>
-                <input type="text" placeholder="Youtube, Instagram url" className="basicinfoinput1" />
-            </div>
         </div>
+        <h3 className='basicinfotitle'>Social Media Link</h3>
+        <input type="text" placeholder="Youtube, Instagram url" className="basicinfoinput" />
         <h3 className='basicinfotitle'>Description</h3>
         <textarea rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
     </div>
@@ -3689,11 +3676,11 @@ const ProductCreation = () => {
           </div>
         )}
         <input type="file" ref={videoInputRef} style={{ display: "none" }} accept=".mp4,.webm,.mov" onChange={handleVideoChange}/>
-        <h3 className='basicinfotitle'>Title</h3>
+        <h3 className='basicinfotitle'>Title<span className="required-star">*</span></h3>
         <input type="text" placeholder="e.g., Luxury 4BHK Penthouse in South Mumbai" className="basicinfoinput" />
         <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Value</h3>
+                <h3 className='basicinfotitle'>Price<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 5,50,00,000" className="basicinfoinput1" />
             </div>
             <div className='basicinfoinputdiv'>
@@ -3717,11 +3704,9 @@ const ProductCreation = () => {
                     <option value="KUWAIT">Kuwait</option>
                 </select>
             </div>
-            <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Social Media Link</h3>
-                <input type="text" placeholder="Youtube, Instagram url" className="basicinfoinput1" />
-            </div>
         </div>
+        <h3 className='basicinfotitle'>Social Media Link</h3>
+        <input type="text" placeholder="Youtube, Instagram url" className="basicinfoinput" />
         <h3 className='basicinfotitle'>Description</h3>
         <textarea rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
     </div>
@@ -5183,11 +5168,11 @@ const ProductCreation = () => {
           </div>
         )}
         <input type="file" ref={videoInputRef} style={{ display: "none" }} accept=".mp4,.webm,.mov" onChange={handleVideoChange}/>
-        <h3 className='basicinfotitle'>Title</h3>
+        <h3 className='basicinfotitle'>Title<span className="required-star">*</span></h3>
         <input type="text" placeholder="e.g., Luxury 4BHK Penthouse in South Mumbai" className="basicinfoinput" />
         <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Rent</h3>
+                <h3 className='basicinfotitle'>Rent<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 5,50,00,000" className="basicinfoinput1" />
             </div>
             <div className='basicinfoinputdiv'>
@@ -5211,11 +5196,9 @@ const ProductCreation = () => {
                     <option value="KUWAIT">Kuwait</option>
                 </select>
             </div>
-            <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Social Media Link</h3>
-                <input type="text" placeholder="Youtube, Instagram url" className="basicinfoinput1" />
-            </div>
         </div>
+        <h3 className='basicinfotitle'>Social Media Link</h3>
+        <input type="text" placeholder="Youtube, Instagram url" className="basicinfoinput" />
         <h3 className='basicinfotitle'>Description</h3>
         <textarea rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
     </div>

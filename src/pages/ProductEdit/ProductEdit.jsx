@@ -196,7 +196,7 @@ const ProductEdit = () => {
     };
     try {
       setSaving(true);
-      await api.patch(`/api/product/${id}`, payload);
+      await api.patch(`/api/product/my/${id}`, payload);
       navigate(`/productpage/${id}`);
     } catch (err) {
       alert(

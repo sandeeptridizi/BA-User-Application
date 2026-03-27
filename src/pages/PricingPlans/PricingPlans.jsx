@@ -158,7 +158,7 @@ const PricingPlans = () => {
 
     try {
       const body = { packageId: pkg.id };
-      if (couponApplied && couponTarget?.id === pkg.id) {
+      if (couponApplied) {
         body.couponCode = couponApplied.code;
       }
       const orderRes = await api.post('/api/subscription/create-order', body);
@@ -381,8 +381,23 @@ const PricingPlans = () => {
                 <LuShield className='pricing-star-icon' />
                 <h3 className='pricing-heading'>{selectedEnterprise.title}</h3>
                 <h3 className='plan-price'>
-                  <BsCurrencyRupee /> {formatPrice(selectedEnterprise.price)}
+                  <BsCurrencyRupee /> {couponApplied ? formatPrice((() => {
+                    let d = 0;
+                    if (couponApplied.discountType === 'PERCENTAGE') {
+                      d = Math.round((selectedEnterprise.price * couponApplied.discountValue) / 100);
+                      if (couponApplied.maxDiscount && d > couponApplied.maxDiscount) d = couponApplied.maxDiscount;
+                    } else {
+                      d = couponApplied.discountValue;
+                    }
+                    if (d > selectedEnterprise.price) d = selectedEnterprise.price;
+                    return selectedEnterprise.price - d;
+                  })()) : formatPrice(selectedEnterprise.price)}
                 </h3>
+                {couponApplied && (
+                  <p className='pricing-original-price'>
+                    <BsCurrencyRupee /> {formatPrice(selectedEnterprise.price)}
+                  </p>
+                )}
                 <p className='pricing-text'>+ GST</p>
               </div>
               <div className='pricing-page-list-container'>

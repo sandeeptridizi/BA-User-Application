@@ -1,3 +1,8 @@
+.required-star {
+    color: red;
+    margin-left: 2px;
+}
+
 .productcontainer1{
     min-height: 1900px;
     height: auto;
@@ -312,7 +317,7 @@ textarea.basicinfoinput {
   height: 38px;
   background-color: #F3F3F5;
   color: #717182;
-  width: 100%;
+  width: 90%;
   margin-top: 8px;
   font-size: 14px;
   border: none;
@@ -617,7 +622,7 @@ textarea.basicinfoinput {
     .basicinfoinput2,
     .basicinfoinput3,
     .basicinfoinput4 {
-        width: 100%;
+        width: 90%;
     }
 
     .basicinforow {

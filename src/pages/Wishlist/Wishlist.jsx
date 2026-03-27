@@ -116,7 +116,7 @@ const Wishlist = () => {
             <div
               className="wishlist-card"
               key={product.id}
-              onClick={() => navigate(`/productpage/${product.id}`)}
+              onClick={() => window.open(`https://billionaireauction.com/product/${product.id}`, '_blank')}
             >
               <div className="wishlist-card-image-wrap">
                 <img
