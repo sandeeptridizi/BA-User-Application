@@ -140,18 +140,7 @@ const ProductPage = () => {
     fetchProduct();
   }, [id]);
 
-  useEffect(() => {
-    if (imageQueue.length === 0) return;
-    const interval = setInterval(() => {
-      setImageQueue((prev) => {
-        const updated = [...prev];
-        const first = updated.shift();
-        updated.push(first);
-        return updated;
-      });
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [product?.id]);
+  const [selectedImage, setSelectedImage] = useState(0);
 
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this product? This action cannot be undone.")) return;
@@ -222,17 +211,17 @@ const ProductPage = () => {
         <div className="productpageleft">
           <div className="productpageimage">
             <img
-              src={getImageUrl(imageQueue[0])}
+              src={getImageUrl(imageQueue[selectedImage])}
               alt="product"
               className="productheaderimage"
             />
             <ul className="productimagescroller">
-              {imageQueue.slice(1, 4).map((img, index) => (
-                <li key={index}>
+              {imageQueue.map((img, index) => (
+                <li key={index} onClick={() => setSelectedImage(index)}>
                   <img
-                    src={getImageUrl(imageQueue[index])}
+                    src={getImageUrl(img)}
                     alt="product"
-                    className="productimageone"
+                    className={`productimageone${index === selectedImage ? " productimageactive" : ""}`}
                   />
                 </li>
               ))}

@@ -43,6 +43,7 @@
     width: 678px;
     border-radius: 10px;
     margin-bottom: 10px;
+    object-fit: contain;
 }
 
 .productimagescroller{
@@ -59,6 +60,16 @@
     height: 122px;
     width: 208px;
     border-radius: 10px;
+    object-fit: contain;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.productimageactive{
+    opacity: 1;
+    outline: 2px solid #007bff;
+    outline-offset: -2px;
 }
 
 .productdescription{
@@ -381,7 +392,7 @@
         width: 100%;
         height: auto;
         max-height: 280px;
-        object-fit: cover;
+        object-fit: contain;
     }
 
     .productimagescroller {

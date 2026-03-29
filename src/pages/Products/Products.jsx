@@ -300,30 +300,6 @@ const Products = () => {
             <IoEyeOutline />
           </div>
         </li>
-        <li className="producthighlight1">
-          <div className="producthighlightinfo">
-            <span className="producthighlighttitle">Total Views</span>
-            <br />
-            <span className="producthighlightnum1">
-              {formatCount(stats.totalViews)}
-            </span>
-          </div>
-          <div className="producthighlighticon2">
-            <IoEyeOutline />
-          </div>
-        </li>
-        <li className="producthighlight1">
-          <div className="producthighlightinfo">
-            <span className="producthighlighttitle">Total Value</span>
-            <br />
-            <span className="producthighlightnum">
-              {formatCurrency(stats.totalValue)}
-            </span>
-          </div>
-          <div className="producthighlighticon3">
-            <LuCrown />
-          </div>
-        </li>
       </ul>
 
       <div className="productcatmain">
