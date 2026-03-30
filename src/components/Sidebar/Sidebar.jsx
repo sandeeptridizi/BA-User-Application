@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 import companyLogo from '../../assets/company-logo.png';
 import { getUser, logout as doLogout } from '../../../lib/auth';
+import { getFile } from '../../../lib/s3';
 
 import { LuLayoutDashboard } from 'react-icons/lu';
 import { FiShoppingBag } from 'react-icons/fi';
@@ -109,7 +110,13 @@ const Sidebar = () => {
       </div>
       <div className='sidebar-admin-logout-container'>
         <div className='admin-container'>
-          <div className='admin-icon-container'>{getInitials(user?.name)}</div>
+          <div className={`admin-icon-container ${user?.profilePicture ? 'admin-icon-has-pic' : ''}`}>
+            {user?.profilePicture ? (
+              <img src={getFile(user.profilePicture)} alt='Profile' className='admin-icon-img' />
+            ) : (
+              getInitials(user?.name)
+            )}
+          </div>
           <div className='admin-content-container'>
             <p className='admin-title'>{user?.name || 'User Profile'}</p>
             <p className='admin-mail'>{user?.email || '—'}</p>

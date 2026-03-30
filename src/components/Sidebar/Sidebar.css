@@ -105,6 +105,21 @@
   font-weight: 700;
 }
 
+.admin-icon-has-pic {
+  background: none;
+  border: 2.5px solid #d4af37;
+  box-shadow: 0 0 0 1.5px rgba(212, 175, 55, 0.3);
+  overflow: hidden;
+  padding: 0;
+}
+
+.admin-icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
 .admin-content-container {
   display: flex;
   flex-direction: column;
