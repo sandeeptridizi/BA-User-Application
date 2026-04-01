@@ -10,26 +10,28 @@ const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     const authtoken = searchParams.get('authtoken');
-    if (!authtoken) return;
+    if (authtoken) {
+      setToken(authtoken);
 
-    setToken(authtoken);
-
-    // Fetch user profile with the new token and clean up the URL
-    api.get('/api/user/me', {
-      headers: { Authorization: `Bearer ${authtoken}` },
-    })
-      .then(({ data }) => {
-        setUser(data.data || data.user || data);
+      // Fetch user profile with the new token and clean up the URL
+      api.get('/api/user/me', {
+        headers: { Authorization: `Bearer ${authtoken}` },
       })
-      .catch(() => {
-        // Token might still be valid even if /me fails; keep it
-      })
-      .finally(() => {
-        // Remove authtoken from URL without full reload
-        searchParams.delete('authtoken');
-        setSearchParams(searchParams, { replace: true });
-        setChecking(false);
-      });
+        .then(({ data }) => {
+          setUser(data.data || data.user || data);
+        })
+        .catch(() => {})
+        .finally(() => {
+          searchParams.delete('authtoken');
+          setSearchParams(searchParams, { replace: true });
+          setChecking(false);
+        });
+    } else if (getToken()) {
+      // Refresh user data from /me on every app load
+      api.get('/api/user/me')
+        .then(({ data }) => setUser(data.data || data.user || data))
+        .catch(() => {});
+    }
   }, []);
 
   if (checking) {

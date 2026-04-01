@@ -14,7 +14,7 @@ import { BsLightningCharge } from "react-icons/bs";
 import { LuUsers } from "react-icons/lu";
 import { FaRegCircleQuestion } from "react-icons/fa6";
 import { LuCrown } from "react-icons/lu";
-import { getUser } from '../../../lib/auth';
+import { getUser, setUser as saveUserToStorage } from '../../../lib/auth';
 import api from '../../../lib/api';
 import { getMyEnquiries } from '../../../lib/enquiries';
 
@@ -67,7 +67,11 @@ const DashboardPage = () => {
     const [loadingEnquiries, setLoadingEnquiries] = useState(true);
 
     useEffect(() => {
-      api.get('/api/user/me').then(res => setProfile(res.data?.data)).catch(() => {});
+      api.get('/api/user/me').then(res => {
+        const data = res.data?.data;
+        setProfile(data);
+        if (data) saveUserToStorage(data);
+      }).catch(() => {});
     }, []);
 
     useEffect(() => {

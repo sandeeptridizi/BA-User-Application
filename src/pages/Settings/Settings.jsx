@@ -53,6 +53,7 @@ const Settings = () => {
                 ]);
                 const user = profileRes.data?.data;
                 setProfile(user);
+                if (user) saveUserToStorage(user);
                 const { first, last } = getFirstLast(user?.name);
                 setForm({
                     firstName: first,
@@ -183,7 +184,7 @@ const Settings = () => {
                 amount,
                 currency,
                 name: 'Billionaire Auctions',
-                description: `${PLAN_LABELS[plan]} - Annual Subscription`,
+                description: `${PLAN_LABELS[plan]} - Monthly Subscription`,
                 order_id: orderId,
                 prefill: {
                     name: profile?.name || '',
