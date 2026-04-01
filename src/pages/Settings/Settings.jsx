@@ -1,7 +1,7 @@
 import './Settings.css';
 import { IoSettingsOutline } from "react-icons/io5";
 import { useState, useEffect, useRef } from "react";
-import { FiUser } from "react-icons/fi";
+import { FiUser, FiEdit2 } from "react-icons/fi";
 import { MdStar } from "react-icons/md";
 import { MdOutlineMail } from "react-icons/md";
 import { LuPhone } from "react-icons/lu";
@@ -282,7 +282,7 @@ const Settings = () => {
                                 style={{ cursor: uploadingPic ? 'not-allowed' : 'pointer' }}
                                 title={uploadingPic === 'uploading' ? 'Uploading...' : 'Change photo'}
                             >
-                                <IoSettingsOutline />
+                                <FiEdit2 />
                             </span>
                             <input ref={picInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleProfilePicUpload} />
                         </div>

@@ -242,4 +242,48 @@
   .wishlist-header {
     font-size: 20px;
   }
+
+  .wishlist-card-title {
+    font-size: 13px;
+  }
+
+  .wishlist-card-category {
+    font-size: 10px;
+  }
+
+  .wishlist-card-location {
+    font-size: 11px;
+  }
+
+  .wishlist-card-price {
+    font-size: 13px;
+  }
+
+  .wishlist-remove-btn {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+
+  .wishlist-head-desc {
+    font-size: 12px;
+  }
+
+  .wishlist-count-badge {
+    font-size: 12px;
+    padding: 4px 12px;
+  }
+
+  .wishlist-badge-verified,
+  .wishlist-badge-tier {
+    font-size: 9px;
+    padding: 2px 6px;
+  }
+
+  .wishlist-card-body {
+    padding: 10px;
+  }
+
+  .wishlist-card-image-wrap {
+    height: 150px;
+  }
 }

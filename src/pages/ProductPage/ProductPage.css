@@ -473,6 +473,46 @@
     .productdetails-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
+    .productfeaturelist {
+        font-size: 12px;
+    }
+
+    .productownerdata,
+    .productownername {
+        font-size: 12px;
+    }
+
+    .currentstatus,
+    .currentstatus1 {
+        font-size: 12px;
+    }
+
+    .productpageactivetag {
+        font-size: 10px;
+    }
+
+    .productpagepricetag {
+        font-size: 18px;
+    }
+
+    .performancecount {
+        font-size: 14px;
+    }
+
+    .productdetail-label {
+        font-size: 11px;
+    }
+
+    .productdetail-value {
+        font-size: 12px;
+    }
+
+    .editproductbutton,
+    .deleteproductbutton,
+    .productsbackbutton {
+        font-size: 13px;
+    }
 }
 
 @media (max-width: 480px) {

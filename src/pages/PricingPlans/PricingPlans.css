@@ -1004,6 +1004,23 @@
     grid-template-columns: 1fr;
   }
 
+  .pricing-text {
+    font-size: 13px;
+  }
+
+  .pricing-date {
+    font-size: 12px;
+  }
+
+  .pricing-time {
+    font-size: 12px;
+  }
+
+  .pricing-btn,
+  .pricing-popular-btn {
+    font-size: 13px;
+  }
+
   .website-grid-item-container {
     padding: 16px;
     gap: 12px;
@@ -1090,8 +1107,33 @@
     text-align: center;
   }
 
+  .package-item-heading {
+    font-size: 15px;
+  }
+
+  .package-price {
+    font-size: 24px;
+  }
+
   .package-item-container {
-    font-size: 9px;
+    font-size: 11px;
+  }
+
+  .select-package-btn {
+    font-size: 13px;
+  }
+
+  .leads-heading {
+    font-size: 18px;
+  }
+
+  .leads-cost,
+  .leads-item-cost {
+    font-size: 22px;
+  }
+
+  .plan {
+    font-size: 14px;
   }
 
   .digital-media-justify-container {

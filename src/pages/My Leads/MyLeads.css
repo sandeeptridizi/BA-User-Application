@@ -514,6 +514,26 @@
   .inquirystat2,
   .inquirystat3 {
     width: 100%;
+    height: auto;
+    padding: 14px;
+  }
+
+  .inquirystat p {
+    font-size: 11px;
+  }
+
+  .inquirystat h2,
+  .inquirystat1 h2,
+  .inquirystat2 h2,
+  .inquirystat3 h2 {
+    font-size: 22px;
+  }
+
+  .inquirystatright,
+  .inquirystatright1,
+  .inquirystatright2,
+  .inquirystatright3 {
+    font-size: 28px;
   }
 
   .buyerenquiry {
@@ -575,11 +595,11 @@
   }
 
   .buyerinfo h2 {
-    font-size: 20px;
+    font-size: 16px;
   }
 
   .buyerinfo p {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .buyerenquirybottom {
@@ -625,7 +645,36 @@
 
   .buyerenquiryactions h3 {
     gap: 3px;
-    font-size: 13px;
+    font-size: 11px;
+  }
+
+  .buyerenquiryactions p {
+    font-size: 11px;
+  }
+
+  .buyercontactinfo {
+    font-size: 11px;
+  }
+
+  .buyerproductinfo {
+    font-size: 11px;
+  }
+
+  .buyerenquiryleft h3,
+  .buyerenquiryright h3 {
+    font-size: 12px;
+  }
+
+  .buyermessage {
+    font-size: 11px;
+  }
+
+  .buyerpreference h3 {
+    font-size: 12px;
+  }
+
+  .buyerpreference p {
+    font-size: 11px;
   }
 
   .buyerenquiryid {
