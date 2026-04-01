@@ -17,13 +17,17 @@ import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import useAppContext from './context/AppContext';
 import AuthenticationModal from './components/AuthenticationModal/AuthenticationModal';
+import { useLocation } from 'react-router-dom';
 
-const App = () => {
+const AppContent = () => {
   const { openAuthenticationModal } = useAppContext();
+  const location = useLocation();
+  const authRoutes = ['/sign-in', '/sign-up', '/forgot-password'];
+  const isAuthPage = authRoutes.includes(location.pathname);
 
   return (
-    <BrowserRouter>
-      <MobileNavbar />
+    <>
+      {!isAuthPage && <MobileNavbar />}
       <Routes>
         <Route
           path='/'
@@ -50,6 +54,14 @@ const App = () => {
         <Route path='forgot-password' element={<ForgotPassword />} />
       </Routes>
       {openAuthenticationModal && <AuthenticationModal />}
+    </>
+  );
+};
+
+const App = () => {
+  return (
+    <BrowserRouter>
+      <AppContent />
     </BrowserRouter>
   );
 };
