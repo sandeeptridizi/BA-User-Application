@@ -95,12 +95,8 @@ const MobileNavbar = () => {
 
       <div className='mobile-navbar-inner'>
         <Link
-          to='/'
+          to='https://billionaireauction.com/'
           className='mobile-navbar-home-link'
-          onClick={() => {
-            setActiveLink('dashboard');
-            setShowLinks(false);
-          }}
         >
           <span className='mobile-navbar-home-text'>Home</span>
         </Link>
@@ -125,7 +121,9 @@ const MobileNavbar = () => {
       {/* Dropdown menu */}
       <div className={`mobile-nav-links-container ${showLinks ? 'mobile-nav-links-open' : ''}`}>
         <div className='mobile-nav-links-header'>
-          <img src={companyLogo} alt='BAuction' className='mobile-nav-menu-logo' />
+          <Link to='https://billionaireauction.com/'>
+            <img src={companyLogo} alt='BAuction' className='mobile-nav-menu-logo' />
+          </Link>
           <div className='mobile-nav-links-divider'></div>
         </div>
 

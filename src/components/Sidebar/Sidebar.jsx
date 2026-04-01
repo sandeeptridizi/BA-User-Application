@@ -1,7 +1,7 @@
 import './Sidebar.css';
 
-import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 import companyLogo from '../../assets/company-logo.png';
 import { getUser, logout as doLogout } from '../../../lib/auth';
@@ -69,10 +69,17 @@ const getInitials = (name) => {
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const [activeLink, setActiveLink] = useState(
-    linksData[0].title.toLowerCase(),
-  );
+  const location = useLocation();
+  const [activeLink, setActiveLink] = useState('dashboard');
   const user = getUser();
+
+  useEffect(() => {
+    const path = location.pathname.replace('/', '') || 'dashboard';
+    const match = linksData.find(
+      (item) => item.link.replace('/', '') === path || (item.link === '/' && path === 'dashboard'),
+    );
+    if (match) setActiveLink(match.title.toLowerCase());
+  }, [location.pathname]);
 
   const handleLogout = () => {
     doLogout();
@@ -81,7 +88,7 @@ const Sidebar = () => {
 
   return (
     <div className='sidebar-container'>
-      <Link to='https://billionaireauction.com' className='sidebar-logo-container' onClick={() => setActiveLink('dashboard')}>
+      <Link to='https://billionaireauction.com/' className='sidebar-logo-container'>
         <img
           src={companyLogo}
           alt='Billionaire Auction'
@@ -92,14 +99,13 @@ const Sidebar = () => {
         {linksData.map((item) => {
           const { id, icon, title, link } = item;
           return (
-            <Link to={link}>
+            <Link to={link} key={id}>
               <div
                 className={
                   activeLink === title.toLowerCase()
                     ? 'link-container active-link'
                     : 'link-container'
                 }
-                key={id}
                 onClick={() => setActiveLink(title.toLowerCase())}
               >
                 {icon} {title}
