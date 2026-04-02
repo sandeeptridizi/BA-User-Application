@@ -108,10 +108,6 @@ const getLocationText = (meta) => {
   return location || "Location not added";
 };
 
-const getViews = (meta) => {
-  if (!meta || typeof meta !== "object") return 0;
-  return Number(meta.views || 0);
-};
 
 const chunkProducts = (items, size = 3) => {
   const rows = [];
@@ -184,15 +180,11 @@ const Products = () => {
     const activeListings = products.filter(
       (item) => item.approvalStatus === "APPROVED",
     ).length;
-    const totalViews = products.reduce(
-      (sum, item) => sum + getViews(item.meta),
-      0,
-    );
     const totalValue = products.reduce(
       (sum, item) => sum + Number(item.value || 0),
       0,
     );
-    return { totalProducts, activeListings, totalViews, totalValue };
+    return { totalProducts, activeListings, totalValue };
   }, [products]);
 
   const visibleProducts = useMemo(() => {
@@ -416,10 +408,6 @@ const Products = () => {
                         </div>
                       )}
                       <div className="productviewtag">
-                        <h3 className="productviews">
-                          <IoEyeOutline />
-                          {formatCount(getViews(product.meta))} views
-                        </h3>
                         {product.tier === "LUXURY" && (
                           <span className="producttag1">
                             <LuCrown />

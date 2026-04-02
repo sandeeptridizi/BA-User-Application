@@ -77,7 +77,6 @@ const getLocationText = (meta) => {
   return location || "Location not added";
 };
 
-const getViews = (meta) => (meta && typeof meta === "object" ? Number(meta.views || 0) : 0);
 
 const formatDate = (d) => {
   if (!d) return "—";
@@ -178,7 +177,6 @@ const ProductPage = () => {
   const meta = product.meta || {};
   const features = Array.isArray(meta.features) ? meta.features : (meta.keyFeatures ? [meta.keyFeatures] : []);
   const owner = product.owner || {};
-  const views = getViews(meta);
   const metaDetails = getMetaDetails(meta);
 
   return (

@@ -377,12 +377,6 @@
     border-radius: 8px;
 }
 
-.productviews{
-    color: #71717B;
-    font-size: 14px;
-    display: inline-flex;
-    gap: 8px;
-}
 
 .producttag1{
     width: fit-content;
@@ -527,9 +521,6 @@
         font-size: 18px;
     }
 
-    .productviews {
-        font-size: 11px;
-    }
 
     .productactivetag {
         font-size: 10px;
