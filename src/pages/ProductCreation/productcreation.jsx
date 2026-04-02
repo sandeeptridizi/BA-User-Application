@@ -706,7 +706,7 @@ const ProductCreation = () => {
             </div>
         </div>
         <h3 className='basicinfotitle'>Social Media Link</h3>
-        <input type="text" placeholder="Youtube, Instagram url" className="basicinfoinput" />
+        <input type="url" placeholder="Youtube, Instagram url" className="basicinfoinput" />
         <h3 className='basicinfotitle'>Description</h3>
         <textarea ref={marketplaceDescriptionRef} rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
     </div>
@@ -771,7 +771,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Age of Property</h3>
-                <input type="text" placeholder="e.g., 5" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 5" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Facing</h3>
@@ -810,17 +810,17 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
-                <input type="text" placeholder="e.g., 3" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bathrooms</h3>
-                <input type="text" placeholder="e.g., 2" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floors </h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing </h3>
@@ -861,17 +861,17 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
-                <input type="text" placeholder="e.g., 3" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bathrooms</h3>
-                <input type="text" placeholder="e.g., 2" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floors </h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing </h3>
@@ -906,21 +906,21 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floor Number</h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
-                <input type="text" placeholder="e.g., 3" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bathrooms</h3>
-                <input type="text" placeholder="e.g., 2" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Total Floors </h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing </h3>
@@ -960,7 +960,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Balcony Count</h3>
-                <input type="text" placeholder="e.g., 2" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Parking Type</h3>
@@ -980,21 +980,21 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floor Number</h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
-                <input type="text" placeholder="e.g., 3" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bathrooms</h3>
-                <input type="text" placeholder="e.g., 2" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Total Floors </h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing </h3>
@@ -1034,7 +1034,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Balcony Count</h3>
-                <input type="text" placeholder="e.g., 2" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Parking Type</h3>
@@ -1192,7 +1192,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floor</h3>
-                <input type="text" placeholder="e.g., 3" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Parking</h3>
@@ -1264,11 +1264,11 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Year of Manufacture</h3>
-                <input type="text" placeholder="e.g., 2020" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2020" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>KM Driven</h3>
-                <input type="text" placeholder="e.g., 25000" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 25000" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
@@ -1411,13 +1411,13 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Year of Manufacture</h3>
-                <input type="text" placeholder="e.g., 2020" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2020" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>KM Driven</h3>
-                <input type="text" placeholder="e.g., 25000" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 25000" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>No of Owners</h3>
@@ -1576,7 +1576,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Seating Capacity</h3>
-                <input type="text" placeholder="Enter Seating Capacity" className="basicinfoinput2" />
+                <input type="number" placeholder="Enter Seating Capacity" className="basicinfoinput2" />
             </div>  
         </div>
          <div className='basicinforow'>  
@@ -1600,7 +1600,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Original Purchase Price</h3>
-                <input type="text" placeholder="e.g., 45,000" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 45000" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Reason for Selling</h3>
@@ -1774,7 +1774,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Year of Purchase</h3>
-                <input type="text" placeholder="e.g., 2024" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2024" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Working Condition</h3>
@@ -1830,7 +1830,7 @@ const ProductCreation = () => {
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Year Created</h3>
-                <input type="text" placeholder="e.g., 2024" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2024" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Signed</h3>
@@ -1874,7 +1874,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Approximate Age</h3>
-                <input type="text" placeholder="e.g., 150" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 150" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Origin</h3>
@@ -2020,7 +2020,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Purchase Year</h3>
-                <input type="text" placeholder="e.g., 2021" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2021" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Reason for Selling</h3>
@@ -2173,7 +2173,7 @@ const ProductCreation = () => {
         <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Price<span className="required-star">*</span></h3>
-                <input type="text" placeholder="e.g., 5,50,00,000" className="basicinfoinput1" />
+                <input type="number" inputMode="numeric" placeholder="e.g., 55000000" className="basicinfoinput1" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>City</h3>
@@ -2198,7 +2198,7 @@ const ProductCreation = () => {
             </div>
         </div>
         <h3 className='basicinfotitle'>Social Media Link</h3>
-        <input type="text" placeholder="Youtube, Instagram url" className="basicinfoinput" />
+        <input type="url" placeholder="Youtube, Instagram url" className="basicinfoinput" />
         <h3 className='basicinfotitle'>Description</h3>
         <textarea rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
     </div>
@@ -2263,7 +2263,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Age of Property</h3>
-                <input type="text" placeholder="e.g., 5" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 5" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Facing</h3>
@@ -2302,17 +2302,17 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
-                <input type="text" placeholder="e.g., 3" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bathrooms</h3>
-                <input type="text" placeholder="e.g., 2" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floors </h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing </h3>
@@ -2353,17 +2353,17 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
-                <input type="text" placeholder="e.g., 3" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bathrooms</h3>
-                <input type="text" placeholder="e.g., 2" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floors </h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing </h3>
@@ -2398,21 +2398,21 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floor Number</h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
-                <input type="text" placeholder="e.g., 3" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bathrooms</h3>
-                <input type="text" placeholder="e.g., 2" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Total Floors </h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing </h3>
@@ -2452,7 +2452,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Balcony Count</h3>
-                <input type="text" placeholder="e.g., 2" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Parking Type</h3>
@@ -2472,21 +2472,21 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floor Number</h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
-                <input type="text" placeholder="e.g., 3" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bathrooms</h3>
-                <input type="text" placeholder="e.g., 2" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Total Floors </h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing </h3>
@@ -2526,7 +2526,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Balcony Count</h3>
-                <input type="text" placeholder="e.g., 2" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Parking Type</h3>
@@ -2684,7 +2684,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floor</h3>
-                <input type="text" placeholder="e.g., 3" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Parking</h3>
@@ -2756,11 +2756,11 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Year of Manufacture</h3>
-                <input type="text" placeholder="e.g., 2020" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2020" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>KM Driven</h3>
-                <input type="text" placeholder="e.g., 25000" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 25000" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
@@ -2903,13 +2903,13 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Year of Manufacture</h3>
-                <input type="text" placeholder="e.g., 2020" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2020" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>KM Driven</h3>
-                <input type="text" placeholder="e.g., 25000" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 25000" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>No of Owners</h3>
@@ -3068,7 +3068,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Seating Capacity</h3>
-                <input type="text" placeholder="Enter Seating Capacity" className="basicinfoinput2" />
+                <input type="number" placeholder="Enter Seating Capacity" className="basicinfoinput2" />
             </div>  
         </div>
          <div className='basicinforow'>  
@@ -3092,7 +3092,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Original Purchase Price</h3>
-                <input type="text" placeholder="e.g., 45,000" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 45000" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Reason for Selling</h3>
@@ -3266,7 +3266,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Year of Purchase</h3>
-                <input type="text" placeholder="e.g., 2024" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2024" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Working Condition</h3>
@@ -3322,7 +3322,7 @@ const ProductCreation = () => {
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Year Created</h3>
-                <input type="text" placeholder="e.g., 2024" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2024" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Signed</h3>
@@ -3366,7 +3366,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Approximate Age</h3>
-                <input type="text" placeholder="e.g., 150" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 150" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Origin</h3>
@@ -3512,7 +3512,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Purchase Year</h3>
-                <input type="text" placeholder="e.g., 2021" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2021" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Reason for Selling</h3>
@@ -3665,7 +3665,7 @@ const ProductCreation = () => {
         <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Price<span className="required-star">*</span></h3>
-                <input type="text" placeholder="e.g., 5,50,00,000" className="basicinfoinput1" />
+                <input type="number" inputMode="numeric" placeholder="e.g., 55000000" className="basicinfoinput1" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>City</h3>
@@ -3690,7 +3690,7 @@ const ProductCreation = () => {
             </div>
         </div>
         <h3 className='basicinfotitle'>Social Media Link</h3>
-        <input type="text" placeholder="Youtube, Instagram url" className="basicinfoinput" />
+        <input type="url" placeholder="Youtube, Instagram url" className="basicinfoinput" />
         <h3 className='basicinfotitle'>Description</h3>
         <textarea rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
     </div>
@@ -3755,7 +3755,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Age of Property</h3>
-                <input type="text" placeholder="e.g., 5" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 5" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Facing</h3>
@@ -3794,17 +3794,17 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
-                <input type="text" placeholder="e.g., 3" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bathrooms</h3>
-                <input type="text" placeholder="e.g., 2" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floors </h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing </h3>
@@ -3845,17 +3845,17 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
-                <input type="text" placeholder="e.g., 3" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bathrooms</h3>
-                <input type="text" placeholder="e.g., 2" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floors </h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing </h3>
@@ -3890,21 +3890,21 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floor Number</h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
-                <input type="text" placeholder="e.g., 3" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bathrooms</h3>
-                <input type="text" placeholder="e.g., 2" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Total Floors </h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing </h3>
@@ -3944,7 +3944,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Balcony Count</h3>
-                <input type="text" placeholder="e.g., 2" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Parking Type</h3>
@@ -3964,21 +3964,21 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floor Number</h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
-                <input type="text" placeholder="e.g., 3" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bathrooms</h3>
-                <input type="text" placeholder="e.g., 2" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Total Floors </h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing </h3>
@@ -4018,7 +4018,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Balcony Count</h3>
-                <input type="text" placeholder="e.g., 2" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Parking Type</h3>
@@ -4176,7 +4176,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Floor</h3>
-                <input type="text" placeholder="e.g., 3" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Parking</h3>
@@ -4248,11 +4248,11 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Year of Manufacture</h3>
-                <input type="text" placeholder="e.g., 2020" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2020" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>KM Driven</h3>
-                <input type="text" placeholder="e.g., 25000" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 25000" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
@@ -4395,13 +4395,13 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Year of Manufacture</h3>
-                <input type="text" placeholder="e.g., 2020" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2020" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>KM Driven</h3>
-                <input type="text" placeholder="e.g., 25000" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 25000" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>No of Owners</h3>
@@ -4560,7 +4560,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Seating Capacity</h3>
-                <input type="text" placeholder="Enter Seating Capacity" className="basicinfoinput2" />
+                <input type="number" placeholder="Enter Seating Capacity" className="basicinfoinput2" />
             </div>  
         </div>
          <div className='basicinforow'>  
@@ -4584,7 +4584,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Original Purchase Price</h3>
-                <input type="text" placeholder="e.g., 45,000" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 45000" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Reason for Selling</h3>
@@ -4758,7 +4758,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Year of Purchase</h3>
-                <input type="text" placeholder="e.g., 2024" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2024" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Working Condition</h3>
@@ -4814,7 +4814,7 @@ const ProductCreation = () => {
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Year Created</h3>
-                <input type="text" placeholder="e.g., 2024" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2024" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Signed</h3>
@@ -4858,7 +4858,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Approximate Age</h3>
-                <input type="text" placeholder="e.g., 150" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 150" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Origin</h3>
@@ -5004,7 +5004,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Purchase Year</h3>
-                <input type="text" placeholder="e.g., 2021" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2021" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Reason for Selling</h3>
@@ -5149,7 +5149,7 @@ const ProductCreation = () => {
         <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Rent<span className="required-star">*</span></h3>
-                <input type="text" placeholder="e.g., 5,50,00,000" className="basicinfoinput1" />
+                <input type="number" inputMode="numeric" placeholder="e.g., 55000000" className="basicinfoinput1" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>City</h3>
@@ -5174,7 +5174,7 @@ const ProductCreation = () => {
             </div>
         </div>
         <h3 className='basicinfotitle'>Social Media Link</h3>
-        <input type="text" placeholder="Youtube, Instagram url" className="basicinfoinput" />
+        <input type="url" placeholder="Youtube, Instagram url" className="basicinfoinput" />
         <h3 className='basicinfotitle'>Description</h3>
         <textarea rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
     </div>
@@ -5206,21 +5206,21 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bedrooms</h3>
-                <input type="text" placeholder="e.g., 2021" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2021" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Bathrooms</h3>
-                <input type="text" placeholder="e.g., 2021" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 2021" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Property Floor</h3>
-                <input type="text" placeholder="e.g., 4" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Total No of Floors</h3>
-                <input type="text" placeholder="e.g., 10" className="basicinfoinput2" />
+                <input type="number" placeholder="e.g., 10" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Carpet Area</h3>
@@ -5238,7 +5238,7 @@ const ProductCreation = () => {
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Maintenance Charges</h3>
-                <input type="text" placeholder="e.g., 10,000" className="basicinfoinput2" />
+                <input type="number" inputMode="numeric" placeholder="e.g., 10000" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Available From</h3>
@@ -5277,11 +5277,11 @@ const ProductCreation = () => {
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Rent per Month (₹)</h3>
-                <input type="text" placeholder="e.g., 2,50,000" className="basicinfoinput4" />
+                <input type="number" inputMode="numeric" placeholder="e.g., 250000" className="basicinfoinput4" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Security Deposit (₹)</h3>
-                <input type="text" placeholder="e.g., 5,00,000" className="basicinfoinput4" />
+                <input type="number" inputMode="numeric" placeholder="e.g., 500000" className="basicinfoinput4" />
             </div> 
         </div>
         <div className='basicinforow'>  
@@ -5315,11 +5315,11 @@ const ProductCreation = () => {
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Rent per Month (₹)</h3>
-                <input type="text" placeholder="e.g., 2,50,000" className="basicinfoinput4" />
+                <input type="number" inputMode="numeric" placeholder="e.g., 250000" className="basicinfoinput4" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Security Deposit (₹)</h3>
-                <input type="text" placeholder="e.g., 5,00,000" className="basicinfoinput4" />
+                <input type="number" inputMode="numeric" placeholder="e.g., 500000" className="basicinfoinput4" />
             </div> 
         </div>
         <div className='basicinforow'>  
@@ -5353,11 +5353,11 @@ const ProductCreation = () => {
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Rent per Month (₹)</h3>
-                <input type="text" placeholder="e.g., 2,50,000" className="basicinfoinput4" />
+                <input type="number" inputMode="numeric" placeholder="e.g., 250000" className="basicinfoinput4" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Security Deposit (₹)</h3>
-                <input type="text" placeholder="e.g., 5,00,000" className="basicinfoinput4" />
+                <input type="number" inputMode="numeric" placeholder="e.g., 500000" className="basicinfoinput4" />
             </div> 
         </div>
         <div className='basicinforow'>  
@@ -5391,11 +5391,11 @@ const ProductCreation = () => {
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Rent per Month (₹)</h3>
-                <input type="text" placeholder="e.g., 2,50,000" className="basicinfoinput4" />
+                <input type="number" inputMode="numeric" placeholder="e.g., 250000" className="basicinfoinput4" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Security Deposit (₹)</h3>
-                <input type="text" placeholder="e.g., 5,00,000" className="basicinfoinput4" />
+                <input type="number" inputMode="numeric" placeholder="e.g., 500000" className="basicinfoinput4" />
             </div> 
         </div>
         <div className='basicinforow'>  
@@ -5429,11 +5429,11 @@ const ProductCreation = () => {
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Rent per Month (₹)</h3>
-                <input type="text" placeholder="e.g., 2,50,000" className="basicinfoinput4" />
+                <input type="number" inputMode="numeric" placeholder="e.g., 250000" className="basicinfoinput4" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Security Deposit (₹)</h3>
-                <input type="text" placeholder="e.g., 5,00,000" className="basicinfoinput4" />
+                <input type="number" inputMode="numeric" placeholder="e.g., 500000" className="basicinfoinput4" />
             </div> 
         </div>
         <div className='basicinforow'>  
@@ -5467,11 +5467,11 @@ const ProductCreation = () => {
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Rent per Month (₹)</h3>
-                <input type="text" placeholder="e.g., 2,50,000" className="basicinfoinput4" />
+                <input type="number" inputMode="numeric" placeholder="e.g., 250000" className="basicinfoinput4" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Security Deposit (₹)</h3>
-                <input type="text" placeholder="e.g., 5,00,000" className="basicinfoinput4" />
+                <input type="number" inputMode="numeric" placeholder="e.g., 500000" className="basicinfoinput4" />
             </div> 
         </div>
         <div className='basicinforow'>  
@@ -5505,11 +5505,11 @@ const ProductCreation = () => {
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Rent per Month (₹)</h3>
-                <input type="text" placeholder="e.g., 2,50,000" className="basicinfoinput4" />
+                <input type="number" inputMode="numeric" placeholder="e.g., 250000" className="basicinfoinput4" />
             </div> 
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Security Deposit (₹)</h3>
-                <input type="text" placeholder="e.g., 5,00,000" className="basicinfoinput4" />
+                <input type="number" inputMode="numeric" placeholder="e.g., 500000" className="basicinfoinput4" />
             </div> 
         </div>
         <div className='basicinforow'>  
