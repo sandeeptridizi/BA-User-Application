@@ -2,6 +2,7 @@ import './Enquiry.css';
 import { useState } from 'react';
 import { LuMessageSquare } from "react-icons/lu";
 import { IoIosSend } from "react-icons/io";
+import { FiCheckCircle, FiX } from "react-icons/fi";
 import { LuPhone } from "react-icons/lu";
 import { MdOutlineMail } from "react-icons/md";
 import { CiLocationOn } from "react-icons/ci";
@@ -20,11 +21,11 @@ const Enquiry = () => {
     const [description, setDescription] = useState('');
     const [priority, setPriority] = useState('Low');
     const [submitting, setSubmitting] = useState(false);
-    const [successMsg, setSuccessMsg] = useState('');
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
 
     const handleSubmit = async () => {
-        setSuccessMsg('');
+        setShowSuccessModal(false);
         setErrorMsg('');
 
         if (!category || category === 'Select issue category') {
@@ -51,7 +52,7 @@ const Enquiry = () => {
                 visitorEmail: user?.email || '',
                 visitorPhone: user?.phone || '',
             });
-            setSuccessMsg('Support ticket submitted successfully!');
+            setShowSuccessModal(true);
             setCategory('');
             setSubject('');
             setDescription('');
@@ -119,7 +120,6 @@ const Enquiry = () => {
                 <li className={`prioritylevelhigh${priority === 'High' ? ' priorityactive' : ''}`} onClick={() => setPriority('High')}>High</li>
             </ul>
             {errorMsg && <p className='enquiry-error-msg'>{errorMsg}</p>}
-            {successMsg && <p className='enquiry-success-msg'>{successMsg}</p>}
             <div className='ticketsubmitbutton' onClick={handleSubmit} style={{ opacity: submitting ? 0.6 : 1, pointerEvents: submitting ? 'none' : 'auto' }}>
                 <IoIosSend />{submitting ? 'Submitting...' : 'Submit Support Ticket'}
             </div>
@@ -164,6 +164,17 @@ const Enquiry = () => {
             </div>
         </div>
         </div>
+        {showSuccessModal && (
+            <div className='ticket-modal-overlay' onClick={() => setShowSuccessModal(false)}>
+                <div className='ticket-modal' onClick={(e) => e.stopPropagation()}>
+                    <FiX className='ticket-modal-close' onClick={() => setShowSuccessModal(false)} />
+                    <FiCheckCircle className='ticket-modal-icon' />
+                    <h3>The support ticket is submitted successfully</h3>
+                    <p>Our team will resolve your issue as soon as possible.</p>
+                    <button className='ticket-modal-btn' onClick={() => setShowSuccessModal(false)}>OK</button>
+                </div>
+            </div>
+        )}
     </div>;
 };
 
