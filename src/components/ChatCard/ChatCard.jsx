@@ -83,9 +83,15 @@ function ChatCard({ closeChat, enquiry, onStatusUpdate }) {
 
           <div className="contact-info">
             {enquiry.visitorPhone && (
-              <span className="contactinfonote"><LuPhone /> {enquiry.visitorPhone}</span>
+              <a href={`tel:${enquiry.visitorPhone}`} className="contactinfonote" style={{ textDecoration: "none", color: "inherit" }}>
+                <LuPhone /> {enquiry.visitorPhone}
+              </a>
             )}
-            <span className="contactinfonote"><MdOutlineMail />{enquiry.visitorEmail}</span>
+            {enquiry.visitorEmail && (
+              <a href={`mailto:${enquiry.visitorEmail}`} className="contactinfonote" style={{ textDecoration: "none", color: "inherit" }}>
+                <MdOutlineMail /> {enquiry.visitorEmail}
+              </a>
+            )}
           </div>
 
           <div className="property-box">
@@ -93,10 +99,12 @@ function ChatCard({ closeChat, enquiry, onStatusUpdate }) {
             {enquiry.product?.value && <p>{formatValue(enquiry.product.value)}</p>}
           </div>
         </div>
-        <div className="chat-body">
+        {enquiry.message && (
+          <div className="chat-body">
             <p className="message">{enquiry.message}</p>
             <span className="time">{timeAgo(enquiry.createdAt)}</span>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

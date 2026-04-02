@@ -121,7 +121,6 @@
 /* Chat Body */
 .chat-body {
   padding: 14px;
-  min-height: 200px;
 }
 
 .message {
@@ -145,37 +144,3 @@
   color: gray;
 }
 
-/* Footer */
-.chat-footer {
-  padding: 12px;
-  display: flex;
-  gap: 10px;
-  background: white;
-  border-top: 1px solid #e5e7eb;
-}
-
-.chat-footer input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 20px;
-  border: 1px solid #e5e7eb;
-  outline: none;
-}
-
-.chat-footer button {
-  background: #0ea45b;
-  border: none;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  color: white;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-.messagesending{
-  color: #71717B;
-  font-size: 12px;
-  font-weight: 400;
-  margin-left: 20px;
-}
