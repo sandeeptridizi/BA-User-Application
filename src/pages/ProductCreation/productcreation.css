@@ -377,23 +377,59 @@ textarea.basicinfoinput {
     width: 180px;
 }
 
+.marketplacePreviewItem .selectedcatdesc{
+    display: block;
+    max-width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.removeImageBtn{
+    background: #ff4d4f;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    width: fit-content;
+    margin-top: 4px;
+}
+
+.removeImageBtn:hover{
+    background: #d9363e;
+}
+
 .videoUploadBox{
     cursor: pointer;
 }
 
 .videoPreviewContainer{
     display: flex;
+    flex-direction: column;
     align-items: flex-start;
-    gap: 16px;
+    gap: 8px;
     margin-top: 8px;
     margin-bottom: 8px;
+    max-width: 320px;
 }
 
 .videoPreviewInfo{
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding-top: 4px;
+}
+
+.videoPreviewInfo .selectedcatdesc{
+    display: block;
+    max-width: 320px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
 }
 
 .removeVideoBtn{
@@ -668,10 +704,6 @@ textarea.basicinfoinput {
     .cancelbutton {
         flex: 1;
         text-align: center;
-    }
-
-    .videoPreviewContainer {
-        flex-direction: column;
     }
 
     .videoPreviewContainer video {

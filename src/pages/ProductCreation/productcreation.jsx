@@ -68,6 +68,19 @@ const ProductCreation = () => {
     event.target.value = "";
   };
 
+  const removeImage = (urlToRemove) => {
+    const idx = marketplacePreviewsRef.current.findIndex((f) => f.url === urlToRemove);
+    if (idx === -1) return;
+    URL.revokeObjectURL(urlToRemove);
+    const nextPreviews = marketplacePreviewsRef.current.filter((_, i) => i !== idx);
+    marketplacePreviewsRef.current = nextPreviews;
+    setMarketplaceFilePreviews(nextPreviews);
+    const nextFiles = selectedMarketplaceFilesRef.current.filter((_, i) => i !== idx);
+    selectedMarketplaceFilesRef.current = nextFiles;
+    setSelectedMarketplaceFiles(nextFiles);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const removeVideo = () => {
     if (videoPreview) URL.revokeObjectURL(videoPreview);
     setSelectedVideoFile(null);
@@ -649,6 +662,7 @@ const ProductCreation = () => {
                   <img src={file.url} alt={file.name} style={{ width: "180px", maxHeight: "140px", objectFit: "cover", borderRadius: "8px" }} />
                 )}
                 <span className='selectedcatdesc'>{file.name}</span>
+                <button type="button" className="removeImageBtn" onClick={() => removeImage(file.url)}>✕</button>
               </div>
             ))}
           </div>
@@ -2147,6 +2161,7 @@ const ProductCreation = () => {
                   <img src={file.url} alt={file.name} style={{ width: "180px", maxHeight: "140px", objectFit: "cover", borderRadius: "8px" }} />
                 )}
                 <span className='selectedcatdesc'>{file.name}</span>
+                <button type="button" className="removeImageBtn" onClick={() => removeImage(file.url)}>✕</button>
               </div>
             ))}
           </div>
@@ -3639,6 +3654,7 @@ const ProductCreation = () => {
                   <img src={file.url} alt={file.name} style={{ width: "180px", maxHeight: "140px", objectFit: "cover", borderRadius: "8px" }} />
                 )}
                 <span className='selectedcatdesc'>{file.name}</span>
+                <button type="button" className="removeImageBtn" onClick={() => removeImage(file.url)}>✕</button>
               </div>
             ))}
           </div>
@@ -5123,6 +5139,7 @@ const ProductCreation = () => {
                   <img src={file.url} alt={file.name} style={{ width: "180px", maxHeight: "140px", objectFit: "cover", borderRadius: "8px" }} />
                 )}
                 <span className='selectedcatdesc'>{file.name}</span>
+                <button type="button" className="removeImageBtn" onClick={() => removeImage(file.url)}>✕</button>
               </div>
             ))}
           </div>
