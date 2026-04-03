@@ -9,6 +9,7 @@ import { IoSettingsOutline } from 'react-icons/io5';
 import { MdLogout } from 'react-icons/md';
 import { FiTarget } from 'react-icons/fi';
 import { FiMessageSquare, FiHeart } from 'react-icons/fi';
+import { BiHome } from 'react-icons/bi';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { logout } from '../../../lib/auth';
 
@@ -98,6 +99,7 @@ const MobileNavbar = () => {
           to='https://billionaireauction.com/'
           className='mobile-navbar-home-link'
         >
+          <BiHome className='mobile-navbar-home-icon' />
           <span className='mobile-navbar-home-text'>Home</span>
         </Link>
 

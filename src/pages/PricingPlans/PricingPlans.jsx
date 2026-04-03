@@ -171,7 +171,7 @@ const PricingPlans = () => {
         key: keyId || import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount,
         currency,
-        name: 'Billionaire Auctions',
+        name: 'Billionaire Auction',
         description: `${pkg.title} - Monthly Subscription`,
         order_id: orderId,
         prefill: {

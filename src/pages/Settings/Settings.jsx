@@ -1,6 +1,7 @@
 import './Settings.css';
 import { IoSettingsOutline } from "react-icons/io5";
 import { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import { FiUser, FiEdit2 } from "react-icons/fi";
 import { MdStar } from "react-icons/md";
 import { MdOutlineMail } from "react-icons/md";
@@ -26,7 +27,11 @@ const getFirstLast = (name) => {
 const PLAN_LABELS = { NONE: 'Basic', BASIC: 'Premium', PRO: 'Pro', ELITE: 'Enterprise' };
 
 const Settings = () => {
-    const [activeTab, setActiveTab] = useState("profile");
+    const [searchParams] = useSearchParams();
+    const [activeTab, setActiveTab] = useState(() => {
+        const tab = searchParams.get('tab');
+        return tab === 'MEMBERSHIP' ? 'membership' : 'profile';
+    });
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [planPackages, setPlanPackages] = useState([]);
@@ -183,7 +188,7 @@ const Settings = () => {
                 key: keyId || import.meta.env.VITE_RAZORPAY_KEY_ID,
                 amount,
                 currency,
-                name: 'Billionaire Auctions',
+                name: 'Billionaire Auction',
                 description: `${PLAN_LABELS[plan]} - Monthly Subscription`,
                 order_id: orderId,
                 prefill: {

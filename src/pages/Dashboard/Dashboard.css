@@ -763,6 +763,7 @@
 
 .quickactiontag {
   color: #364153;
+  text-decoration: none;
   border: 1px solid #d1d5dc;
   width: fit-content;
   height: 30px;

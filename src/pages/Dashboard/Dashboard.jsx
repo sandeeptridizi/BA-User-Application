@@ -292,7 +292,7 @@ const DashboardPage = () => {
                             <li className='buyertime'>Add a new property</li>
                         </ul>
                     </div>
-                    <span className='quickactiontag' onClick={() => navigate('/productcreation/marketplace')} style={{cursor:'pointer'}}>Go</span>
+                    <a className='quickactiontag' href='/productcreation/marketplace'>Go</a>
                 </div>
                 <div className='enquiryinfo1'>
                     <div className='enquiryinfoleft'>
@@ -302,7 +302,7 @@ const DashboardPage = () => {
                             <li className='buyertime'>Check buyer inquiries</li>
                         </ul>
                     </div>
-                    <span className='quickactiontag' onClick={() => navigate('/myleads')} style={{cursor:'pointer'}}>Go</span>
+                    <a className='quickactiontag' href='/myleads'>Go</a>
                 </div>
                 <div className='enquiryinfo1'>
                     <div className='enquiryinfoleft'>
@@ -312,7 +312,7 @@ const DashboardPage = () => {
                             <li className='buyertime'>Get help & assistance</li>
                         </ul>
                     </div>
-                    <span className='quickactiontag' onClick={() => navigate('/enquiry')} style={{cursor:'pointer'}}>Go</span>
+                    <a className='quickactiontag' href='/enquiry'>Go</a>
                 </div>
                 <div className='enquiryinfo1'>
                     <div className='enquiryinfoleft'>
@@ -322,7 +322,7 @@ const DashboardPage = () => {
                             <li className='buyertime'>Upgrade your plan</li>
                         </ul>
                     </div>
-                    <span className='quickactiontag' onClick={() => navigate('/settings')} style={{cursor:'pointer'}}>Go</span>
+                    <a className='quickactiontag' href='/settings?tab=MEMBERSHIP'>Go</a>
                 </div>
             </div>
         </div>
