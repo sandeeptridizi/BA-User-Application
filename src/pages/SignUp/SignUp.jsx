@@ -10,7 +10,7 @@ import { MdOutlineEmail } from 'react-icons/md';
 import { LuBuilding2 } from 'react-icons/lu';
 import { FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
 
-import companyLogo from '../../assets/company-logo.png';
+import { getFile } from '../../../lib/s3';
 import api from '../../../lib/api';
 import useAppContext from '../../context/AppContext';
 
@@ -123,7 +123,7 @@ const SignUp = () => {
     <div className='sign-up-container'>
       <div className='sign-up-main-container'>
         <div className='sign-up-header'>
-          <img src={companyLogo} alt='company' className='company-logo-img' />
+          <img src={getFile("static/logo.png")} alt='company' className='company-logo-img' />
           <p className='sign-up-text'>
             <LuShield className='sign-up-shield-icon' /> Start Selling Luxury
             Products

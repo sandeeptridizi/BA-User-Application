@@ -1,6 +1,6 @@
 import './MobileNavbar.css';
 
-import companyLogo from '../../assets/company-logo.png';
+import { getFile } from '../../../lib/s3';
 import { useState, useEffect, useRef } from 'react';
 
 import { LuLayoutDashboard } from 'react-icons/lu';
@@ -124,7 +124,7 @@ const MobileNavbar = () => {
       <div className={`mobile-nav-links-container ${showLinks ? 'mobile-nav-links-open' : ''}`}>
         <div className='mobile-nav-links-header'>
           <Link to='https://billionaireauction.com/'>
-            <img src={companyLogo} alt='BAuction' className='mobile-nav-menu-logo' />
+            <img src={getFile("static/logo.png")} alt='BAuction' className='mobile-nav-menu-logo' />
           </Link>
           <div className='mobile-nav-links-divider'></div>
         </div>

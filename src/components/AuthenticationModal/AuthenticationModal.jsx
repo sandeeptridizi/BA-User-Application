@@ -2,7 +2,7 @@ import './AuthenticationModal.css';
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import companyLogo from '../../assets/company-logo.png';
+import { getFile } from '../../../lib/s3';
 import { LuShield } from 'react-icons/lu';
 import { CiMobile2 } from 'react-icons/ci';
 import { MdOutlineEmail } from 'react-icons/md';
@@ -133,7 +133,7 @@ const AuthenticationModal = () => {
       <div className='overlay'></div>
       <div className='modal-content'>
         <div className='modal-header'>
-          <img src={companyLogo} alt='company' className='modal-logo' />
+          <img src={getFile("static/logo.png")} alt='company' className='modal-logo' />
           <div className='modal-text'>
             <LuShield className='auth-shield-icon' /> Start Selling Luxury
             Properties

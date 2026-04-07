@@ -3,7 +3,6 @@ import './Sidebar.css';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
-import companyLogo from '../../assets/company-logo.png';
 import { getUser, logout as doLogout } from '../../../lib/auth';
 import { getFile } from '../../../lib/s3';
 
@@ -90,7 +89,7 @@ const Sidebar = () => {
     <div className='sidebar-container'>
       <Link to='https://billionaireauction.com/' className='sidebar-logo-container'>
         <img
-          src={companyLogo}
+          src={getFile("static/logo.png")}
           alt='Billionaire Auction'
           className='company-logo'
         />
