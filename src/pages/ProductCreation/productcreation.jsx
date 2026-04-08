@@ -156,6 +156,8 @@ const ProductCreation = () => {
       const nextMode = modeByRoute[(mode || "").toLowerCase()];
       if (nextMode) {
         setListingMode(nextMode);
+        if (nextMode === "tolet") setActiveTab("residential");
+        else setActiveTab("realestate");
       }
     }, [mode]);
 
@@ -396,6 +398,9 @@ const ProductCreation = () => {
         setIsMarketplaceSubmitting(true);
         setSubmitStatus("Creating product...");
 
+        const metaObj = collectMarketplaceMeta();
+        if (listingMode === "tolet") metaObj.toletCategory = activeTab;
+
         const createPayload = {
           title,
           description: description || undefined,
@@ -404,7 +409,7 @@ const ProductCreation = () => {
           tier,
           country,
           value: parsedValue,
-          meta: JSON.stringify(collectMarketplaceMeta()),
+          meta: JSON.stringify(metaObj),
         };
 
         const createdProductResponse = await api.post("/api/product/my", createPayload);
