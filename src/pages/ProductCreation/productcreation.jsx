@@ -336,6 +336,62 @@ const ProductCreation = () => {
         return;
       }
 
+      // ── TO_LET mandatory field validation ──────────────────────────────
+      if (listingMode === "tolet") {
+        const formRoot = marketplaceFormRef.current;
+        const getFieldValue = (label) => {
+          const headings = Array.from(formRoot?.querySelectorAll(".basicinfotitle") || []);
+          for (const h of headings) {
+            if (h.textContent?.replace("*", "").trim() === label) {
+              const container = h.parentElement;
+              const input = container?.querySelector("input, select, textarea");
+              return input?.value?.trim() || "";
+            }
+          }
+          return "";
+        };
+
+        const missing = [];
+        if (!rawValue) missing.push("Rent");
+        if (!getFieldValue("City")) missing.push("City");
+        if (!description?.trim()) missing.push("Description");
+
+        // These 4 fields are required for all TO_LET tabs
+        if (!getFieldValue("Rent per Month (₹)")) missing.push("Rent per Month");
+        if (!getFieldValue("Security Deposit (₹)")) missing.push("Security Deposit");
+        if (!getFieldValue("Lease Duration")) missing.push("Lease Duration");
+        if (!getFieldValue("Furnishing Status")) missing.push("Furnishing Status");
+
+        if (activeTab === "residential") {
+          if (!getFieldValue("Ownership")) missing.push("Ownership");
+          if (!getFieldValue("Rental Type")) missing.push("Rental Type");
+          if (!getFieldValue("Bedrooms")) missing.push("Bedrooms");
+          if (!getFieldValue("Bathrooms")) missing.push("Bathrooms");
+          if (!getFieldValue("Furnished Status")) missing.push("Furnished Status");
+        }
+
+        if (missing.length > 0) {
+          alert(`Please fill the required fields:\n${missing.join(", ")}`);
+          return;
+        }
+      }
+
+      // ── Furnished Status mandatory wherever visible ────────────────────
+      if (listingMode !== "tolet" && activeTab === "realestate") {
+        const formRoot = marketplaceFormRef.current;
+        const headings = Array.from(formRoot?.querySelectorAll(".basicinfotitle") || []);
+        for (const h of headings) {
+          const label = h.textContent?.replace("*", "").trim();
+          if (label === "Furnished Status" || label === "Furnishing Status") {
+            const input = h.parentElement?.querySelector("input, select, textarea");
+            if (!input?.value?.trim()) {
+              alert("Furnished Status is required.");
+              return;
+            }
+          }
+        }
+      }
+
       try {
         setIsMarketplaceSubmitting(true);
         setSubmitStatus("Creating product...");
@@ -685,7 +741,7 @@ const ProductCreation = () => {
         )}
         <input type="file" ref={videoInputRef} style={{ display: "none" }} accept=".mp4,.webm,.mov" onChange={handleVideoChange}/>
         <h3 className='basicinfotitle'>Title<span className="required-star">*</span></h3>
-        <input ref={marketplaceTitleRef} type="text" placeholder="e.g., Luxury 4BHK Penthouse in South Mumbai" className="basicinfoinput" />
+        <input ref={marketplaceTitleRef} type="text" placeholder="Please enter your Product Title" className="basicinfoinput" />
         <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Price<span className="required-star">*</span></h3>
@@ -1243,7 +1299,7 @@ const ProductCreation = () => {
                 <input type="text" placeholder="e.g., 5 KW" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnished Status</h3>
+                <h3 className='basicinfotitle'>Furnished Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Unfurnished</option>
@@ -2184,7 +2240,7 @@ const ProductCreation = () => {
         )}
         <input type="file" ref={videoInputRef} style={{ display: "none" }} accept=".mp4,.webm,.mov" onChange={handleVideoChange}/>
         <h3 className='basicinfotitle'>Title<span className="required-star">*</span></h3>
-        <input type="text" placeholder="e.g., Luxury 4BHK Penthouse in South Mumbai" className="basicinfoinput" />
+        <input type="text" placeholder="Please enter your Product Title" className="basicinfoinput" />
         <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Price<span className="required-star">*</span></h3>
@@ -2736,7 +2792,7 @@ const ProductCreation = () => {
                 <input type="text" placeholder="e.g., 5 KW" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnished Status</h3>
+                <h3 className='basicinfotitle'>Furnished Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Unfurnished</option>
@@ -3677,7 +3733,7 @@ const ProductCreation = () => {
         )}
         <input type="file" ref={videoInputRef} style={{ display: "none" }} accept=".mp4,.webm,.mov" onChange={handleVideoChange}/>
         <h3 className='basicinfotitle'>Title<span className="required-star">*</span></h3>
-        <input type="text" placeholder="e.g., Luxury 4BHK Penthouse in South Mumbai" className="basicinfoinput" />
+        <input type="text" placeholder="Please enter your Product Title" className="basicinfoinput" />
         <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Price<span className="required-star">*</span></h3>
@@ -4229,7 +4285,7 @@ const ProductCreation = () => {
                 <input type="text" placeholder="e.g., 5 KW" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnished Status</h3>
+                <h3 className='basicinfotitle'>Furnished Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Unfurnished</option>
@@ -5162,14 +5218,14 @@ const ProductCreation = () => {
         )}
         <input type="file" ref={videoInputRef} style={{ display: "none" }} accept=".mp4,.webm,.mov" onChange={handleVideoChange}/>
         <h3 className='basicinfotitle'>Title<span className="required-star">*</span></h3>
-        <input type="text" placeholder="e.g., Luxury 4BHK Penthouse in South Mumbai" className="basicinfoinput" />
+        <input type="text" placeholder="Please enter your Product Title" className="basicinfoinput" />
         <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Rent<span className="required-star">*</span></h3>
                 <input type="number" inputMode="numeric" placeholder="e.g., 55000000" className="basicinfoinput1" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>City</h3>
+                <h3 className='basicinfotitle'>City<span className="required-star">*</span></h3>
                 <input type="text" placeholder="Enter City" className="basicinfoinput1" />
             </div>
             <div className='basicinfoinputdiv'>
@@ -5192,16 +5248,16 @@ const ProductCreation = () => {
         </div>
         <h3 className='basicinfotitle'>Social Media Link</h3>
         <input type="url" placeholder="Youtube, Instagram url" className="basicinfoinput" />
-        <h3 className='basicinfotitle'>Description</h3>
+        <h3 className='basicinfotitle'>Description<span className="required-star">*</span></h3>
         <textarea rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
     </div>
     {activeTab === "residential" &&
         <div className='basiccatinputs'>
         <h3 className='basicinfotitle'>Rental Settings</h3>
         <span className='basicinfodesc'>Property rental configuration</span>
-        <div className='basicinforow'>  
+        <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Ownership</h3>
+                <h3 className='basicinfotitle'>Ownership<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Owner</option>
@@ -5210,7 +5266,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Rental Type</h3>
+                <h3 className='basicinfotitle'>Rental Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Flat</option>
@@ -5220,13 +5276,13 @@ const ProductCreation = () => {
                     <option>Studio</option>
                     <option>Penthouse</option>
                 </select>
-            </div> 
+            </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bedrooms</h3>
+                <h3 className='basicinfotitle'>Bedrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2021" className="basicinfoinput2" />
-            </div> 
+            </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bathrooms</h3>
+                <h3 className='basicinfotitle'>Bathrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2021" className="basicinfoinput2" />
             </div>  
         </div>
@@ -5268,7 +5324,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnished Status</h3>
+                <h3 className='basicinfotitle'>Furnished Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Fully - Furnished</option>
@@ -5283,7 +5339,39 @@ const ProductCreation = () => {
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Society Amenities</h3>
                 <input type="text" placeholder="e.g., Lift, Power Backup" className="basicinfoinput2" />
-            </div> 
+            </div>
+        </div>
+        <div className='basicinforow'>
+            <div className='basicinfoinputdiv'>
+                <h3 className='basicinfotitle'>Rent per Month (₹)<span className="required-star">*</span></h3>
+                <input type="number" inputMode="numeric" placeholder="e.g., 250000" className="basicinfoinput2" />
+            </div>
+            <div className='basicinfoinputdiv'>
+                <h3 className='basicinfotitle'>Security Deposit (₹)<span className="required-star">*</span></h3>
+                <input type="number" inputMode="numeric" placeholder="e.g., 500000" className="basicinfoinput2" />
+            </div>
+        </div>
+        <div className='basicinforow'>
+            <div className='basicinfoinputdiv'>
+                <h3 className='basicinfotitle'>Lease Duration<span className="required-star">*</span></h3>
+                <select className="basicinfoinput2">
+                    <option value="">Select type<FaChevronDown /></option>
+                    <option>11 Months</option>
+                    <option>1 Year</option>
+                    <option>2 Years</option>
+                    <option>3 Years</option>
+                </select>
+            </div>
+            <div className='basicinfoinputdiv'>
+                <h3 className='basicinfotitle'>Furnishing Status<span className="required-star">*</span></h3>
+                <select className="basicinfoinput2">
+                    <option value="">Select type<FaChevronDown /></option>
+                    <option>Furnished</option>
+                    <option>Semi Furnished</option>
+                    <option>Unfurnished</option>
+                    <option>Other</option>
+                </select>
+            </div>
         </div>
     </div>
     }
@@ -5293,17 +5381,17 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Property rental configuration</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Rent per Month (₹)</h3>
+                <h3 className='basicinfotitle'>Rent per Month (₹)<span className="required-star">*</span></h3>
                 <input type="number" inputMode="numeric" placeholder="e.g., 250000" className="basicinfoinput4" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Security Deposit (₹)</h3>
+                <h3 className='basicinfotitle'>Security Deposit (₹)<span className="required-star">*</span></h3>
                 <input type="number" inputMode="numeric" placeholder="e.g., 500000" className="basicinfoinput4" />
             </div> 
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Lease Duration</h3>
+                <h3 className='basicinfotitle'>Lease Duration<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>11 Months</option>
@@ -5313,7 +5401,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing Status</h3>
+                <h3 className='basicinfotitle'>Furnishing Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Furnished</option>
@@ -5331,17 +5419,17 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Property rental configuration</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Rent per Month (₹)</h3>
+                <h3 className='basicinfotitle'>Rent per Month (₹)<span className="required-star">*</span></h3>
                 <input type="number" inputMode="numeric" placeholder="e.g., 250000" className="basicinfoinput4" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Security Deposit (₹)</h3>
+                <h3 className='basicinfotitle'>Security Deposit (₹)<span className="required-star">*</span></h3>
                 <input type="number" inputMode="numeric" placeholder="e.g., 500000" className="basicinfoinput4" />
             </div> 
         </div>
         <div className='basicinforow'>  
            <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Lease Duration</h3>
+                <h3 className='basicinfotitle'>Lease Duration<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>11 Months</option>
@@ -5351,7 +5439,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing Status</h3>
+                <h3 className='basicinfotitle'>Furnishing Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Furnished</option>
@@ -5369,17 +5457,17 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Property rental configuration</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Rent per Month (₹)</h3>
+                <h3 className='basicinfotitle'>Rent per Month (₹)<span className="required-star">*</span></h3>
                 <input type="number" inputMode="numeric" placeholder="e.g., 250000" className="basicinfoinput4" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Security Deposit (₹)</h3>
+                <h3 className='basicinfotitle'>Security Deposit (₹)<span className="required-star">*</span></h3>
                 <input type="number" inputMode="numeric" placeholder="e.g., 500000" className="basicinfoinput4" />
             </div> 
         </div>
         <div className='basicinforow'>  
            <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Lease Duration</h3>
+                <h3 className='basicinfotitle'>Lease Duration<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>11 Months</option>
@@ -5389,7 +5477,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing Status</h3>
+                <h3 className='basicinfotitle'>Furnishing Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Furnished</option>
@@ -5407,17 +5495,17 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Property rental configuration</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Rent per Month (₹)</h3>
+                <h3 className='basicinfotitle'>Rent per Month (₹)<span className="required-star">*</span></h3>
                 <input type="number" inputMode="numeric" placeholder="e.g., 250000" className="basicinfoinput4" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Security Deposit (₹)</h3>
+                <h3 className='basicinfotitle'>Security Deposit (₹)<span className="required-star">*</span></h3>
                 <input type="number" inputMode="numeric" placeholder="e.g., 500000" className="basicinfoinput4" />
             </div> 
         </div>
         <div className='basicinforow'>  
            <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Lease Duration</h3>
+                <h3 className='basicinfotitle'>Lease Duration<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>11 Months</option>
@@ -5427,7 +5515,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing Status</h3>
+                <h3 className='basicinfotitle'>Furnishing Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Furnished</option>
@@ -5445,17 +5533,17 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Property rental configuration</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Rent per Month (₹)</h3>
+                <h3 className='basicinfotitle'>Rent per Month (₹)<span className="required-star">*</span></h3>
                 <input type="number" inputMode="numeric" placeholder="e.g., 250000" className="basicinfoinput4" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Security Deposit (₹)</h3>
+                <h3 className='basicinfotitle'>Security Deposit (₹)<span className="required-star">*</span></h3>
                 <input type="number" inputMode="numeric" placeholder="e.g., 500000" className="basicinfoinput4" />
             </div> 
         </div>
         <div className='basicinforow'>  
            <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Lease Duration</h3>
+                <h3 className='basicinfotitle'>Lease Duration<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>11 Months</option>
@@ -5465,7 +5553,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing Status</h3>
+                <h3 className='basicinfotitle'>Furnishing Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Furnished</option>
@@ -5483,17 +5571,17 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Property rental configuration</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Rent per Month (₹)</h3>
+                <h3 className='basicinfotitle'>Rent per Month (₹)<span className="required-star">*</span></h3>
                 <input type="number" inputMode="numeric" placeholder="e.g., 250000" className="basicinfoinput4" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Security Deposit (₹)</h3>
+                <h3 className='basicinfotitle'>Security Deposit (₹)<span className="required-star">*</span></h3>
                 <input type="number" inputMode="numeric" placeholder="e.g., 500000" className="basicinfoinput4" />
             </div> 
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Lease Duration</h3>
+                <h3 className='basicinfotitle'>Lease Duration<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>11 Months</option>
@@ -5503,7 +5591,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing Status</h3>
+                <h3 className='basicinfotitle'>Furnishing Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Furnished</option>
@@ -5521,17 +5609,17 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Property rental configuration</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Rent per Month (₹)</h3>
+                <h3 className='basicinfotitle'>Rent per Month (₹)<span className="required-star">*</span></h3>
                 <input type="number" inputMode="numeric" placeholder="e.g., 250000" className="basicinfoinput4" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Security Deposit (₹)</h3>
+                <h3 className='basicinfotitle'>Security Deposit (₹)<span className="required-star">*</span></h3>
                 <input type="number" inputMode="numeric" placeholder="e.g., 500000" className="basicinfoinput4" />
             </div> 
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Lease Duration</h3>
+                <h3 className='basicinfotitle'>Lease Duration<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>11 Months</option>
@@ -5541,7 +5629,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing Status</h3>
+                <h3 className='basicinfotitle'>Furnishing Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Furnished</option>

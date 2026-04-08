@@ -111,9 +111,9 @@ const TOLET_TABS = [
 ];
 
 // ── field configs ────────────────────────────────────────────────────────────
-const f = (label, type = "text", options) => ({ label, type, options });
+const f = (label, type = "text", options, required = false) => ({ label, type, options, required });
 const n = (label) => f(label, "number");
-const sel = (label, opts) => f(label, "select", opts);
+const sel = (label, opts, required = false) => f(label, "select", opts, required);
 
 const REAL_ESTATE_COMMON = [
   [
@@ -150,7 +150,7 @@ const RE_PLOT_LAND = [
 
 const RE_COMMERCIAL = [
   [sel("Commercial Type", ["Office", "Shop", "Showroom", "Warehouse", "Industrial"]), f("Built-up Area"), n("Floor"), sel("Parking", ["Yes", "No"])],
-  [sel("Suitable For", ["Office", "Retail", "Clinic", "Restaurant", "Storage"]), sel("Washroom", ["Private", "Common", "None"]), f("Power Load"), sel("Furnished Status", ["Unfurnished", "Semi-Furnished", "Furnished"])],
+  [sel("Suitable For", ["Office", "Retail", "Clinic", "Restaurant", "Storage"]), sel("Washroom", ["Private", "Common", "None"]), f("Power Load"), sel("Furnished Status", ["Unfurnished", "Semi-Furnished", "Furnished"], true)],
   [sel("Fire Safety Compliance", ["Yes", "No"])],
 ];
 
@@ -214,18 +214,18 @@ const TOLET_RESIDENTIAL = [
   [sel("Ownership", ["Owner", "Agent", "Builder"]), sel("Rental Type", ["Flat", "Apartment", "Independent House", "Villa", "Studio", "Penthouse"]), n("Bedrooms"), n("Bathrooms")],
   [n("Property Floor"), n("Total No of Floors"), f("Carpet Area"), f("Built-up Area")],
   [f("Facing"), f("Maintenance Charges"), f("Available From"), f("Preferred Tenants")],
-  [sel("Furnished Status", ["Fully - Furnished", "Unfurnished", "Semi-Furnished"]), f("Furnishing Items"), f("Society Amenities")],
+  [sel("Furnished Status", ["Fully - Furnished", "Unfurnished", "Semi-Furnished"], true), f("Furnishing Items"), f("Society Amenities")],
 ];
 
 const TOLET_GENERIC = [
-  [f("Rent per Month (₹)"), f("Security Deposit (₹)")],
-  [sel("Lease Duration", ["11 Months", "1 Year", "2 Years", "3 Years"]), sel("Furnishing Status", ["Furnished", "Semi Furnished", "Unfurnished", "Other"])],
+  [f("Rent per Month (₹)", "number", undefined, true), f("Security Deposit (₹)", "number", undefined, true)],
+  [sel("Lease Duration", ["11 Months", "1 Year", "2 Years", "3 Years"], true), sel("Furnishing Status", ["Furnished", "Semi Furnished", "Unfurnished", "Other"], true)],
 ];
 
 // ── get fields for current state ─────────────────────────────────────────────
 function getCategoryFields(mode, tab, meta) {
   if (mode === "tolet") {
-    if (tab === "residential") return TOLET_RESIDENTIAL;
+    if (tab === "residential") return [...TOLET_RESIDENTIAL, ...TOLET_GENERIC];
     return TOLET_GENERIC;
   }
   switch (tab) {
@@ -419,6 +419,24 @@ const ProductEdit = () => {
   // ── save ───────────────────────────────────────────────────────────────
   const handleSave = async () => {
     if (!id) return;
+
+    // ── validate required fields ───────────────────────────────────────
+    const activeTabVal = mode === "tolet" ? toletTab : tab;
+    const fields = getCategoryFields(mode, activeTabVal, meta);
+    const missing = [];
+    for (const row of fields) {
+      for (const field of row) {
+        if (field.required) {
+          const key = normalizeMetaKey(field.label);
+          if (!meta[key]?.trim()) missing.push(field.label);
+        }
+      }
+    }
+    if (missing.length > 0) {
+      alert(`Please fill the required fields:\n${missing.join(", ")}`);
+      return;
+    }
+
     try {
       setSaving(true);
 
@@ -479,10 +497,11 @@ const ProductEdit = () => {
   const renderField = (field) => {
     const key = normalizeMetaKey(field.label);
     const val = meta[key] || "";
+    const star = field.required ? <span className="required-star">*</span> : null;
     if (field.type === "select") {
       return (
         <div className="basicinfoinputdiv" key={key}>
-          <div className="basicinfotitle">{field.label}</div>
+          <div className="basicinfotitle">{field.label}{star}</div>
           <select
             className="basicinfoinput2"
             value={val}
@@ -498,7 +517,7 @@ const ProductEdit = () => {
     }
     return (
       <div className="basicinfoinputdiv" key={key}>
-        <div className="basicinfotitle">{field.label}</div>
+        <div className="basicinfotitle">{field.label}{star}</div>
         <input
           className="basicinfoinput2"
           type={field.type === "number" ? "number" : "text"}
