@@ -17,13 +17,6 @@ import api from '../../../lib/api';
 import { setUser as saveUserToStorage } from '../../../lib/auth';
 import { getFile } from '../../../lib/s3';
 
-const getFirstLast = (name) => {
-  if (!name || typeof name !== 'string') return { first: '', last: '' };
-  const parts = name.trim().split(/\s+/);
-  if (parts.length >= 2) return { first: parts[0], last: parts.slice(1).join(' ') };
-  return { first: parts[0] || '', last: '' };
-};
-
 const PLAN_LABELS = { NONE: 'Basic', BASIC: 'Premium', PRO: 'Pro', ELITE: 'Enterprise' };
 
 const Settings = () => {
@@ -38,8 +31,9 @@ const Settings = () => {
     const [editing, setEditing] = useState(false);
     const [saving, setSaving] = useState(false);
     const [saveMsg, setSaveMsg] = useState('');
-    const [form, setForm] = useState({ firstName: '', lastName: '', phone: '', city: '', state: '' });
+    const [form, setForm] = useState({ name: '', phone: '', city: '', state: '' });
     const [paymentLoading, setPaymentLoading] = useState(null); // tracks which plan is being paid for
+    const [salesPhone, setSalesPhone] = useState('');
     const [uploadingPic, setUploadingPic] = useState(null); // 'uploading' | 'removing' | null
     const picInputRef = useRef(null);
 
@@ -52,22 +46,23 @@ const Settings = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [profileRes, pkgRes] = await Promise.all([
+                const [profileRes, pkgRes, platformRes] = await Promise.all([
                     api.get('/api/user/me'),
                     api.get('/api/package/public?category=SUBSCRIPTION_PLAN'),
+                    api.get('/api/platform'),
                 ]);
                 const user = profileRes.data?.data;
                 setProfile(user);
                 if (user) saveUserToStorage(user);
-                const { first, last } = getFirstLast(user?.name);
                 setForm({
-                    firstName: first,
-                    lastName: last,
+                    name: user?.name || '',
                     phone: user?.phone || '',
                     city: user?.city || '',
                     state: user?.state || '',
                 });
                 setPlanPackages(pkgRes.data?.data || []);
+                const phones = platformRes.data?.data?.phone;
+                if (phones?.length) setSalesPhone(phones[0]);
             } catch {
                 // fallback silent
             } finally {
@@ -81,9 +76,8 @@ const Settings = () => {
         setSaving(true);
         setSaveMsg('');
         try {
-            const fullName = [form.firstName.trim(), form.lastName.trim()].filter(Boolean).join(' ');
             const res = await api.patch('/api/user/me', {
-                name: fullName,
+                name: form.name.trim(),
                 phone: form.phone.trim(),
                 city: form.city.trim(),
                 state: form.state.trim(),
@@ -251,7 +245,6 @@ const Settings = () => {
         return new Date(dateStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
     };
 
-    const { first: firstName, last: lastName } = getFirstLast(profile?.name);
     const memberSince = profile?.createdAt
         ? new Date(profile.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
         : '—';
@@ -312,21 +305,12 @@ const Settings = () => {
                 {editing ? (
                     <>
                     <div className='profileinfoname'>
-                        <div className='profileinfonaming'>
-                            <p>First Name</p>
+                        <div className='profileinfonaming' style={{ flex: 1 }}>
+                            <p>Full Name</p>
                             <input
                                 type='text'
-                                value={form.firstName}
-                                onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                                className='settings-input'
-                            />
-                        </div>
-                        <div className='profileinfonaming'>
-                            <p>Last Name</p>
-                            <input
-                                type='text'
-                                value={form.lastName}
-                                onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+                                value={form.name}
+                                onChange={(e) => setForm({ ...form, name: e.target.value })}
                                 className='settings-input'
                             />
                         </div>
@@ -373,7 +357,7 @@ const Settings = () => {
                         </div>
                         <div className='savechanges' onClick={() => {
                             setEditing(false);
-                            setForm({ firstName, lastName, phone: profile?.phone || '', city: profile?.city || '', state: profile?.state || '' });
+                            setForm({ name: profile?.name || '', phone: profile?.phone || '', city: profile?.city || '', state: profile?.state || '' });
                         }} style={{ background: '#eee', color: '#333' }}>
                             Cancel
                         </div>
@@ -381,27 +365,31 @@ const Settings = () => {
                     </>
                 ) : (
                     <>
-                    <div className='profileinfoname'>
-                        <div className='profileinfonaming'>
-                            <p>First Name</p>
-                            <h3>{firstName || '—'}</h3>
+                    <div className='profileinforow'>
+                        <div className='profileinfonaming' style={{ flex: 1 }}>
+                            <p>Full Name</p>
+                            <h3>{profile?.name || '—'}</h3>
                         </div>
-                        <div className='profileinfonaming'>
-                            <p>Last Name</p>
-                            <h3>{lastName || '—'}</h3>
+                        <div className='profileinfonaming' style={{ flex: 1 }}>
+                            <p>Email Address</p>
+                            <h3><MdOutlineMail />{profile?.email || '—'}</h3>
                         </div>
                     </div>
-                    <div className='profileotherdetails'>
-                        <p>Email Address</p>
-                        <h3><MdOutlineMail />{profile?.email || '—'}</h3>
+                    <div className='profileinforow'>
+                        <div className='profileinfonaming' style={{ flex: 1 }}>
+                            <p>Phone Number</p>
+                            <h3><LuPhone />{profile?.phone ? `+91 ${profile.phone.replace(/^91/, '').trim()}` : '—'}</h3>
+                        </div>
                     </div>
-                    <div className='profileotherdetails'>
-                        <p>Phone Number</p>
-                        <h3><LuPhone />{profile?.phone ? `+91 ${profile.phone.replace(/^91/, '').trim()}` : '—'}</h3>
-                    </div>
-                    <div className='profileotherdetails'>
-                        <p>Location</p>
-                        <h3><SlLocationPin />{[profile?.city, profile?.state].filter(Boolean).join(', ') || '—'}</h3>
+                    <div className='profileinforow'>
+                        <div className='profileinfonaming' style={{ flex: 1 }}>
+                            <p>City</p>
+                            <h3><SlLocationPin />{profile?.city || '—'}</h3>
+                        </div>
+                        <div className='profileinfonaming' style={{ flex: 1 }}>
+                            <p>State</p>
+                            <h3><SlLocationPin />{profile?.state || '—'}</h3>
+                        </div>
                     </div>
                     <div className='savechanges' onClick={() => setEditing(true)}>Edit Profile</div>
                     </>
@@ -626,8 +614,11 @@ const Settings = () => {
                 <h2>Need help choosing?</h2>
                 <p>Compare all plans side-by-side or contact our sales team</p>
                 <div className='finalctas'>
-                    <span className='comparision'>View Detailed Comparison</span>
-                    <span className='contactsales'>Contact Sales Team</span>
+                    {salesPhone ? (
+                        <a href={`tel:${salesPhone.replace(/\s/g, '')}`} className='contactsales' style={{ textDecoration: 'none', color: '#fff' }}>Contact Sales Team</a>
+                    ) : (
+                        <span className='contactsales'>Contact Sales Team</span>
+                    )}
                 </div>
             </div>
         </div>)}

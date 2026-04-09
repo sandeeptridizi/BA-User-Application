@@ -538,7 +538,7 @@ const ProductCreation = () => {
                 : "selectedcatname1"
             }
         >
-            Buy Now
+            Sell Now
         </li>
 
         <li className="selectedcatdesc">

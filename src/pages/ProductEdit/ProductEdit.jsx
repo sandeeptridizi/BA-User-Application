@@ -80,10 +80,10 @@ const tabToCategory = {
 
 // ── listing mode cards ───────────────────────────────────────────────────────
 const LISTING_MODES = [
-  { key: "marketplace", label: "Marketplace", desc: "List on marketplace", icon: <AiOutlineShop /> },
-  { key: "buynow", label: "Buy Now", desc: "Direct purchase listing", icon: <BsLightningCharge /> },
-  { key: "auction", label: "Auction", desc: "Auction style listing", icon: <TbHammer /> },
-  { key: "tolet", label: "To-Let", desc: "Rental listing", icon: <FiHome /> },
+  { key: "marketplace", label: "Marketplace", desc: "List and connect directly with buyers.", icon: <AiOutlineShop /> },
+  { key: "buynow", label: "Sell Now", desc: "We manage the sale for you, end-to-end.", icon: <BsLightningCharge /> },
+  { key: "auction", label: "Auction", desc: "List items for competitive offline bidding.", icon: <TbHammer /> },
+  { key: "tolet", label: "To-Let", desc: "List your property and find tenants easily.", icon: <FiHome /> },
 ];
 
 // ── category tabs ────────────────────────────────────────────────────────────
@@ -727,20 +727,6 @@ const ProductEdit = () => {
           onChange={(e) => setDescription(e.target.value)}
         />
 
-        <div className="basicinforow" style={{ marginTop: 12 }}>
-          <div className="basicinfoinputdiv">
-            <div className="basicinfotitle">Tier</div>
-            <select
-              className="basicinfoinput2"
-              value={tier}
-              onChange={(e) => setTier(e.target.value)}
-            >
-              <option value="GENERAL">GENERAL</option>
-              <option value="LUXURY">LUXURY</option>
-              <option value="CLASSIC">CLASSIC</option>
-            </select>
-          </div>
-        </div>
       </div>
 
       {/* ── category-specific fields ───────────────────────────────────── */}

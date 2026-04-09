@@ -213,6 +213,12 @@
   gap: 12px;
 }
 
+.profileinforow {
+  display: flex;
+  gap: 16px;
+  padding: 12px 24px 0 24px;
+}
+
 .profileinfonaming p,
 .profileotherdetails p {
   color: #3f3f47;
@@ -222,7 +228,7 @@
 
 .profileinfonaming h3 {
   height: 48px;
-  width: 470px;
+  width: 100%;
   border-radius: 14px;
   border: 1px solid #e4e4e7;
   background-color: #f3f3f5;
@@ -231,6 +237,10 @@
   font-weight: 400;
   padding: 12px;
   margin-top: 12px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .profileotherdetails h3 {
@@ -1006,6 +1016,7 @@
   .profileinformation {
     width: 100%;
     height: auto;
+    overflow: hidden;
   }
   .profileinformationtop {
     width: 100%;
@@ -1023,6 +1034,13 @@
   .profileinfoname {
     width: 100%;
     flex-direction: column;
+    padding: 16px;
+    margin: 16px 0 0 0;
+  }
+
+  .profileinforow {
+    flex-direction: column;
+    padding: 12px 16px 0 16px;
   }
 
   .profileinfonaming {
@@ -1030,18 +1048,26 @@
   }
 
   .profileinfonaming h3 {
-    width: 90%;
+    width: 100%;
     border-radius: 6px;
+    box-sizing: border-box;
+  }
+
+  .profileotherdetails {
+    width: 100%;
+    padding: 12px 16px 0 16px;
+    box-sizing: border-box;
   }
 
   .profileotherdetails h3 {
-    width: 95%;
+    width: 100%;
     border-radius: 6px;
+    box-sizing: border-box;
   }
 
   .savechanges {
-    width: 90%;
-    margin-bottom: 20px;
+    width: calc(100% - 32px);
+    margin: 32px 16px 20px 16px;
   }
 
   .currentmemebership {
@@ -1084,13 +1110,45 @@
 
   .plandetails {
     width: 100%;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 16px;
+    gap: 10px;
   }
 
   .planinfodetails,
   .planinfodetails1,
   .planinfodetails2 {
     width: 100%;
+    height: auto;
+    padding: 14px;
+  }
+
+  .planinfodetails h2,
+  .planinfodetails1 h2,
+  .planinfodetails2 h2 {
+    font-size: 22px;
+    margin-top: 8px;
+  }
+
+  .planinfodetailstop p {
+    font-size: 12px;
+  }
+
+  .planinfoicon,
+  .planinfoicon1,
+  .planinfoicon2 {
+    height: 32px;
+    width: 32px;
+    font-size: 16px;
+    border-radius: 8px;
+  }
+
+  .planinfodetails p,
+  .planinfodetails1 p,
+  .planinfodetails2 p {
+    font-size: 12px;
+    margin-top: 6px;
   }
 
   .benefits {
@@ -1157,14 +1215,45 @@
     width: 100%;
     height: auto;
     flex-direction: column;
-    gap: 16px;
-    padding-left: 0;
+    gap: 12px;
+    padding: 0 16px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .renewalinfoleft h2 {
+    font-size: 15px;
+  }
+
+  .renewalinfoleft p {
+    font-size: 12px;
   }
 
   .basicplan,
   .proplan,
   .eliteplan {
     width: 100%;
+  }
+
+  .basicplan h2,
+  .proplan h2,
+  .eliteplan h2 {
+    font-size: 20px;
+  }
+
+  .basicplan h3,
+  .proplan h3,
+  .eliteplan h3 {
+    font-size: 24px;
+  }
+
+  .basicplan p,
+  .basicplan span,
+  .proplan p,
+  .proplan span,
+  .eliteplan p,
+  .eliteplan span {
+    font-size: 13px;
   }
 
   .downgradebutton,
@@ -1188,6 +1277,7 @@
   color: #1d293d;
   outline: none;
   transition: border-color 0.2s;
+  box-sizing: border-box;
 }
 
 .settings-input:focus {
