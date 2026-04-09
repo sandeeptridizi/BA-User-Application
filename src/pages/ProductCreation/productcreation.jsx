@@ -5367,16 +5367,6 @@ const ProductCreation = () => {
                     <option>3 Years</option>
                 </select>
             </div>
-            <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing Status<span className="required-star">*</span></h3>
-                <select className="basicinfoinput2">
-                    <option value="">Select type<FaChevronDown /></option>
-                    <option>Furnished</option>
-                    <option>Semi Furnished</option>
-                    <option>Unfurnished</option>
-                    <option>Other</option>
-                </select>
-            </div>
         </div>
     </div>
     }
@@ -5404,7 +5394,7 @@ const ProductCreation = () => {
                     <option>2 Years</option>
                     <option>3 Years</option>
                 </select>
-            </div> 
+            </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
@@ -5414,7 +5404,7 @@ const ProductCreation = () => {
                     <option>Unfurnished</option>
                     <option>Other</option>
                 </select>
-            </div> 
+            </div>
         </div>
     </div>
     }
@@ -5442,7 +5432,7 @@ const ProductCreation = () => {
                     <option>2 Years</option>
                     <option>3 Years</option>
                 </select>
-            </div> 
+            </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
@@ -5452,7 +5442,7 @@ const ProductCreation = () => {
                     <option>Unfurnished</option>
                     <option>Other</option>
                 </select>
-            </div> 
+            </div>
         </div>
     </div>
     }
@@ -5480,7 +5470,7 @@ const ProductCreation = () => {
                     <option>2 Years</option>
                     <option>3 Years</option>
                 </select>
-            </div> 
+            </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
@@ -5490,7 +5480,7 @@ const ProductCreation = () => {
                     <option>Unfurnished</option>
                     <option>Other</option>
                 </select>
-            </div>  
+            </div>
         </div>
     </div>
     }
@@ -5518,7 +5508,7 @@ const ProductCreation = () => {
                     <option>2 Years</option>
                     <option>3 Years</option>
                 </select>
-            </div> 
+            </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
@@ -5528,7 +5518,7 @@ const ProductCreation = () => {
                     <option>Unfurnished</option>
                     <option>Other</option>
                 </select>
-            </div> 
+            </div>
         </div>
     </div>
     }
@@ -5556,7 +5546,7 @@ const ProductCreation = () => {
                     <option>2 Years</option>
                     <option>3 Years</option>
                 </select>
-            </div> 
+            </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
@@ -5566,7 +5556,7 @@ const ProductCreation = () => {
                     <option>Unfurnished</option>
                     <option>Other</option>
                 </select>
-            </div>  
+            </div>
         </div>
     </div>
     }
@@ -5594,7 +5584,7 @@ const ProductCreation = () => {
                     <option>2 Years</option>
                     <option>3 Years</option>
                 </select>
-            </div> 
+            </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
@@ -5604,7 +5594,7 @@ const ProductCreation = () => {
                     <option>Unfurnished</option>
                     <option>Other</option>
                 </select>
-            </div>   
+            </div>
         </div>
     </div>
     }
@@ -5632,7 +5622,7 @@ const ProductCreation = () => {
                     <option>2 Years</option>
                     <option>3 Years</option>
                 </select>
-            </div> 
+            </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Furnishing Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
@@ -5642,7 +5632,7 @@ const ProductCreation = () => {
                     <option>Unfurnished</option>
                     <option>Other</option>
                 </select>
-            </div> 
+            </div>
         </div>
     </div>
     }

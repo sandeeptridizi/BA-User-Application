@@ -225,7 +225,7 @@ const TOLET_GENERIC = [
 // ── get fields for current state ─────────────────────────────────────────────
 function getCategoryFields(mode, tab, meta) {
   if (mode === "tolet") {
-    if (tab === "residential") return [...TOLET_RESIDENTIAL, ...TOLET_GENERIC];
+    if (tab === "residential") return [...TOLET_RESIDENTIAL, ...TOLET_GENERIC.map(row => row.filter(f => f.label !== "Furnishing Status"))];
     return TOLET_GENERIC;
   }
   switch (tab) {
