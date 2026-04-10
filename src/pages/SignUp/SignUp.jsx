@@ -46,8 +46,8 @@ const SignUp = () => {
       setError('Email is required');
       return;
     }
-    if (!password || password.length < 6) {
-      setError('Password must be at least 6 characters');
+    if (!password || password.length < 6 || password.length > 12) {
+      setError('Password must be between 6 and 12 characters');
       return;
     }
 

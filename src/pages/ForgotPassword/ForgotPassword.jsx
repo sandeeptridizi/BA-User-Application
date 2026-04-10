@@ -150,8 +150,8 @@ const ForgotPassword = () => {
     e.preventDefault();
     setError('');
 
-    if (!newPassword || newPassword.length < 6) {
-      setError('Password must be at least 6 characters');
+    if (!newPassword || newPassword.length < 6 || newPassword.length > 12) {
+      setError('Password must be between 6 and 12 characters');
       return;
     }
     if (newPassword !== confirmPassword) {

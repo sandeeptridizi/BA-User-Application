@@ -1,5 +1,5 @@
 import './Enquiry.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { LuMessageSquare } from "react-icons/lu";
 import { IoIosSend } from "react-icons/io";
 import { FiCheckCircle, FiX } from "react-icons/fi";
@@ -9,12 +9,16 @@ import { CiLocationOn } from "react-icons/ci";
 import { IoMdTime } from "react-icons/io";
 import { getUser } from '../../../lib/auth';
 import { submitSupportTicket } from '../../../lib/enquiries';
+import api from '../../../lib/api';
+
+const PLAN_LABELS = { NONE: 'Basic', BASIC: 'Premium', PRO: 'Pro', ELITE: 'Enterprise' };
 
 const Enquiry = () => {
     const user = getUser();
     const displayName = user?.name || '—';
     const displayEmail = user?.email || '—';
     const displayPhone = user?.phone ? `+91 ${user.phone.replace(/^91/, '').trim()}` : '—';
+    const memberType = user?.subscriptionPlan ? (PLAN_LABELS[user.subscriptionPlan] || user.subscriptionPlan) : 'Basic';
 
     const [category, setCategory] = useState('');
     const [subject, setSubject] = useState('');
@@ -23,6 +27,17 @@ const Enquiry = () => {
     const [submitting, setSubmitting] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
+    const [platform, setPlatform] = useState(null);
+
+    useEffect(() => {
+        api.get('/api/platform')
+            .then((res) => setPlatform(res.data?.data))
+            .catch(() => {});
+    }, []);
+
+    const phones = platform?.phone || [];
+    const emails = platform?.email || [];
+    const address = platform?.address || '';
 
     const handleSubmit = async () => {
         setShowSuccessModal(false);
@@ -86,7 +101,7 @@ const Enquiry = () => {
                </div>
                <div className='accountinformationleft'>
                     <p>Email:<span className='accountinformationtitle'>{displayEmail}</span></p>
-                    <p>Member Type:<span className='accountinformationtitle'>Pro Seller</span></p>
+                    <p>Member Type:<span className='accountinformationtitle'>{memberType}</span></p>
                </div>
                </div>
             </div>
@@ -129,30 +144,33 @@ const Enquiry = () => {
                 <h3>Contact Information</h3>
                 <p>Get in touch with us directly</p>
             </div>
+            {phones.length > 0 && (
             <div className='supportcontactinfo'>
                 <div className='supportcontacticon'><LuPhone /></div>
                 <div className='supportcontactdetails'>
                     <h3>Phone</h3>
-                    <p>+91 7842201879</p>
-                    <p>+91 7842501879</p>
+                    {phones.map((p, i) => <p key={i}>{p}</p>)}
                 </div>
             </div>
+            )}
+            {emails.length > 0 && (
             <div className='supportcontactinfo'>
                 <div className='supportcontacticon1'><MdOutlineMail /></div>
                 <div className='supportcontactdetails'>
                     <h3>Email</h3>
-                    <p>Elite@billionaireauction.com</p>
-                    <p>We reply within 24 hours</p>
+                    {emails.map((e, i) => <p key={i}>{e}</p>)}
                 </div>
             </div>
+            )}
+            {address && (
             <div className='supportcontactinfo'>
                 <div className='supportcontacticon2'><CiLocationOn /></div>
                 <div className='supportcontactdetails'>
                     <h3>Office</h3>
-                    <p>H no: 5-497, Izzath nagar</p>
-                    <p>Kondapur, Telangana, India</p>
+                    <p>{address}</p>
                 </div>
             </div>
+            )}
             <div className='supportcontactinfo'>
                 <div className='supportcontacticon3'><IoMdTime /></div>
                 <div className='supportcontactdetails'>

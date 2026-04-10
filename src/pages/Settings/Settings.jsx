@@ -298,7 +298,7 @@ const Settings = () => {
                     <div className='profileinfodetails'>
                         <h3>{profile?.name || '—'}</h3>
                         <p>Member Since {memberSince}</p>
-                        <span><MdStar />{isActive ? PLAN_LABELS[currentPlan] || 'Pro Member' : 'Free Member'}</span>
+                        <span><MdStar />{isActive ? PLAN_LABELS[currentPlan] || currentPlan : 'Free Member'}</span>
                     </div>
                 </div>
                 {saveMsg && <p style={{ padding: '10px 20px', color: saveMsg.includes('success') ? 'green' : 'red' }}>{saveMsg}</p>}
@@ -404,7 +404,7 @@ const Settings = () => {
                         <div className='currentmembershipicon'><LuCrown /></div>
                         <div className='currentmembershipplan'>
                             <h3><BsStars />Your Active Plan</h3>
-                            <h2>{isActive ? PLAN_LABELS[currentPlan] || 'Pro Seller' : 'Free Plan'}</h2>
+                            <h2>{isActive ? PLAN_LABELS[currentPlan] || currentPlan : 'Free Plan'}</h2>
                             <p>Unlock premium features and grow your business</p>
                         </div>
                     </div>
