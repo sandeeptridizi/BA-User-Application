@@ -425,7 +425,7 @@ const Settings = () => {
                             <span className='planinfoicon1'><CiCircleCheck /></span>
                         </div>
                         <h2>{currentPlan === 'BASIC' ? '3 / mo' : currentPlan === 'PRO' ? '9 / mo' : currentPlan === 'ELITE' ? 'Custom' : '—'}</h2>
-                        <p>{isActive ? 'After Mar 2027' : '—'}</p>
+                        <p>{isActive ? `Since ${formatDate(profile?.subscriptionStartDate || profile?.subscriptionEndDate)}` : '—'}</p>
                     </div>
                     <div className='planinfodetails2'>
                         <div className='planinfodetailstop'>
@@ -463,7 +463,7 @@ const Settings = () => {
                             <div className='benefitsinfo1icon'><CiCircleCheck /></div>
                             <div className='benefitsinfo1details'>
                                 <h3>{currentPlan === 'ELITE' ? 'Custom' : currentPlan === 'PRO' ? '9 / month' : currentPlan === 'BASIC' ? '3 / month' : '1 / month'} Listings</h3>
-                                <p>{currentPlan === 'ELITE' ? 'Custom listing quota' : 'After Mar 2027; unlimited till then'}</p>
+                                <p>{currentPlan === 'ELITE' ? 'Custom listing quota' : `Since ${formatDate(profile?.subscriptionStartDate || profile?.subscriptionEndDate)}; unlimited till then`}</p>
                             </div>
                         </div>
                         <div className='benefitsinfo2'>
