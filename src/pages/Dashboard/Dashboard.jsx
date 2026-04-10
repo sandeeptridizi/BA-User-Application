@@ -6,10 +6,6 @@ import { CiCircleCheck } from "react-icons/ci";
 import { FaPlus } from "react-icons/fa";
 import { FiBox } from "react-icons/fi";
 import { GoArrowUpRight } from "react-icons/go";
-import { FiMessageSquare } from "react-icons/fi";
-import { LuAward } from "react-icons/lu";
-import { FaArrowTrendUp } from "react-icons/fa6";
-import { FaRegBell } from "react-icons/fa6";
 import { BsLightningCharge } from "react-icons/bs";
 import { LuUsers } from "react-icons/lu";
 import { FaRegCircleQuestion } from "react-icons/fa6";
@@ -134,42 +130,6 @@ const DashboardPage = () => {
                 <p className='dashboardstatcta' onClick={() => navigate('/products')} style={{cursor:'pointer'}}>View Details <GoArrowUpRight /></p>
             </div>
         </div>
-        {/* <div className='performancemetrics'>
-            <div className='performancementricshead'>
-                <p className='performancemetricstitle'><LuAward className='performancemetricsicon'/>Performance Metrics</p>
-                <p className='performancemetricsnote'>Your selling performance this month</p>
-            </div>
-            <div className='performancestats'>
-                <div className='perfromstat'>
-                    <p>Response Rate</p>
-                    <div className='performvalue'>
-                        <h2 className='performvaluenum'>94%</h2>
-                        <span className='performvaluegrowth'>+5%</span>
-                    </div>
-                </div>
-                <div className='perfromstat'>
-                    <p>Avg. Response Time</p>
-                    <div className='performvalue'>
-                        <h2 className='performvaluenum1'>2.3 hrs</h2>
-                        <span className='performvaluegrowth1'>-0.5hrs</span>
-                    </div>
-                </div>
-                <div className='perfromstat'>
-                    <p>Conversion Rate</p>
-                    <div className='performvalue'>
-                        <h2 className='performvaluenum2'>28%</h2>
-                        <span className='performvaluegrowth2'>+8%</span>
-                    </div>
-                </div>
-                <div className='perfromstat'>
-                    <p>Customer Rating</p>
-                    <div className='performvalue'>
-                        <h2 className='performvaluenum3'>4.8</h2>
-                        <span className='performvaluegrowth3'>+0.2</span>
-                    </div>
-                </div>
-            </div>
-        </div> */}
         <div className='activelistings'>
             <div className='activelistingshead'>
                 <div className='activelistingsheader'>
@@ -194,91 +154,10 @@ const DashboardPage = () => {
                             </div>
                             <div className='listingcontainerright'>{formatCurrency(product.value)}</div>
                         </div>
-                        {/* <div className='listingcontainerbottom'>
-                            <div className='listingproductstat'>
-                                <span><FaRegEye  /></span>
-                                <h3>{getViews(product.meta).toLocaleString('en-IN')}</h3>
-                                <p>Views</p>
-                            </div>
-                            <div className='listingproductstat1'>
-                                <span><FiMessageSquare  /></span>
-                                <h3>—</h3>
-                                <p>Leads</p>
-                            </div>
-                            <div className='listingproductstat2'>
-                                <span><FaArrowTrendUp   /></span>
-                                <h3>—</h3>
-                                <p>Interest</p>
-                            </div>
-                        </div> */}
                     </div>
                 ))}
             </div>
         </div>
-        {/* <div className='buyerenquiries'>
-            <div className='activelistingshead1'>
-                <div className='activelistingsheader'>
-                <p className='performancemetricstitle'><FiMessageSquare className='enquiriesicon'/>Recent Buyer Enquiries</p>
-                <p className='performancemetricsnote'>New leads received on your listings</p></div>
-                <span className='viewallleads' onClick={() => navigate('/myleads')} style={{cursor:'pointer'}}>View All Leads</span>
-            </div>
-            <div className='enquiriesdetails'>
-                {loadingEnquiries ? (
-                    <p style={{padding:'20px'}}>Loading enquiries...</p>
-                ) : recentEnquiries.length === 0 ? (
-                    <p style={{padding:'20px'}}>No enquiries yet.</p>
-                ) : recentEnquiries.map(enq => (
-                    <div className='enquiryinfo' key={enq.id}>
-                        <div className='enquiryinfoleft'>
-                            <span className='buyerprofile'>{enq.visitorName?.charAt(0).toUpperCase()}</span>
-                            <ul className='buyerdetails'>
-                                <li className='buyername'>{enq.visitorName} <span className={statusTagClass[enq.status] || 'buyertag'}>{statusTagText[enq.status]}</span></li>
-                                <li className='buyerproduct'>{enq.product?.title || 'Unknown Product'}</li>
-                                <li className='buyertime'>{timeAgo(enq.createdAt)}</li>
-                            </ul>
-                        </div>
-                        <span className='respondtag' onClick={() => navigate('/myleads')} style={{cursor:'pointer'}}>Respond</span>
-                    </div>
-                ))}
-            </div>
-        </div> */}
-        {/* <div className='supporttickets'>
-            <div className='supportticketsheader'>
-                <p className='performancemetricstitle'><FaRegBell  className='ticketsicon'/>Support Tickets</p>
-                <p className='performancemetricsnote'>Manage your support tickets</p></div>
-            <div className='enquiriesdetails'>
-                <div className='enquiryinfo1'>
-                    <div className='enquiryinfoleft'>
-                        <span className='buyerprofile1'>T</span>
-                        <ul className='buyerdetails'>
-                            <li className='buyername'>Payment gateway issue <span className='respondedtag'>Resolved</span></li>
-                            <li className='buyertime'>15 Feb 2026</li>
-                        </ul>
-                    </div>
-                    <span className='ticketviewtag'>View</span>
-                </div>
-                <div className='enquiryinfo1'>
-                    <div className='enquiryinfoleft'>
-                        <span className='buyerprofile1'>T</span>
-                        <ul className='buyerdetails'>
-                            <li className='buyername'>Buyer inquiry not showing <span className='progresstag'>In Progress</span></li>
-                            <li className='buyertime'>16 Feb 2026</li>
-                        </ul>
-                    </div>
-                    <span className='ticketviewtag'>View</span>
-                </div>
-                <div className='enquiryinfo1'>
-                    <div className='enquiryinfoleft'>
-                        <span className='buyerprofile1'>T</span>
-                        <ul className='buyerdetails'>
-                            <li className='buyername'>Featured listing request <span className='buyertag'>Open</span></li>
-                            <li className='buyertime'>17 Feb 2026</li>
-                        </ul>
-                    </div>
-                    <span className='ticketviewtag'>View</span>
-                </div>
-            </div>
-        </div> */}
         <div className='quickactions'>
             <div className='quickactionsheader'>
                 <p className='performancemetricstitle'><BsLightningCharge className='actionsicon'/>Quick Actions</p>

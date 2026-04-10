@@ -1,5 +1,6 @@
 import './PricingPlans.css';
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import api from '../../../lib/api';
 import { getUser, setUser as saveUserToStorage } from '../../../lib/auth';
 
@@ -35,6 +36,7 @@ function formatPrice(num) {
 }
 
 const PricingPlans = () => {
+  const navigate = useNavigate();
   const [subscriptionPlans, setSubscriptionPlans] = useState([]);
   const [bannerAds, setBannerAds] = useState([]);
   const [featuredListings, setFeaturedListings] = useState([]);
@@ -43,6 +45,7 @@ const PricingPlans = () => {
   const [loading, setLoading] = useState(true);
   const [paymentLoading, setPaymentLoading] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [salesPhone, setSalesPhone] = useState('');
 
   const mainPlans = subscriptionPlans.filter(p => !p.title.startsWith('Enterprise'));
   const enterprisePlans = subscriptionPlans.filter(p => p.title.startsWith('Enterprise'));
@@ -64,14 +67,18 @@ const PricingPlans = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [subRes, bannerRes, featuredRes, leadRes, digitalRes, profileRes] = await Promise.all([
+        const [subRes, bannerRes, featuredRes, leadRes, digitalRes, profileRes, platformRes] = await Promise.all([
           api.get('/api/package/public?category=SUBSCRIPTION_PLAN'),
           api.get('/api/package/public?category=BANNER_AD'),
           api.get('/api/package/public?category=FEATURED_LISTING'),
           api.get('/api/package/public?category=LEAD_UNLOCK'),
           api.get('/api/package/public?category=DIGITAL_MEDIA'),
           api.get('/api/user/me').catch(() => null),
+          api.get('/api/platform').catch(() => null),
         ]);
+
+        const phones = platformRes?.data?.data?.phone || [];
+        if (phones.length) setSalesPhone(phones[0]);
 
         setSubscriptionPlans(subRes.data.data || []);
         setBannerAds(bannerRes.data.data || []);
@@ -471,7 +478,7 @@ const PricingPlans = () => {
                   {formatPrice(selectedAd.price)}
                 </h2>
                 <p className="month">/ month + GST</p>
-                <button className="book-now-btn">Book Now</button>
+                <button className="book-now-btn" onClick={() => navigate('/enquiry')}>Book Now</button>
               </div>
             </div>
           )}
@@ -522,7 +529,7 @@ const PricingPlans = () => {
                     <FaCheck className="package-check-icon" /> More Leads
                   </div>
                 </div>
-                <button className="select-package-btn">Select Package</button>
+                <button className="select-package-btn" onClick={() => navigate('/enquiry')}>Select Package</button>
               </div>
             </div>
           )}
@@ -579,7 +586,7 @@ const PricingPlans = () => {
                     }
                     {!isFree && <p className="leads-gst">+ GST</p>}
                   </h2>
-                  <button className="leads-purchase-btn">
+                  <button className="leads-purchase-btn" onClick={() => !isFree && navigate('/enquiry')}>
                     {isFree ? "Included" : "Purchase"}
                   </button>
                 </div>
@@ -614,7 +621,7 @@ const PricingPlans = () => {
                   ))}
                 </div>
               </div>
-              <button className='digital-media-btn'>
+              <button className='digital-media-btn' onClick={() => navigate('/enquiry')}>
                 Book Digital Media Package
               </button>
             </div>
@@ -629,8 +636,8 @@ const PricingPlans = () => {
           marketplace
         </p>
         <div className='pricing-page-footer-btn-container'>
-          <button className='pricing-footer-contact-btn'>Contact Sales</button>
-          <button className='pricing-footer-features-btn'>
+          <button className='pricing-footer-contact-btn' onClick={() => salesPhone ? window.location.href = `tel:${salesPhone}` : navigate('/enquiry')}>Contact Sales</button>
+          <button className='pricing-footer-features-btn' onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             View All Features
           </button>
         </div>
