@@ -338,59 +338,31 @@ const ProductCreation = () => {
         return;
       }
 
-      // ── TO_LET mandatory field validation ──────────────────────────────
-      if (listingMode === "tolet") {
-        const formRoot = marketplaceFormRef.current;
-        const getFieldValue = (label) => {
-          const headings = Array.from(formRoot?.querySelectorAll(".basicinfotitle") || []);
-          for (const h of headings) {
-            if (h.textContent?.replace("*", "").trim() === label) {
-              const container = h.parentElement;
-              const input = container?.querySelector("input, select, textarea");
-              return input?.value?.trim() || "";
-            }
-          }
-          return "";
-        };
-
+      // ── Universal mandatory field validation (all modes) ───────────────
+      {
+        const root = marketplaceFormRef.current;
         const missing = [];
-        if (!rawValue) missing.push("Rent");
-        if (!getFieldValue("City")) missing.push("City");
+
+        if (!title) missing.push("Title");
         if (!description?.trim()) missing.push("Description");
+        if (!rawValue) missing.push(listingMode === "tolet" ? "Rent" : "Value");
+        if (marketplaceFilePreviews.length === 0) missing.push("Product Images / Video");
 
-        // These 4 fields are required for all TO_LET tabs
-        if (!getFieldValue("Rent per Month (₹)")) missing.push("Rent per Month");
-        if (!getFieldValue("Security Deposit (₹)")) missing.push("Security Deposit");
-        if (!getFieldValue("Lease Duration")) missing.push("Lease Duration");
-        if (!getFieldValue("Furnishing Status")) missing.push("Furnishing Status");
-
-        if (activeTab === "residential") {
-          if (!getFieldValue("Ownership")) missing.push("Ownership");
-          if (!getFieldValue("Rental Type")) missing.push("Rental Type");
-          if (!getFieldValue("Bedrooms")) missing.push("Bedrooms");
-          if (!getFieldValue("Bathrooms")) missing.push("Bathrooms");
-          if (!getFieldValue("Furnished Status")) missing.push("Furnished Status");
+        const inputDivs = Array.from(root?.querySelectorAll(".basicinfoinputdiv") || []);
+        for (const div of inputDivs) {
+          const h = div.querySelector(".basicinfotitle");
+          if (!h) continue;
+          const label = h.textContent?.replace(/\*/g, "").trim();
+          if (!label) continue;
+          if (label === "Product Video") continue;
+          const input = div.querySelector("input, select, textarea");
+          if (!input || input.type === "file") continue;
+          if (!input.value?.trim()) missing.push(label);
         }
 
         if (missing.length > 0) {
-          alert(`Please fill the required fields:\n${missing.join(", ")}`);
+          alert(`Please fill the required fields:\n${Array.from(new Set(missing)).join(", ")}`);
           return;
-        }
-      }
-
-      // ── Furnished Status mandatory wherever visible ────────────────────
-      if (listingMode !== "tolet" && activeTab === "realestate") {
-        const formRoot = marketplaceFormRef.current;
-        const headings = Array.from(formRoot?.querySelectorAll(".basicinfotitle") || []);
-        for (const h of headings) {
-          const label = h.textContent?.replace("*", "").trim();
-          if (label === "Furnished Status" || label === "Furnishing Status") {
-            const input = h.parentElement?.querySelector("input, select, textarea");
-            if (!input?.value?.trim()) {
-              alert("Furnished Status is required.");
-              return;
-            }
-          }
         }
       }
 
@@ -706,7 +678,7 @@ const ProductCreation = () => {
     <div className='basicinfoform'>
         <h3 className='basicinfotitle'>Basic Information</h3>
         <span className='basicinfodesc'>Enter the basic details and upload media for the product</span>
-        <h3 className='basicinfotitle'>Product Images</h3>
+        <h3 className='basicinfotitle'>Product Images<span className="required-star">*</span></h3>
         <ul className='selectedcategory2'>
                 <li className='selectedcaticon2' onClick={handleIconClick} style={{ cursor: "pointer" }}><FiUpload /></li>
                 <li className='selectedcatname1'>Click to upload or drag and drop</li>
@@ -759,11 +731,11 @@ const ProductCreation = () => {
                 />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>City</h3>
+                <h3 className='basicinfotitle'>City<span className="required-star">*</span></h3>
                 <input type="text" placeholder="Enter City" className="basicinfoinput1" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Country</h3>
+                <h3 className='basicinfotitle'>Country<span className="required-star">*</span></h3>
                 <select ref={marketplaceCountryRef} defaultValue="INDIA" className="basicinfoinput1">
                     <option value="INDIA">India</option>
                     <option value="UNITED STATES">United States</option>
@@ -780,9 +752,9 @@ const ProductCreation = () => {
                 </select>
             </div>
         </div>
-        <h3 className='basicinfotitle'>Social Media Link</h3>
+        <h3 className='basicinfotitle'>Social Media Link<span className="required-star">*</span></h3>
         <input type="url" placeholder="Youtube, Instagram url" className="basicinfoinput" />
-        <h3 className='basicinfotitle'>Description</h3>
+        <h3 className='basicinfotitle'>Description<span className="required-star">*</span></h3>
         <textarea ref={marketplaceDescriptionRef} rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
     </div>
     {activeTab === "realestate" &&
@@ -791,7 +763,7 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Enter property-specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Property Type</h3>
+                <h3 className='basicinfotitle'>Property Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2" value={propertyType} onChange={(e) => setPropertyType(e.target.value)}>
                     <option value="">Select type<FaChevronDown /></option>
                     <option value="House">House</option>
@@ -804,15 +776,15 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Area / Locality</h3>
+                <h3 className='basicinfotitle'>Area / Locality<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Bandra West" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Landmark</h3>
+                <h3 className='basicinfotitle'>Landmark<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Near City Mall" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Ownership Type</h3>
+                <h3 className='basicinfotitle'>Ownership Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Freehold</option>
@@ -824,7 +796,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Approval Status</h3>
+                <h3 className='basicinfotitle'>Approval Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type <FaChevronDown /></option>
                     <option>RERA Approved</option>
@@ -834,7 +806,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Availability</h3>
+                <h3 className='basicinfotitle'>Availability<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type <FaChevronDown /></option>
                     <option>Immediate</option>
@@ -845,11 +817,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Age of Property</h3>
+                <h3 className='basicinfotitle'>Age of Property<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 5" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Facing</h3>
+                <h3 className='basicinfotitle'>Facing<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type <FaChevronDown /></option>
                     <option>North</option>
@@ -864,7 +836,7 @@ const ProductCreation = () => {
             </div>  
         </div>
          <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>No of Car Parking</h3>
+                <h3 className='basicinfotitle'>No of Car Parking<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>1</option>
@@ -876,29 +848,29 @@ const ProductCreation = () => {
          {propertyType === "House" && (<div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
+                <h3 className='basicinfotitle'>Built-up Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
+                <h3 className='basicinfotitle'>Plot Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bedrooms</h3>
+                <h3 className='basicinfotitle'>Bedrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bathrooms</h3>
+                <h3 className='basicinfotitle'>Bathrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Floors </h3>
+                <h3 className='basicinfotitle'>Floors <span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing </h3>
+                <h3 className='basicinfotitle'>Furnishing <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Unfurnished</option>
@@ -907,7 +879,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Garden</h3>
+                <h3 className='basicinfotitle'>Garden<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -915,7 +887,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Gated Community</h3>
+                <h3 className='basicinfotitle'>Gated Community<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -927,29 +899,29 @@ const ProductCreation = () => {
         )}
         {propertyType === "Villa" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
+                <h3 className='basicinfotitle'>Built-up Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
+                <h3 className='basicinfotitle'>Plot Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bedrooms</h3>
+                <h3 className='basicinfotitle'>Bedrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bathrooms</h3>
+                <h3 className='basicinfotitle'>Bathrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Floors </h3>
+                <h3 className='basicinfotitle'>Floors <span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing </h3>
+                <h3 className='basicinfotitle'>Furnishing <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Unfurnished</option>
@@ -958,7 +930,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Garden</h3>
+                <h3 className='basicinfotitle'>Garden<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -966,7 +938,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Gated Community</h3>
+                <h3 className='basicinfotitle'>Gated Community<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -976,29 +948,29 @@ const ProductCreation = () => {
             </div></div>)}
         {propertyType === "Apartment" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
+                <h3 className='basicinfotitle'>Built-up Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Floor Number</h3>
+                <h3 className='basicinfotitle'>Floor Number<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bedrooms</h3>
+                <h3 className='basicinfotitle'>Bedrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bathrooms</h3>
+                <h3 className='basicinfotitle'>Bathrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Total Floors </h3>
+                <h3 className='basicinfotitle'>Total Floors <span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing </h3>
+                <h3 className='basicinfotitle'>Furnishing <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Unfurnished</option>
@@ -1007,11 +979,11 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Society Name</h3>
+                <h3 className='basicinfotitle'>Society Name<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., My Home Booja" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Maintenance Charges</h3>
+                <h3 className='basicinfotitle'>Maintenance Charges<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Included</option>
@@ -1022,7 +994,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Lift</h3>
+                <h3 className='basicinfotitle'>Lift<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1030,15 +1002,15 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Amenities  </h3>
+                <h3 className='basicinfotitle'>Amenities  <span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Gym, Pool" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Balcony Count</h3>
+                <h3 className='basicinfotitle'>Balcony Count<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Parking Type</h3>
+                <h3 className='basicinfotitle'>Parking Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>No</option>
@@ -1050,29 +1022,29 @@ const ProductCreation = () => {
             </div>)}
         {propertyType === "Flat" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
+                <h3 className='basicinfotitle'>Built-up Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Floor Number</h3>
+                <h3 className='basicinfotitle'>Floor Number<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bedrooms</h3>
+                <h3 className='basicinfotitle'>Bedrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bathrooms</h3>
+                <h3 className='basicinfotitle'>Bathrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Total Floors </h3>
+                <h3 className='basicinfotitle'>Total Floors <span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing </h3>
+                <h3 className='basicinfotitle'>Furnishing <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Unfurnished</option>
@@ -1081,11 +1053,11 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Society Name</h3>
+                <h3 className='basicinfotitle'>Society Name<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., My Home Booja" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Maintenance Charges</h3>
+                <h3 className='basicinfotitle'>Maintenance Charges<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Included</option>
@@ -1096,7 +1068,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Lift</h3>
+                <h3 className='basicinfotitle'>Lift<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1104,15 +1076,15 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Amenities  </h3>
+                <h3 className='basicinfotitle'>Amenities  <span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Gym, Pool" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Balcony Count</h3>
+                <h3 className='basicinfotitle'>Balcony Count<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Parking Type</h3>
+                <h3 className='basicinfotitle'>Parking Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>No</option>
@@ -1124,21 +1096,21 @@ const ProductCreation = () => {
             </div>)}
         {propertyType === "Plot" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Dimensions</h3>
+                <h3 className='basicinfotitle'>Plot Dimensions<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 300 x 400" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
+                <h3 className='basicinfotitle'>Plot Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Road Width</h3>
+                <h3 className='basicinfotitle'>Road Width<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 20 ft" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Approval Type </h3>
+                <h3 className='basicinfotitle'>Approval Type <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>DTCP</option>
@@ -1149,7 +1121,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Boundary Wall </h3>
+                <h3 className='basicinfotitle'>Boundary Wall <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1157,7 +1129,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Corner Plot</h3>
+                <h3 className='basicinfotitle'>Corner Plot<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1165,7 +1137,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Electricity Available</h3>
+                <h3 className='basicinfotitle'>Electricity Available<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1175,7 +1147,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Water Connection </h3>
+                <h3 className='basicinfotitle'>Water Connection <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Municipal</option>
@@ -1188,21 +1160,21 @@ const ProductCreation = () => {
             </div>)}
         {propertyType === "Land" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Dimensions</h3>
+                <h3 className='basicinfotitle'>Plot Dimensions<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 300 x 400" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
+                <h3 className='basicinfotitle'>Plot Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Road Width</h3>
+                <h3 className='basicinfotitle'>Road Width<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 20 ft" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Approval Type </h3>
+                <h3 className='basicinfotitle'>Approval Type <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>DTCP</option>
@@ -1213,7 +1185,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Boundary Wall </h3>
+                <h3 className='basicinfotitle'>Boundary Wall <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1221,7 +1193,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Corner Plot</h3>
+                <h3 className='basicinfotitle'>Corner Plot<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1229,7 +1201,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Electricity Available</h3>
+                <h3 className='basicinfotitle'>Electricity Available<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1239,7 +1211,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Water Connection </h3>
+                <h3 className='basicinfotitle'>Water Connection <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Municipal</option>
@@ -1251,7 +1223,7 @@ const ProductCreation = () => {
             </div></div>)}
         {propertyType === "Commercial" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Commercial Type</h3>
+                <h3 className='basicinfotitle'>Commercial Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Office</option>
@@ -1262,15 +1234,15 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
+                <h3 className='basicinfotitle'>Built-up Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Floor</h3>
+                <h3 className='basicinfotitle'>Floor<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Parking</h3>
+                <h3 className='basicinfotitle'>Parking<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1280,7 +1252,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Suitable For </h3>
+                <h3 className='basicinfotitle'>Suitable For <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Office</option>
@@ -1291,7 +1263,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Washroom</h3>
+                <h3 className='basicinfotitle'>Washroom<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Private</option>
@@ -1300,7 +1272,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Power Load</h3>
+                <h3 className='basicinfotitle'>Power Load<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 5 KW" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
@@ -1315,7 +1287,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Fire Safety Compliance</h3>
+                <h3 className='basicinfotitle'>Fire Safety Compliance<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1330,25 +1302,25 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Vehicle specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Brand</h3>
+                <h3 className='basicinfotitle'>Brand<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Mercedes-Benz" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Model</h3>
+                <h3 className='basicinfotitle'>Model<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., S-Class" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Year of Manufacture</h3>
+                <h3 className='basicinfotitle'>Year of Manufacture<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2020" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>KM Driven</h3>
+                <h3 className='basicinfotitle'>KM Driven<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 25000" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>No of Owners</h3>
+                <h3 className='basicinfotitle'>No of Owners<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>1st Owner</option>
@@ -1358,7 +1330,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Fuel Type</h3>
+                <h3 className='basicinfotitle'>Fuel Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Petrol</option>
@@ -1369,7 +1341,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition</h3>
+                <h3 className='basicinfotitle'>Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Excellent</option>
@@ -1378,7 +1350,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Transmission</h3>
+                <h3 className='basicinfotitle'>Transmission<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Manual</option>
@@ -1389,7 +1361,7 @@ const ProductCreation = () => {
         </div>
          <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Tyres</h3>
+                <h3 className='basicinfotitle'>Tyres<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Brand New</option>
@@ -1398,11 +1370,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Color</h3>
+                <h3 className='basicinfotitle'>Color<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Silver" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Accident History</h3>
+                <h3 className='basicinfotitle'>Accident History<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1410,7 +1382,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Service History</h3>
+                <h3 className='basicinfotitle'>Service History<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Available</option>
@@ -1420,7 +1392,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Number of Keys</h3>
+                <h3 className='basicinfotitle'>Number of Keys<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>1</option>
@@ -1429,7 +1401,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Seller Type</h3>
+                <h3 className='basicinfotitle'>Seller Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Owner</option>
@@ -1437,7 +1409,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Negotiable</h3>
+                <h3 className='basicinfotitle'>Negotiable<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1445,13 +1417,13 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Registration State</h3>
+                <h3 className='basicinfotitle'>Registration State<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Maharashtra" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Insurance Validity</h3>
+                <h3 className='basicinfotitle'>Insurance Validity<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Active</option>
@@ -1459,7 +1431,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>RC Available</h3>
+                <h3 className='basicinfotitle'>RC Available<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes / Available</option>
@@ -1473,29 +1445,29 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Vehicle specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Brand</h3>
+                <h3 className='basicinfotitle'>Brand<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Royal Enfield" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Model</h3>
+                <h3 className='basicinfotitle'>Model<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Classic 350" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Variant</h3>
+                <h3 className='basicinfotitle'>Variant<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Standard" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Year of Manufacture</h3>
+                <h3 className='basicinfotitle'>Year of Manufacture<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2020" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>KM Driven</h3>
+                <h3 className='basicinfotitle'>KM Driven<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 25000" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>No of Owners</h3>
+                <h3 className='basicinfotitle'>No of Owners<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>1st Owner</option>
@@ -1505,7 +1477,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Fuel Type</h3>
+                <h3 className='basicinfotitle'>Fuel Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Petrol</option>
@@ -1516,7 +1488,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition</h3>
+                <h3 className='basicinfotitle'>Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Excellent</option>
@@ -1527,7 +1499,7 @@ const ProductCreation = () => {
         </div>
          <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Seller Type</h3>
+                <h3 className='basicinfotitle'>Seller Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Owner</option>
@@ -1535,7 +1507,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Negotiable</h3>
+                <h3 className='basicinfotitle'>Negotiable<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1543,11 +1515,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Registration State</h3>
+                <h3 className='basicinfotitle'>Registration State<span className="required-star">*</span></h3>
                 <input type="text" placeholder="Select" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Insurance Status</h3>
+                <h3 className='basicinfotitle'>Insurance Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Valid</option>
@@ -1557,7 +1529,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>RC Available</h3>
+                <h3 className='basicinfotitle'>RC Available<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes / Available</option>
@@ -1565,7 +1537,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>PUC</h3>
+                <h3 className='basicinfotitle'>PUC<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Current</option>
@@ -1579,7 +1551,7 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Furniture specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furniture Type</h3>
+                <h3 className='basicinfotitle'>Furniture Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Sofa</option>
@@ -1597,7 +1569,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Material</h3>
+                <h3 className='basicinfotitle'>Material<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Solid Wood</option>
@@ -1613,7 +1585,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition</h3>
+                <h3 className='basicinfotitle'>Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Brand New</option>
@@ -1622,7 +1594,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Usage Condition</h3>
+                <h3 className='basicinfotitle'>Usage Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Never Used</option>
@@ -1634,7 +1606,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Brand</h3>
+                <h3 className='basicinfotitle'>Brand<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Custom</option>
@@ -1642,21 +1614,21 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Dimensions</h3>
+                <h3 className='basicinfotitle'>Dimensions<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 180 × 90 × 75 cm" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Color / Finish</h3>
+                <h3 className='basicinfotitle'>Color / Finish<span className="required-star">*</span></h3>
                 <input type="text" placeholder="Enter Color" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Seating Capacity</h3>
+                <h3 className='basicinfotitle'>Seating Capacity<span className="required-star">*</span></h3>
                 <input type="number" placeholder="Enter Seating Capacity" className="basicinfoinput2" />
             </div>  
         </div>
          <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Age of Furniture</h3>
+                <h3 className='basicinfotitle'>Age of Furniture<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Less than 1 Year</option>
@@ -1666,7 +1638,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Assembly Required</h3>
+                <h3 className='basicinfotitle'>Assembly Required<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1674,11 +1646,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Original Purchase Price</h3>
+                <h3 className='basicinfotitle'>Original Purchase Price<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 45000" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Reason for Selling</h3>
+                <h3 className='basicinfotitle'>Reason for Selling<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Relocation</option>
@@ -1691,7 +1663,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Seller Type</h3>
+                <h3 className='basicinfotitle'>Seller Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Owner</option>
@@ -1705,7 +1677,7 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Item specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Item Type</h3>
+                <h3 className='basicinfotitle'>Item Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2" value={ItemType} onChange={(e) => setItemType(e.target.value)}>
                     <option value="">Select type<FaChevronDown /></option>
                     <option value="Jewellery">Jewellery</option>
@@ -1713,7 +1685,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition</h3>
+                <h3 className='basicinfotitle'>Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Brand New</option>
@@ -1721,7 +1693,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Gender</h3>
+                <h3 className='basicinfotitle'>Gender<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Male</option>
@@ -1730,7 +1702,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Invoice Available</h3>
+                <h3 className='basicinfotitle'>Invoice Available<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1740,7 +1712,7 @@ const ProductCreation = () => {
         </div>
         {ItemType === "Jewellery" && (<div><div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Type</h3>
+                <h3 className='basicinfotitle'>Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Ring</option>
@@ -1754,7 +1726,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Material</h3>
+                <h3 className='basicinfotitle'>Material<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Gold</option>
@@ -1765,11 +1737,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Weight</h3>
+                <h3 className='basicinfotitle'>Weight<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 10g" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Purity</h3>
+                <h3 className='basicinfotitle'>Purity<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>18K</option>
@@ -1781,7 +1753,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Certification</h3>
+                <h3 className='basicinfotitle'>Certification<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>BIS</option>
@@ -1791,7 +1763,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Making Charges</h3>
+                <h3 className='basicinfotitle'>Making Charges<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Included</option>
@@ -1799,7 +1771,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Hallmark Type</h3>
+                <h3 className='basicinfotitle'>Hallmark Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>BIS</option>
@@ -1811,15 +1783,15 @@ const ProductCreation = () => {
         </div>)}
         {ItemType === "Watch" && (<div><div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Brand</h3>
+                <h3 className='basicinfotitle'>Brand<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Rolex" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Model</h3>
+                <h3 className='basicinfotitle'>Model<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., X100" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Dial Type</h3>
+                <h3 className='basicinfotitle'>Dial Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Analog</option>
@@ -1828,7 +1800,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Strap Type</h3>
+                <h3 className='basicinfotitle'>Strap Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Leather</option>
@@ -1840,7 +1812,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Box & Papers</h3>
+                <h3 className='basicinfotitle'>Box & Papers<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Available</option>
@@ -1848,11 +1820,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Year of Purchase</h3>
+                <h3 className='basicinfotitle'>Year of Purchase<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2024" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Working Condition</h3>
+                <h3 className='basicinfotitle'>Working Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Working</option>
@@ -1860,7 +1832,7 @@ const ProductCreation = () => {
                 </select>
             </div>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Original Parts</h3>
+                <h3 className='basicinfotitle'>Original Parts<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1874,7 +1846,7 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Item specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Art Type</h3>
+                <h3 className='basicinfotitle'>Art Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Sculpture</option>
@@ -1884,11 +1856,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Artist Name</h3>
+                <h3 className='basicinfotitle'>Artist Name<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Monica" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Medium</h3>
+                <h3 className='basicinfotitle'>Medium<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Oil</option>
@@ -1898,17 +1870,17 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Size</h3>
+                <h3 className='basicinfotitle'>Size<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 4ft" className="basicinfoinput2" />
             </div>
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Year Created</h3>
+                <h3 className='basicinfotitle'>Year Created<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2024" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Signed</h3>
+                <h3 className='basicinfotitle'>Signed<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1916,7 +1888,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Certificate</h3>
+                <h3 className='basicinfotitle'>Certificate<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1924,7 +1896,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Framed</h3>
+                <h3 className='basicinfotitle'>Framed<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1938,7 +1910,7 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Antique specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Antique Type</h3>
+                <h3 className='basicinfotitle'>Antique Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Furniture</option>
@@ -1948,21 +1920,21 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Approximate Age</h3>
+                <h3 className='basicinfotitle'>Approximate Age<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 150" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Origin</h3>
+                <h3 className='basicinfotitle'>Origin<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Indian, Japanese" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Material</h3>
+                <h3 className='basicinfotitle'>Material<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Bronze, Wood" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition</h3>
+                <h3 className='basicinfotitle'>Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Excellent</option>
@@ -1971,7 +1943,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Restoration</h3>
+                <h3 className='basicinfotitle'>Restoration<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -1979,7 +1951,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Documentation</h3>
+                <h3 className='basicinfotitle'>Documentation<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Available</option>
@@ -1987,7 +1959,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Historical Period</h3>
+                <h3 className='basicinfotitle'>Historical Period<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Colonial</option>
@@ -2003,11 +1975,11 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Collectable specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Item Type</h3>
+                <h3 className='basicinfotitle'>Item Type<span className="required-star">*</span></h3>
                 <input type="text" placeholder="Enter Type" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Rarity Level</h3>
+                <h3 className='basicinfotitle'>Rarity Level<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Common</option>
@@ -2017,7 +1989,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Limited Edition</h3>
+                <h3 className='basicinfotitle'>Limited Edition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -2025,7 +1997,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Serial Number</h3>
+                <h3 className='basicinfotitle'>Serial Number<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Available</option>
@@ -2035,7 +2007,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Authentication</h3>
+                <h3 className='basicinfotitle'>Authentication<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -2043,7 +2015,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition Grade</h3>
+                <h3 className='basicinfotitle'>Condition Grade<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Fair</option>
@@ -2058,15 +2030,15 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>General Item information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Item Category</h3>
+                <h3 className='basicinfotitle'>Item Category<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Electronics, Books" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Brand</h3>
+                <h3 className='basicinfotitle'>Brand<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Sony, Apple" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition</h3>
+                <h3 className='basicinfotitle'>Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>New</option>
@@ -2074,7 +2046,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Usage</h3>
+                <h3 className='basicinfotitle'>Usage<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Unused</option>
@@ -2085,7 +2057,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Warranty</h3>
+                <h3 className='basicinfotitle'>Warranty<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Available</option>
@@ -2094,11 +2066,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Purchase Year</h3>
+                <h3 className='basicinfotitle'>Purchase Year<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2021" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Reason for Selling</h3>
+                <h3 className='basicinfotitle'>Reason for Selling<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Upgrade</option>
@@ -2108,7 +2080,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Additional Notes</h3>
+                <h3 className='basicinfotitle'>Additional Notes<span className="required-star">*</span></h3>
                 <input type="text" placeholder="Any additional information..." className="basicinfoinput2" />
             </div>  
         </div>
@@ -2205,7 +2177,7 @@ const ProductCreation = () => {
     <div className='basicinfoform'>
         <h3 className='basicinfotitle'>Basic Information</h3>
         <span className='basicinfodesc'>Enter the basic details and upload media for the product</span>
-        <h3 className='basicinfotitle'>Product Images</h3>
+        <h3 className='basicinfotitle'>Product Images<span className="required-star">*</span></h3>
         <ul className='selectedcategory2'>
                 <li className='selectedcaticon2' onClick={handleIconClick} style={{ cursor: "pointer" }}><FiUpload /></li>
                 <li className='selectedcatname1'>Click to upload or drag and drop</li>
@@ -2252,11 +2224,11 @@ const ProductCreation = () => {
                 <input type="number" inputMode="numeric" placeholder="e.g., 55000000" className="basicinfoinput1" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>City</h3>
+                <h3 className='basicinfotitle'>City<span className="required-star">*</span></h3>
                 <input type="text" placeholder="Enter City" className="basicinfoinput1" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Country</h3>
+                <h3 className='basicinfotitle'>Country<span className="required-star">*</span></h3>
                 <select ref={marketplaceCountryRef} defaultValue="INDIA" className="basicinfoinput1">
                     <option value="INDIA">India</option>
                     <option value="UNITED STATES">United States</option>
@@ -2273,9 +2245,9 @@ const ProductCreation = () => {
                 </select>
             </div>
         </div>
-        <h3 className='basicinfotitle'>Social Media Link</h3>
+        <h3 className='basicinfotitle'>Social Media Link<span className="required-star">*</span></h3>
         <input type="url" placeholder="Youtube, Instagram url" className="basicinfoinput" />
-        <h3 className='basicinfotitle'>Description</h3>
+        <h3 className='basicinfotitle'>Description<span className="required-star">*</span></h3>
         <textarea rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
     </div>
     {activeTab === "realestate" &&
@@ -2284,7 +2256,7 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Enter property-specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Property Type</h3>
+                <h3 className='basicinfotitle'>Property Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2" value={propertyType} onChange={(e) => setPropertyType(e.target.value)}>
                     <option value="">Select type<FaChevronDown /></option>
                     <option value="House">House</option>
@@ -2297,15 +2269,15 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Area / Locality</h3>
+                <h3 className='basicinfotitle'>Area / Locality<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Bandra West" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Landmark</h3>
+                <h3 className='basicinfotitle'>Landmark<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Near City Mall" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Ownership Type</h3>
+                <h3 className='basicinfotitle'>Ownership Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Freehold</option>
@@ -2317,7 +2289,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Approval Status</h3>
+                <h3 className='basicinfotitle'>Approval Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type <FaChevronDown /></option>
                     <option>RERA Approved</option>
@@ -2327,7 +2299,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Availability</h3>
+                <h3 className='basicinfotitle'>Availability<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type <FaChevronDown /></option>
                     <option>Immediate</option>
@@ -2338,11 +2310,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Age of Property</h3>
+                <h3 className='basicinfotitle'>Age of Property<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 5" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Facing</h3>
+                <h3 className='basicinfotitle'>Facing<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type <FaChevronDown /></option>
                     <option>North</option>
@@ -2357,7 +2329,7 @@ const ProductCreation = () => {
             </div>  
         </div>
          <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>No of Car Parking</h3>
+                <h3 className='basicinfotitle'>No of Car Parking<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>1</option>
@@ -2369,29 +2341,29 @@ const ProductCreation = () => {
          {propertyType === "House" && (<div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
+                <h3 className='basicinfotitle'>Built-up Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
+                <h3 className='basicinfotitle'>Plot Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bedrooms</h3>
+                <h3 className='basicinfotitle'>Bedrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bathrooms</h3>
+                <h3 className='basicinfotitle'>Bathrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Floors </h3>
+                <h3 className='basicinfotitle'>Floors <span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing </h3>
+                <h3 className='basicinfotitle'>Furnishing <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Unfurnished</option>
@@ -2400,7 +2372,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Garden</h3>
+                <h3 className='basicinfotitle'>Garden<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -2408,7 +2380,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Gated Community</h3>
+                <h3 className='basicinfotitle'>Gated Community<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -2420,29 +2392,29 @@ const ProductCreation = () => {
         )}
         {propertyType === "Villa" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
+                <h3 className='basicinfotitle'>Built-up Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
+                <h3 className='basicinfotitle'>Plot Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bedrooms</h3>
+                <h3 className='basicinfotitle'>Bedrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bathrooms</h3>
+                <h3 className='basicinfotitle'>Bathrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Floors </h3>
+                <h3 className='basicinfotitle'>Floors <span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing </h3>
+                <h3 className='basicinfotitle'>Furnishing <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Unfurnished</option>
@@ -2451,7 +2423,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Garden</h3>
+                <h3 className='basicinfotitle'>Garden<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -2459,7 +2431,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Gated Community</h3>
+                <h3 className='basicinfotitle'>Gated Community<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -2469,29 +2441,29 @@ const ProductCreation = () => {
             </div></div>)}
         {propertyType === "Apartment" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
+                <h3 className='basicinfotitle'>Built-up Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Floor Number</h3>
+                <h3 className='basicinfotitle'>Floor Number<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bedrooms</h3>
+                <h3 className='basicinfotitle'>Bedrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bathrooms</h3>
+                <h3 className='basicinfotitle'>Bathrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Total Floors </h3>
+                <h3 className='basicinfotitle'>Total Floors <span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing </h3>
+                <h3 className='basicinfotitle'>Furnishing <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Unfurnished</option>
@@ -2500,11 +2472,11 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Society Name</h3>
+                <h3 className='basicinfotitle'>Society Name<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., My Home Booja" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Maintenance Charges</h3>
+                <h3 className='basicinfotitle'>Maintenance Charges<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Included</option>
@@ -2515,7 +2487,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Lift</h3>
+                <h3 className='basicinfotitle'>Lift<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -2523,15 +2495,15 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Amenities  </h3>
+                <h3 className='basicinfotitle'>Amenities  <span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Gym, Pool" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Balcony Count</h3>
+                <h3 className='basicinfotitle'>Balcony Count<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Parking Type</h3>
+                <h3 className='basicinfotitle'>Parking Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>No</option>
@@ -2543,29 +2515,29 @@ const ProductCreation = () => {
             </div>)}
         {propertyType === "Flat" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
+                <h3 className='basicinfotitle'>Built-up Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Floor Number</h3>
+                <h3 className='basicinfotitle'>Floor Number<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bedrooms</h3>
+                <h3 className='basicinfotitle'>Bedrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bathrooms</h3>
+                <h3 className='basicinfotitle'>Bathrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Total Floors </h3>
+                <h3 className='basicinfotitle'>Total Floors <span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing </h3>
+                <h3 className='basicinfotitle'>Furnishing <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Unfurnished</option>
@@ -2574,11 +2546,11 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Society Name</h3>
+                <h3 className='basicinfotitle'>Society Name<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., My Home Booja" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Maintenance Charges</h3>
+                <h3 className='basicinfotitle'>Maintenance Charges<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Included</option>
@@ -2589,7 +2561,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Lift</h3>
+                <h3 className='basicinfotitle'>Lift<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -2597,15 +2569,15 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Amenities  </h3>
+                <h3 className='basicinfotitle'>Amenities  <span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Gym, Pool" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Balcony Count</h3>
+                <h3 className='basicinfotitle'>Balcony Count<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Parking Type</h3>
+                <h3 className='basicinfotitle'>Parking Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>No</option>
@@ -2617,21 +2589,21 @@ const ProductCreation = () => {
             </div>)}
         {propertyType === "Plot" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Dimensions</h3>
+                <h3 className='basicinfotitle'>Plot Dimensions<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 300 x 400" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
+                <h3 className='basicinfotitle'>Plot Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Road Width</h3>
+                <h3 className='basicinfotitle'>Road Width<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 20 ft" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Approval Type </h3>
+                <h3 className='basicinfotitle'>Approval Type <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>DTCP</option>
@@ -2642,7 +2614,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Boundary Wall </h3>
+                <h3 className='basicinfotitle'>Boundary Wall <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -2650,7 +2622,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Corner Plot</h3>
+                <h3 className='basicinfotitle'>Corner Plot<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -2658,7 +2630,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Electricity Available</h3>
+                <h3 className='basicinfotitle'>Electricity Available<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -2668,7 +2640,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Water Connection </h3>
+                <h3 className='basicinfotitle'>Water Connection <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Municipal</option>
@@ -2681,21 +2653,21 @@ const ProductCreation = () => {
             </div>)}
         {propertyType === "Land" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Dimensions</h3>
+                <h3 className='basicinfotitle'>Plot Dimensions<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 300 x 400" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
+                <h3 className='basicinfotitle'>Plot Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Road Width</h3>
+                <h3 className='basicinfotitle'>Road Width<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 20 ft" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Approval Type </h3>
+                <h3 className='basicinfotitle'>Approval Type <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>DTCP</option>
@@ -2706,7 +2678,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Boundary Wall </h3>
+                <h3 className='basicinfotitle'>Boundary Wall <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -2714,7 +2686,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Corner Plot</h3>
+                <h3 className='basicinfotitle'>Corner Plot<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -2722,7 +2694,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Electricity Available</h3>
+                <h3 className='basicinfotitle'>Electricity Available<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -2732,7 +2704,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Water Connection </h3>
+                <h3 className='basicinfotitle'>Water Connection <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Municipal</option>
@@ -2744,7 +2716,7 @@ const ProductCreation = () => {
             </div></div>)}
         {propertyType === "Commercial" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Commercial Type</h3>
+                <h3 className='basicinfotitle'>Commercial Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Office</option>
@@ -2755,15 +2727,15 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
+                <h3 className='basicinfotitle'>Built-up Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Floor</h3>
+                <h3 className='basicinfotitle'>Floor<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Parking</h3>
+                <h3 className='basicinfotitle'>Parking<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -2773,7 +2745,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Suitable For </h3>
+                <h3 className='basicinfotitle'>Suitable For <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Office</option>
@@ -2784,7 +2756,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Washroom</h3>
+                <h3 className='basicinfotitle'>Washroom<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Private</option>
@@ -2793,7 +2765,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Power Load</h3>
+                <h3 className='basicinfotitle'>Power Load<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 5 KW" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
@@ -2808,7 +2780,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Fire Safety Compliance</h3>
+                <h3 className='basicinfotitle'>Fire Safety Compliance<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -2823,25 +2795,25 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Vehicle specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Brand</h3>
+                <h3 className='basicinfotitle'>Brand<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Mercedes-Benz" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Model</h3>
+                <h3 className='basicinfotitle'>Model<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., S-Class" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Year of Manufacture</h3>
+                <h3 className='basicinfotitle'>Year of Manufacture<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2020" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>KM Driven</h3>
+                <h3 className='basicinfotitle'>KM Driven<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 25000" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>No of Owners</h3>
+                <h3 className='basicinfotitle'>No of Owners<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>1st Owner</option>
@@ -2851,7 +2823,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Fuel Type</h3>
+                <h3 className='basicinfotitle'>Fuel Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Petrol</option>
@@ -2862,7 +2834,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition</h3>
+                <h3 className='basicinfotitle'>Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Excellent</option>
@@ -2871,7 +2843,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Transmission</h3>
+                <h3 className='basicinfotitle'>Transmission<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Manual</option>
@@ -2882,7 +2854,7 @@ const ProductCreation = () => {
         </div>
          <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Tyres</h3>
+                <h3 className='basicinfotitle'>Tyres<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Brand New</option>
@@ -2891,11 +2863,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Color</h3>
+                <h3 className='basicinfotitle'>Color<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Silver" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Accident History</h3>
+                <h3 className='basicinfotitle'>Accident History<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -2903,7 +2875,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Service History</h3>
+                <h3 className='basicinfotitle'>Service History<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Available</option>
@@ -2913,7 +2885,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Number of Keys</h3>
+                <h3 className='basicinfotitle'>Number of Keys<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>1</option>
@@ -2922,7 +2894,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Seller Type</h3>
+                <h3 className='basicinfotitle'>Seller Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Owner</option>
@@ -2930,7 +2902,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Negotiable</h3>
+                <h3 className='basicinfotitle'>Negotiable<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -2938,13 +2910,13 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Registration State</h3>
+                <h3 className='basicinfotitle'>Registration State<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Maharashtra" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Insurance Validity</h3>
+                <h3 className='basicinfotitle'>Insurance Validity<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Active</option>
@@ -2952,7 +2924,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>RC Available</h3>
+                <h3 className='basicinfotitle'>RC Available<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes / Available</option>
@@ -2966,29 +2938,29 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Vehicle specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Brand</h3>
+                <h3 className='basicinfotitle'>Brand<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Royal Enfield" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Model</h3>
+                <h3 className='basicinfotitle'>Model<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Classic 350" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Variant</h3>
+                <h3 className='basicinfotitle'>Variant<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Standard" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Year of Manufacture</h3>
+                <h3 className='basicinfotitle'>Year of Manufacture<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2020" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>KM Driven</h3>
+                <h3 className='basicinfotitle'>KM Driven<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 25000" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>No of Owners</h3>
+                <h3 className='basicinfotitle'>No of Owners<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>1st Owner</option>
@@ -2998,7 +2970,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Fuel Type</h3>
+                <h3 className='basicinfotitle'>Fuel Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Petrol</option>
@@ -3009,7 +2981,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition</h3>
+                <h3 className='basicinfotitle'>Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Excellent</option>
@@ -3020,7 +2992,7 @@ const ProductCreation = () => {
         </div>
          <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Seller Type</h3>
+                <h3 className='basicinfotitle'>Seller Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Owner</option>
@@ -3028,7 +3000,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Negotiable</h3>
+                <h3 className='basicinfotitle'>Negotiable<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -3036,11 +3008,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Registration State</h3>
+                <h3 className='basicinfotitle'>Registration State<span className="required-star">*</span></h3>
                 <input type="text" placeholder="Select" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Insurance Status</h3>
+                <h3 className='basicinfotitle'>Insurance Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Valid</option>
@@ -3050,7 +3022,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>RC Available</h3>
+                <h3 className='basicinfotitle'>RC Available<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes / Available</option>
@@ -3058,7 +3030,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>PUC</h3>
+                <h3 className='basicinfotitle'>PUC<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Current</option>
@@ -3072,7 +3044,7 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Furniture specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furniture Type</h3>
+                <h3 className='basicinfotitle'>Furniture Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Sofa</option>
@@ -3090,7 +3062,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Material</h3>
+                <h3 className='basicinfotitle'>Material<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Solid Wood</option>
@@ -3106,7 +3078,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition</h3>
+                <h3 className='basicinfotitle'>Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Brand New</option>
@@ -3115,7 +3087,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Usage Condition</h3>
+                <h3 className='basicinfotitle'>Usage Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Never Used</option>
@@ -3127,7 +3099,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Brand</h3>
+                <h3 className='basicinfotitle'>Brand<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Custom</option>
@@ -3135,21 +3107,21 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Dimensions</h3>
+                <h3 className='basicinfotitle'>Dimensions<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 180 × 90 × 75 cm" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Color / Finish</h3>
+                <h3 className='basicinfotitle'>Color / Finish<span className="required-star">*</span></h3>
                 <input type="text" placeholder="Enter Color" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Seating Capacity</h3>
+                <h3 className='basicinfotitle'>Seating Capacity<span className="required-star">*</span></h3>
                 <input type="number" placeholder="Enter Seating Capacity" className="basicinfoinput2" />
             </div>  
         </div>
          <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Age of Furniture</h3>
+                <h3 className='basicinfotitle'>Age of Furniture<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Less than 1 Year</option>
@@ -3159,7 +3131,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Assembly Required</h3>
+                <h3 className='basicinfotitle'>Assembly Required<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -3167,11 +3139,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Original Purchase Price</h3>
+                <h3 className='basicinfotitle'>Original Purchase Price<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 45000" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Reason for Selling</h3>
+                <h3 className='basicinfotitle'>Reason for Selling<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Relocation</option>
@@ -3184,7 +3156,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Seller Type</h3>
+                <h3 className='basicinfotitle'>Seller Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Owner</option>
@@ -3198,7 +3170,7 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Item specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Item Type</h3>
+                <h3 className='basicinfotitle'>Item Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2" value={ItemType} onChange={(e) => setItemType(e.target.value)}>
                     <option value="">Select type<FaChevronDown /></option>
                     <option value="Jewellery">Jewellery</option>
@@ -3206,7 +3178,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition</h3>
+                <h3 className='basicinfotitle'>Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Brand New</option>
@@ -3214,7 +3186,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Gender</h3>
+                <h3 className='basicinfotitle'>Gender<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Male</option>
@@ -3223,7 +3195,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Invoice Available</h3>
+                <h3 className='basicinfotitle'>Invoice Available<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -3233,7 +3205,7 @@ const ProductCreation = () => {
         </div>
         {ItemType === "Jewellery" && (<div><div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Type</h3>
+                <h3 className='basicinfotitle'>Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Ring</option>
@@ -3247,7 +3219,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Material</h3>
+                <h3 className='basicinfotitle'>Material<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Gold</option>
@@ -3258,11 +3230,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Weight</h3>
+                <h3 className='basicinfotitle'>Weight<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 10g" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Purity</h3>
+                <h3 className='basicinfotitle'>Purity<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>18K</option>
@@ -3274,7 +3246,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Certification</h3>
+                <h3 className='basicinfotitle'>Certification<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>BIS</option>
@@ -3284,7 +3256,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Making Charges</h3>
+                <h3 className='basicinfotitle'>Making Charges<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Included</option>
@@ -3292,7 +3264,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Hallmark Type</h3>
+                <h3 className='basicinfotitle'>Hallmark Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>BIS</option>
@@ -3304,15 +3276,15 @@ const ProductCreation = () => {
         </div>)}
         {ItemType === "Watch" && (<div><div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Brand</h3>
+                <h3 className='basicinfotitle'>Brand<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Rolex" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Model</h3>
+                <h3 className='basicinfotitle'>Model<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., X100" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Dial Type</h3>
+                <h3 className='basicinfotitle'>Dial Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Analog</option>
@@ -3321,7 +3293,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Strap Type</h3>
+                <h3 className='basicinfotitle'>Strap Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Leather</option>
@@ -3333,7 +3305,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Box & Papers</h3>
+                <h3 className='basicinfotitle'>Box & Papers<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Available</option>
@@ -3341,11 +3313,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Year of Purchase</h3>
+                <h3 className='basicinfotitle'>Year of Purchase<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2024" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Working Condition</h3>
+                <h3 className='basicinfotitle'>Working Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Working</option>
@@ -3353,7 +3325,7 @@ const ProductCreation = () => {
                 </select>
             </div>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Original Parts</h3>
+                <h3 className='basicinfotitle'>Original Parts<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -3367,7 +3339,7 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Item specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Art Type</h3>
+                <h3 className='basicinfotitle'>Art Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Sculpture</option>
@@ -3377,11 +3349,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Artist Name</h3>
+                <h3 className='basicinfotitle'>Artist Name<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Monica" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Medium</h3>
+                <h3 className='basicinfotitle'>Medium<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Oil</option>
@@ -3391,17 +3363,17 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Size</h3>
+                <h3 className='basicinfotitle'>Size<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 4ft" className="basicinfoinput2" />
             </div>
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Year Created</h3>
+                <h3 className='basicinfotitle'>Year Created<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2024" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Signed</h3>
+                <h3 className='basicinfotitle'>Signed<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -3409,7 +3381,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Certificate</h3>
+                <h3 className='basicinfotitle'>Certificate<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -3417,7 +3389,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Framed</h3>
+                <h3 className='basicinfotitle'>Framed<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -3431,7 +3403,7 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Antique specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Antique Type</h3>
+                <h3 className='basicinfotitle'>Antique Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Furniture</option>
@@ -3441,21 +3413,21 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Approximate Age</h3>
+                <h3 className='basicinfotitle'>Approximate Age<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 150" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Origin</h3>
+                <h3 className='basicinfotitle'>Origin<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Indian, Japanese" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Material</h3>
+                <h3 className='basicinfotitle'>Material<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Bronze, Wood" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition</h3>
+                <h3 className='basicinfotitle'>Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Excellent</option>
@@ -3464,7 +3436,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Restoration</h3>
+                <h3 className='basicinfotitle'>Restoration<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -3472,7 +3444,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Documentation</h3>
+                <h3 className='basicinfotitle'>Documentation<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Available</option>
@@ -3480,7 +3452,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Historical Period</h3>
+                <h3 className='basicinfotitle'>Historical Period<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Colonial</option>
@@ -3496,11 +3468,11 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Collectable specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Item Type</h3>
+                <h3 className='basicinfotitle'>Item Type<span className="required-star">*</span></h3>
                 <input type="text" placeholder="Enter Type" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Rarity Level</h3>
+                <h3 className='basicinfotitle'>Rarity Level<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Common</option>
@@ -3510,7 +3482,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Limited Edition</h3>
+                <h3 className='basicinfotitle'>Limited Edition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -3518,7 +3490,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Serial Number</h3>
+                <h3 className='basicinfotitle'>Serial Number<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Available</option>
@@ -3528,7 +3500,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Authentication</h3>
+                <h3 className='basicinfotitle'>Authentication<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -3536,7 +3508,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition Grade</h3>
+                <h3 className='basicinfotitle'>Condition Grade<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Fair</option>
@@ -3551,15 +3523,15 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>General Item information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Item Category</h3>
+                <h3 className='basicinfotitle'>Item Category<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Electronics, Books" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Brand</h3>
+                <h3 className='basicinfotitle'>Brand<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Sony, Apple" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition</h3>
+                <h3 className='basicinfotitle'>Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>New</option>
@@ -3567,7 +3539,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Usage</h3>
+                <h3 className='basicinfotitle'>Usage<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Unused</option>
@@ -3578,7 +3550,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Warranty</h3>
+                <h3 className='basicinfotitle'>Warranty<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Available</option>
@@ -3587,11 +3559,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Purchase Year</h3>
+                <h3 className='basicinfotitle'>Purchase Year<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2021" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Reason for Selling</h3>
+                <h3 className='basicinfotitle'>Reason for Selling<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Upgrade</option>
@@ -3601,7 +3573,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Additional Notes</h3>
+                <h3 className='basicinfotitle'>Additional Notes<span className="required-star">*</span></h3>
                 <input type="text" placeholder="Any additional information..." className="basicinfoinput2" />
             </div>  
         </div>
@@ -3698,7 +3670,7 @@ const ProductCreation = () => {
     <div className='basicinfoform'>
         <h3 className='basicinfotitle'>Basic Information</h3>
         <span className='basicinfodesc'>Enter the basic details and upload media for the product</span>
-        <h3 className='basicinfotitle'>Product Images</h3>
+        <h3 className='basicinfotitle'>Product Images<span className="required-star">*</span></h3>
         <ul className='selectedcategory2'>
                 <li className='selectedcaticon2'onClick={handleIconClick} style={{ cursor: "pointer" }}><FiUpload /></li>
                 <li className='selectedcatname1'>Click to upload or drag and drop</li>
@@ -3745,11 +3717,11 @@ const ProductCreation = () => {
                 <input type="number" inputMode="numeric" placeholder="e.g., 55000000" className="basicinfoinput1" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>City</h3>
+                <h3 className='basicinfotitle'>City<span className="required-star">*</span></h3>
                 <input type="text" placeholder="Enter City" className="basicinfoinput1" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Country</h3>
+                <h3 className='basicinfotitle'>Country<span className="required-star">*</span></h3>
                 <select ref={marketplaceCountryRef} defaultValue="INDIA" className="basicinfoinput1">
                     <option value="INDIA">India</option>
                     <option value="UNITED STATES">United States</option>
@@ -3766,9 +3738,9 @@ const ProductCreation = () => {
                 </select>
             </div>
         </div>
-        <h3 className='basicinfotitle'>Social Media Link</h3>
+        <h3 className='basicinfotitle'>Social Media Link<span className="required-star">*</span></h3>
         <input type="url" placeholder="Youtube, Instagram url" className="basicinfoinput" />
-        <h3 className='basicinfotitle'>Description</h3>
+        <h3 className='basicinfotitle'>Description<span className="required-star">*</span></h3>
         <textarea rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
     </div>
     {activeTab === "realestate" &&
@@ -3777,7 +3749,7 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Enter property-specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Property Type</h3>
+                <h3 className='basicinfotitle'>Property Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2" value={propertyType} onChange={(e) => setPropertyType(e.target.value)}>
                     <option value="">Select type<FaChevronDown /></option>
                     <option value="House">House</option>
@@ -3790,15 +3762,15 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Area / Locality</h3>
+                <h3 className='basicinfotitle'>Area / Locality<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Bandra West" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Landmark</h3>
+                <h3 className='basicinfotitle'>Landmark<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Near City Mall" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Ownership Type</h3>
+                <h3 className='basicinfotitle'>Ownership Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Freehold</option>
@@ -3810,7 +3782,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Approval Status</h3>
+                <h3 className='basicinfotitle'>Approval Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type <FaChevronDown /></option>
                     <option>RERA Approved</option>
@@ -3820,7 +3792,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Availability</h3>
+                <h3 className='basicinfotitle'>Availability<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type <FaChevronDown /></option>
                     <option>Immediate</option>
@@ -3831,11 +3803,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Age of Property</h3>
+                <h3 className='basicinfotitle'>Age of Property<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 5" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Facing</h3>
+                <h3 className='basicinfotitle'>Facing<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type <FaChevronDown /></option>
                     <option>North</option>
@@ -3850,7 +3822,7 @@ const ProductCreation = () => {
             </div>  
         </div>
          <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>No of Car Parking</h3>
+                <h3 className='basicinfotitle'>No of Car Parking<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>1</option>
@@ -3862,29 +3834,29 @@ const ProductCreation = () => {
          {propertyType === "House" && (<div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
+                <h3 className='basicinfotitle'>Built-up Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
+                <h3 className='basicinfotitle'>Plot Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bedrooms</h3>
+                <h3 className='basicinfotitle'>Bedrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bathrooms</h3>
+                <h3 className='basicinfotitle'>Bathrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Floors </h3>
+                <h3 className='basicinfotitle'>Floors <span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing </h3>
+                <h3 className='basicinfotitle'>Furnishing <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Unfurnished</option>
@@ -3893,7 +3865,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Garden</h3>
+                <h3 className='basicinfotitle'>Garden<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -3901,7 +3873,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Gated Community</h3>
+                <h3 className='basicinfotitle'>Gated Community<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -3913,29 +3885,29 @@ const ProductCreation = () => {
         )}
         {propertyType === "Villa" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
+                <h3 className='basicinfotitle'>Built-up Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
+                <h3 className='basicinfotitle'>Plot Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bedrooms</h3>
+                <h3 className='basicinfotitle'>Bedrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bathrooms</h3>
+                <h3 className='basicinfotitle'>Bathrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Floors </h3>
+                <h3 className='basicinfotitle'>Floors <span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing </h3>
+                <h3 className='basicinfotitle'>Furnishing <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Unfurnished</option>
@@ -3944,7 +3916,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Garden</h3>
+                <h3 className='basicinfotitle'>Garden<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -3952,7 +3924,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Gated Community</h3>
+                <h3 className='basicinfotitle'>Gated Community<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -3962,29 +3934,29 @@ const ProductCreation = () => {
             </div></div>)}
         {propertyType === "Apartment" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
+                <h3 className='basicinfotitle'>Built-up Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Floor Number</h3>
+                <h3 className='basicinfotitle'>Floor Number<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bedrooms</h3>
+                <h3 className='basicinfotitle'>Bedrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bathrooms</h3>
+                <h3 className='basicinfotitle'>Bathrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Total Floors </h3>
+                <h3 className='basicinfotitle'>Total Floors <span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing </h3>
+                <h3 className='basicinfotitle'>Furnishing <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Unfurnished</option>
@@ -3993,11 +3965,11 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Society Name</h3>
+                <h3 className='basicinfotitle'>Society Name<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., My Home Booja" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Maintenance Charges</h3>
+                <h3 className='basicinfotitle'>Maintenance Charges<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Included</option>
@@ -4008,7 +3980,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Lift</h3>
+                <h3 className='basicinfotitle'>Lift<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4016,15 +3988,15 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Amenities  </h3>
+                <h3 className='basicinfotitle'>Amenities  <span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Gym, Pool" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Balcony Count</h3>
+                <h3 className='basicinfotitle'>Balcony Count<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Parking Type</h3>
+                <h3 className='basicinfotitle'>Parking Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>No</option>
@@ -4036,29 +4008,29 @@ const ProductCreation = () => {
             </div>)}
         {propertyType === "Flat" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
+                <h3 className='basicinfotitle'>Built-up Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Floor Number</h3>
+                <h3 className='basicinfotitle'>Floor Number<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bedrooms</h3>
+                <h3 className='basicinfotitle'>Bedrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Bathrooms</h3>
+                <h3 className='basicinfotitle'>Bathrooms<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Total Floors </h3>
+                <h3 className='basicinfotitle'>Total Floors <span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing </h3>
+                <h3 className='basicinfotitle'>Furnishing <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Unfurnished</option>
@@ -4067,11 +4039,11 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Society Name</h3>
+                <h3 className='basicinfotitle'>Society Name<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., My Home Booja" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Maintenance Charges</h3>
+                <h3 className='basicinfotitle'>Maintenance Charges<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Included</option>
@@ -4082,7 +4054,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Lift</h3>
+                <h3 className='basicinfotitle'>Lift<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4090,15 +4062,15 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Amenities  </h3>
+                <h3 className='basicinfotitle'>Amenities  <span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Gym, Pool" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Balcony Count</h3>
+                <h3 className='basicinfotitle'>Balcony Count<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Parking Type</h3>
+                <h3 className='basicinfotitle'>Parking Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>No</option>
@@ -4110,21 +4082,21 @@ const ProductCreation = () => {
             </div>)}
         {propertyType === "Plot" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Dimensions</h3>
+                <h3 className='basicinfotitle'>Plot Dimensions<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 300 x 400" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
+                <h3 className='basicinfotitle'>Plot Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Road Width</h3>
+                <h3 className='basicinfotitle'>Road Width<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 20 ft" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Approval Type </h3>
+                <h3 className='basicinfotitle'>Approval Type <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>DTCP</option>
@@ -4135,7 +4107,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Boundary Wall </h3>
+                <h3 className='basicinfotitle'>Boundary Wall <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4143,7 +4115,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Corner Plot</h3>
+                <h3 className='basicinfotitle'>Corner Plot<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4151,7 +4123,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Electricity Available</h3>
+                <h3 className='basicinfotitle'>Electricity Available<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4161,7 +4133,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Water Connection </h3>
+                <h3 className='basicinfotitle'>Water Connection <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Municipal</option>
@@ -4174,21 +4146,21 @@ const ProductCreation = () => {
             </div>)}
         {propertyType === "Land" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Dimensions</h3>
+                <h3 className='basicinfotitle'>Plot Dimensions<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 300 x 400" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Plot Area</h3>
+                <h3 className='basicinfotitle'>Plot Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Road Width</h3>
+                <h3 className='basicinfotitle'>Road Width<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 20 ft" className="basicinfoinput2" />
             </div> 
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Approval Type </h3>
+                <h3 className='basicinfotitle'>Approval Type <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>DTCP</option>
@@ -4199,7 +4171,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Boundary Wall </h3>
+                <h3 className='basicinfotitle'>Boundary Wall <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4207,7 +4179,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Corner Plot</h3>
+                <h3 className='basicinfotitle'>Corner Plot<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4215,7 +4187,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Electricity Available</h3>
+                <h3 className='basicinfotitle'>Electricity Available<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4225,7 +4197,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Water Connection </h3>
+                <h3 className='basicinfotitle'>Water Connection <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Municipal</option>
@@ -4237,7 +4209,7 @@ const ProductCreation = () => {
             </div></div>)}
         {propertyType === "Commercial" && (<div><div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Commercial Type</h3>
+                <h3 className='basicinfotitle'>Commercial Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Office</option>
@@ -4248,15 +4220,15 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
+                <h3 className='basicinfotitle'>Built-up Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 1200 sq. yards" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Floor</h3>
+                <h3 className='basicinfotitle'>Floor<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 3" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Parking</h3>
+                <h3 className='basicinfotitle'>Parking<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4266,7 +4238,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Suitable For </h3>
+                <h3 className='basicinfotitle'>Suitable For <span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Office</option>
@@ -4277,7 +4249,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Washroom</h3>
+                <h3 className='basicinfotitle'>Washroom<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Private</option>
@@ -4286,7 +4258,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Power Load</h3>
+                <h3 className='basicinfotitle'>Power Load<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 5 KW" className="basicinfoinput2" />
             </div>
             <div className='basicinfoinputdiv'>
@@ -4301,7 +4273,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Fire Safety Compliance</h3>
+                <h3 className='basicinfotitle'>Fire Safety Compliance<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4316,25 +4288,25 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Vehicle specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Brand</h3>
+                <h3 className='basicinfotitle'>Brand<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Mercedes-Benz" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Model</h3>
+                <h3 className='basicinfotitle'>Model<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., S-Class" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Year of Manufacture</h3>
+                <h3 className='basicinfotitle'>Year of Manufacture<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2020" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>KM Driven</h3>
+                <h3 className='basicinfotitle'>KM Driven<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 25000" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>No of Owners</h3>
+                <h3 className='basicinfotitle'>No of Owners<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>1st Owner</option>
@@ -4344,7 +4316,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Fuel Type</h3>
+                <h3 className='basicinfotitle'>Fuel Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Petrol</option>
@@ -4355,7 +4327,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition</h3>
+                <h3 className='basicinfotitle'>Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Excellent</option>
@@ -4364,7 +4336,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Transmission</h3>
+                <h3 className='basicinfotitle'>Transmission<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Manual</option>
@@ -4375,7 +4347,7 @@ const ProductCreation = () => {
         </div>
          <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Tyres</h3>
+                <h3 className='basicinfotitle'>Tyres<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Brand New</option>
@@ -4384,11 +4356,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Color</h3>
+                <h3 className='basicinfotitle'>Color<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Silver" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Accident History</h3>
+                <h3 className='basicinfotitle'>Accident History<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4396,7 +4368,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Service History</h3>
+                <h3 className='basicinfotitle'>Service History<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Available</option>
@@ -4406,7 +4378,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Number of Keys</h3>
+                <h3 className='basicinfotitle'>Number of Keys<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>1</option>
@@ -4415,7 +4387,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Seller Type</h3>
+                <h3 className='basicinfotitle'>Seller Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Owner</option>
@@ -4423,7 +4395,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Negotiable</h3>
+                <h3 className='basicinfotitle'>Negotiable<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4431,13 +4403,13 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Registration State</h3>
+                <h3 className='basicinfotitle'>Registration State<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Maharashtra" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Insurance Validity</h3>
+                <h3 className='basicinfotitle'>Insurance Validity<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Active</option>
@@ -4445,7 +4417,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>RC Available</h3>
+                <h3 className='basicinfotitle'>RC Available<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes / Available</option>
@@ -4459,29 +4431,29 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Vehicle specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Brand</h3>
+                <h3 className='basicinfotitle'>Brand<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Royal Enfield" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Model</h3>
+                <h3 className='basicinfotitle'>Model<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Classic 350" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Variant</h3>
+                <h3 className='basicinfotitle'>Variant<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Standard" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Year of Manufacture</h3>
+                <h3 className='basicinfotitle'>Year of Manufacture<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2020" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>KM Driven</h3>
+                <h3 className='basicinfotitle'>KM Driven<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 25000" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>No of Owners</h3>
+                <h3 className='basicinfotitle'>No of Owners<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>1st Owner</option>
@@ -4491,7 +4463,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Fuel Type</h3>
+                <h3 className='basicinfotitle'>Fuel Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Petrol</option>
@@ -4502,7 +4474,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition</h3>
+                <h3 className='basicinfotitle'>Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Excellent</option>
@@ -4513,7 +4485,7 @@ const ProductCreation = () => {
         </div>
          <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Seller Type</h3>
+                <h3 className='basicinfotitle'>Seller Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Owner</option>
@@ -4521,7 +4493,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Negotiable</h3>
+                <h3 className='basicinfotitle'>Negotiable<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4529,11 +4501,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Registration State</h3>
+                <h3 className='basicinfotitle'>Registration State<span className="required-star">*</span></h3>
                 <input type="text" placeholder="Select" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Insurance Status</h3>
+                <h3 className='basicinfotitle'>Insurance Status<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Valid</option>
@@ -4543,7 +4515,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>RC Available</h3>
+                <h3 className='basicinfotitle'>RC Available<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes / Available</option>
@@ -4551,7 +4523,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>PUC</h3>
+                <h3 className='basicinfotitle'>PUC<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Current</option>
@@ -4565,7 +4537,7 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Furniture specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furniture Type</h3>
+                <h3 className='basicinfotitle'>Furniture Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Sofa</option>
@@ -4583,7 +4555,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Material</h3>
+                <h3 className='basicinfotitle'>Material<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Solid Wood</option>
@@ -4599,7 +4571,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition</h3>
+                <h3 className='basicinfotitle'>Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Brand New</option>
@@ -4608,7 +4580,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Usage Condition</h3>
+                <h3 className='basicinfotitle'>Usage Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Never Used</option>
@@ -4620,7 +4592,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Brand</h3>
+                <h3 className='basicinfotitle'>Brand<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Custom</option>
@@ -4628,21 +4600,21 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Dimensions</h3>
+                <h3 className='basicinfotitle'>Dimensions<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 180 × 90 × 75 cm" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Color / Finish</h3>
+                <h3 className='basicinfotitle'>Color / Finish<span className="required-star">*</span></h3>
                 <input type="text" placeholder="Enter Color" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Seating Capacity</h3>
+                <h3 className='basicinfotitle'>Seating Capacity<span className="required-star">*</span></h3>
                 <input type="number" placeholder="Enter Seating Capacity" className="basicinfoinput2" />
             </div>  
         </div>
          <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Age of Furniture</h3>
+                <h3 className='basicinfotitle'>Age of Furniture<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Less than 1 Year</option>
@@ -4652,7 +4624,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Assembly Required</h3>
+                <h3 className='basicinfotitle'>Assembly Required<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4660,11 +4632,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Original Purchase Price</h3>
+                <h3 className='basicinfotitle'>Original Purchase Price<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 45000" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Reason for Selling</h3>
+                <h3 className='basicinfotitle'>Reason for Selling<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Relocation</option>
@@ -4677,7 +4649,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Seller Type</h3>
+                <h3 className='basicinfotitle'>Seller Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Owner</option>
@@ -4691,7 +4663,7 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Item specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Item Type</h3>
+                <h3 className='basicinfotitle'>Item Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2" value={ItemType} onChange={(e) => setItemType(e.target.value)}>
                     <option value="">Select type<FaChevronDown /></option>
                     <option value="Jewellery">Jewellery</option>
@@ -4699,7 +4671,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition</h3>
+                <h3 className='basicinfotitle'>Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Brand New</option>
@@ -4707,7 +4679,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Gender</h3>
+                <h3 className='basicinfotitle'>Gender<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Male</option>
@@ -4716,7 +4688,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Invoice Available</h3>
+                <h3 className='basicinfotitle'>Invoice Available<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4726,7 +4698,7 @@ const ProductCreation = () => {
         </div>
         {ItemType === "Jewellery" && (<div><div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Type</h3>
+                <h3 className='basicinfotitle'>Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Ring</option>
@@ -4740,7 +4712,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Material</h3>
+                <h3 className='basicinfotitle'>Material<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Gold</option>
@@ -4751,11 +4723,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Weight</h3>
+                <h3 className='basicinfotitle'>Weight<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 10g" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Purity</h3>
+                <h3 className='basicinfotitle'>Purity<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>18K</option>
@@ -4767,7 +4739,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Certification</h3>
+                <h3 className='basicinfotitle'>Certification<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>BIS</option>
@@ -4777,7 +4749,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Making Charges</h3>
+                <h3 className='basicinfotitle'>Making Charges<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Included</option>
@@ -4785,7 +4757,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Hallmark Type</h3>
+                <h3 className='basicinfotitle'>Hallmark Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>BIS</option>
@@ -4797,15 +4769,15 @@ const ProductCreation = () => {
         </div>)}
         {ItemType === "Watch" && (<div><div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Brand</h3>
+                <h3 className='basicinfotitle'>Brand<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Rolex" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Model</h3>
+                <h3 className='basicinfotitle'>Model<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., X100" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Dial Type</h3>
+                <h3 className='basicinfotitle'>Dial Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Analog</option>
@@ -4814,7 +4786,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Strap Type</h3>
+                <h3 className='basicinfotitle'>Strap Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Leather</option>
@@ -4826,7 +4798,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Box & Papers</h3>
+                <h3 className='basicinfotitle'>Box & Papers<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Available</option>
@@ -4834,11 +4806,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Year of Purchase</h3>
+                <h3 className='basicinfotitle'>Year of Purchase<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2024" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Working Condition</h3>
+                <h3 className='basicinfotitle'>Working Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Working</option>
@@ -4846,7 +4818,7 @@ const ProductCreation = () => {
                 </select>
             </div>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Original Parts</h3>
+                <h3 className='basicinfotitle'>Original Parts<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4860,7 +4832,7 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Item specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Art Type</h3>
+                <h3 className='basicinfotitle'>Art Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Sculpture</option>
@@ -4870,11 +4842,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Artist Name</h3>
+                <h3 className='basicinfotitle'>Artist Name<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Monica" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Medium</h3>
+                <h3 className='basicinfotitle'>Medium<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Oil</option>
@@ -4884,17 +4856,17 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Size</h3>
+                <h3 className='basicinfotitle'>Size<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 4ft" className="basicinfoinput2" />
             </div>
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Year Created</h3>
+                <h3 className='basicinfotitle'>Year Created<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2024" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Signed</h3>
+                <h3 className='basicinfotitle'>Signed<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4902,7 +4874,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Certificate</h3>
+                <h3 className='basicinfotitle'>Certificate<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4910,7 +4882,7 @@ const ProductCreation = () => {
                 </select>
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Framed</h3>
+                <h3 className='basicinfotitle'>Framed<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4924,7 +4896,7 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Antique specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Antique Type</h3>
+                <h3 className='basicinfotitle'>Antique Type<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Furniture</option>
@@ -4934,21 +4906,21 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Approximate Age</h3>
+                <h3 className='basicinfotitle'>Approximate Age<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 150" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Origin</h3>
+                <h3 className='basicinfotitle'>Origin<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Indian, Japanese" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Material</h3>
+                <h3 className='basicinfotitle'>Material<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Bronze, Wood" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition</h3>
+                <h3 className='basicinfotitle'>Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Excellent</option>
@@ -4957,7 +4929,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Restoration</h3>
+                <h3 className='basicinfotitle'>Restoration<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -4965,7 +4937,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Documentation</h3>
+                <h3 className='basicinfotitle'>Documentation<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Available</option>
@@ -4973,7 +4945,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Historical Period</h3>
+                <h3 className='basicinfotitle'>Historical Period<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Colonial</option>
@@ -4989,11 +4961,11 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>Collectable specific information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Item Type</h3>
+                <h3 className='basicinfotitle'>Item Type<span className="required-star">*</span></h3>
                 <input type="text" placeholder="Enter Type" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Rarity Level</h3>
+                <h3 className='basicinfotitle'>Rarity Level<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Common</option>
@@ -5003,7 +4975,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Limited Edition</h3>
+                <h3 className='basicinfotitle'>Limited Edition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -5011,7 +4983,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Serial Number</h3>
+                <h3 className='basicinfotitle'>Serial Number<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Available</option>
@@ -5021,7 +4993,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Authentication</h3>
+                <h3 className='basicinfotitle'>Authentication<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Yes</option>
@@ -5029,7 +5001,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition Grade</h3>
+                <h3 className='basicinfotitle'>Condition Grade<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Fair</option>
@@ -5044,15 +5016,15 @@ const ProductCreation = () => {
         <span className='basicinfodesc'>General Item information</span>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Item Category</h3>
+                <h3 className='basicinfotitle'>Item Category<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Electronics, Books" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Brand</h3>
+                <h3 className='basicinfotitle'>Brand<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Sony, Apple" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Condition</h3>
+                <h3 className='basicinfotitle'>Condition<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>New</option>
@@ -5060,7 +5032,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Usage</h3>
+                <h3 className='basicinfotitle'>Usage<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Unused</option>
@@ -5071,7 +5043,7 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Warranty</h3>
+                <h3 className='basicinfotitle'>Warranty<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Available</option>
@@ -5080,11 +5052,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Purchase Year</h3>
+                <h3 className='basicinfotitle'>Purchase Year<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 2021" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Reason for Selling</h3>
+                <h3 className='basicinfotitle'>Reason for Selling<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
                     <option>Upgrade</option>
@@ -5094,7 +5066,7 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Additional Notes</h3>
+                <h3 className='basicinfotitle'>Additional Notes<span className="required-star">*</span></h3>
                 <input type="text" placeholder="Any additional information..." className="basicinfoinput2" />
             </div>  
         </div>
@@ -5183,7 +5155,7 @@ const ProductCreation = () => {
     <div className='basicinfoform'>
         <h3 className='basicinfotitle'>Basic Information</h3>
         <span className='basicinfodesc'>Enter the basic details and upload media for the product</span>
-        <h3 className='basicinfotitle'>Product Images</h3>
+        <h3 className='basicinfotitle'>Product Images<span className="required-star">*</span></h3>
         <ul className='selectedcategory2'>
                 <li className='selectedcaticon2'onClick={handleIconClick} style={{ cursor: "pointer" }}><FiUpload /></li>
                 <li className='selectedcatname1'>Click to upload or drag and drop</li>
@@ -5234,7 +5206,7 @@ const ProductCreation = () => {
                 <input type="text" placeholder="Enter City" className="basicinfoinput1" />
             </div>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Country</h3>
+                <h3 className='basicinfotitle'>Country<span className="required-star">*</span></h3>
                 <select ref={marketplaceCountryRef} defaultValue="INDIA" className="basicinfoinput1">
                     <option value="INDIA">India</option>
                     <option value="UNITED STATES">United States</option>
@@ -5251,7 +5223,7 @@ const ProductCreation = () => {
                 </select>
             </div>
         </div>
-        <h3 className='basicinfotitle'>Social Media Link</h3>
+        <h3 className='basicinfotitle'>Social Media Link<span className="required-star">*</span></h3>
         <input type="url" placeholder="Youtube, Instagram url" className="basicinfoinput" />
         <h3 className='basicinfotitle'>Description<span className="required-star">*</span></h3>
         <textarea rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
@@ -5293,37 +5265,37 @@ const ProductCreation = () => {
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Property Floor</h3>
+                <h3 className='basicinfotitle'>Property Floor<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 4" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Total No of Floors</h3>
+                <h3 className='basicinfotitle'>Total No of Floors<span className="required-star">*</span></h3>
                 <input type="number" placeholder="e.g., 10" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Carpet Area</h3>
+                <h3 className='basicinfotitle'>Carpet Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 3000 sft" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Built-up Area</h3>
+                <h3 className='basicinfotitle'>Built-up Area<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 2500 sft" className="basicinfoinput2" />
             </div>  
         </div>
         <div className='basicinforow'>  
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Facing</h3>
+                <h3 className='basicinfotitle'>Facing<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., North" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Maintenance Charges</h3>
+                <h3 className='basicinfotitle'>Maintenance Charges<span className="required-star">*</span></h3>
                 <input type="number" inputMode="numeric" placeholder="e.g., 10000" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Available From</h3>
+                <h3 className='basicinfotitle'>Available From<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., 01/03/2026" className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Preferred Tenants</h3>
+                <h3 className='basicinfotitle'>Preferred Tenants<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Families" className="basicinfoinput2" />
             </div>  
         </div>
@@ -5338,11 +5310,11 @@ const ProductCreation = () => {
                 </select>
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Furnishing Items</h3>
+                <h3 className='basicinfotitle'>Furnishing Items<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Sofa, TV," className="basicinfoinput2" />
             </div> 
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Society Amenities</h3>
+                <h3 className='basicinfotitle'>Society Amenities<span className="required-star">*</span></h3>
                 <input type="text" placeholder="e.g., Lift, Power Backup" className="basicinfoinput2" />
             </div>
         </div>
