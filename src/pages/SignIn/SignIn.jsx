@@ -18,7 +18,11 @@ const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(() => {
+    const notice = sessionStorage.getItem('auth_notice');
+    if (notice) sessionStorage.removeItem('auth_notice');
+    return notice || '';
+  });
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {

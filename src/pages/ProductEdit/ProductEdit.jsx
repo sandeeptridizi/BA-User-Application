@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../../lib/api";
+import { MAJOR_CITIES } from "../../../lib/cities";
 import { getFile } from "../../../lib/s3";
 import { AiOutlineShop } from "react-icons/ai";
 import { BsLightningCharge, BsStars } from "react-icons/bs";
@@ -429,7 +430,7 @@ const ProductEdit = () => {
     if (!value.trim()) missing.push(mode === "tolet" ? "Rent" : "Value");
     if (!city?.trim()) missing.push("City");
     if (!country?.trim()) missing.push("Country");
-    if (!socialMediaLink?.trim()) missing.push("Social Media Link");
+    if (existingMedia.length + newFiles.length === 0) missing.push("At least one product image");
     for (const row of fields) {
       for (const field of row) {
         const key = normalizeMetaKey(field.label);
@@ -683,10 +684,14 @@ const ProductEdit = () => {
             <input
               className="basicinfoinput1"
               type="text"
-              placeholder="City"
+              list="majorCitiesList"
+              placeholder="Select or type city"
               value={city}
               onChange={(e) => setCity(e.target.value)}
             />
+            <datalist id="majorCitiesList">
+              {MAJOR_CITIES.map((c) => (<option key={c} value={c} />))}
+            </datalist>
           </div>
           <div className="basicinfoinputdiv">
             <div className="basicinfotitle">Country<span className="required-star">*</span></div>
@@ -710,7 +715,7 @@ const ProductEdit = () => {
             </select>
           </div>
           <div className="basicinfoinputdiv">
-            <div className="basicinfotitle">Social Media Link<span className="required-star">*</span></div>
+            <div className="basicinfotitle">Social Media Link</div>
             <input
               className="basicinfoinput1"
               type="url"
