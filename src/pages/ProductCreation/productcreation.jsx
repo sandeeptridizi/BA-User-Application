@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useRef } from "react";
 import api from "../../../lib/api";
 import { MAJOR_CITIES } from "../../../lib/cities";
+import CityDropdown from "../../components/CityDropdown/CityDropdown";
 import './productcreation.css';
 import { BiLeftArrowAlt } from "react-icons/bi";
 import { useNavigate, useParams } from "react-router-dom";
@@ -43,6 +44,7 @@ const ProductCreation = () => {
   const marketplaceCountryRef = useRef(null);
   const [propertyType, setPropertyType] = useState("");
   const [ItemType, setItemType] = useState("");
+  const [city, setCity] = useState("");
   const [selectedMarketplaceFiles, setSelectedMarketplaceFiles] = useState([]);
   const [marketplaceFilePreviews, setMarketplaceFilePreviews] = useState([]);
   const [selectedVideoFile, setSelectedVideoFile] = useState(null);
@@ -734,10 +736,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>City<span className="required-star">*</span></h3>
-                <input type="text" list="majorCitiesList" placeholder="Select or type city" className="basicinfoinput1" />
-                <datalist id="majorCitiesList">
-                    {MAJOR_CITIES.map((c) => (<option key={c} value={c} />))}
-                </datalist>
+                <CityDropdown value={city} onChange={setCity} suggestions={MAJOR_CITIES} />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Country<span className="required-star">*</span></h3>
@@ -2230,10 +2229,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>City<span className="required-star">*</span></h3>
-                <input type="text" list="majorCitiesList" placeholder="Select or type city" className="basicinfoinput1" />
-                <datalist id="majorCitiesList">
-                    {MAJOR_CITIES.map((c) => (<option key={c} value={c} />))}
-                </datalist>
+                <CityDropdown value={city} onChange={setCity} suggestions={MAJOR_CITIES} />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Country<span className="required-star">*</span></h3>
@@ -3726,10 +3722,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>City<span className="required-star">*</span></h3>
-                <input type="text" list="majorCitiesList" placeholder="Select or type city" className="basicinfoinput1" />
-                <datalist id="majorCitiesList">
-                    {MAJOR_CITIES.map((c) => (<option key={c} value={c} />))}
-                </datalist>
+                <CityDropdown value={city} onChange={setCity} suggestions={MAJOR_CITIES} />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Country<span className="required-star">*</span></h3>
@@ -5214,10 +5207,7 @@ const ProductCreation = () => {
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>City<span className="required-star">*</span></h3>
-                <input type="text" list="majorCitiesList" placeholder="Select or type city" className="basicinfoinput1" />
-                <datalist id="majorCitiesList">
-                    {MAJOR_CITIES.map((c) => (<option key={c} value={c} />))}
-                </datalist>
+                <CityDropdown value={city} onChange={setCity} suggestions={MAJOR_CITIES} />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>Country<span className="required-star">*</span></h3>
