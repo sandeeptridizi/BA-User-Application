@@ -5338,6 +5338,8 @@ const ProductCreation = () => {
                 <h3 className='basicinfotitle'>Lease Duration<span className="required-star">*</span></h3>
                 <select className="basicinfoinput2">
                     <option value="">Select type<FaChevronDown /></option>
+                    <option>3 Months</option>
+                    <option>6 Months</option>
                     <option>11 Months</option>
                     <option>1 Year</option>
                     <option>2 Years</option>
@@ -5366,6 +5368,8 @@ const ProductCreation = () => {
                 <h3 className='basicinfotitle'>Lease Duration<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
+                    <option>3 Months</option>
+                    <option>6 Months</option>
                     <option>11 Months</option>
                     <option>1 Year</option>
                     <option>2 Years</option>
@@ -5404,6 +5408,8 @@ const ProductCreation = () => {
                 <h3 className='basicinfotitle'>Lease Duration<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
+                    <option>3 Months</option>
+                    <option>6 Months</option>
                     <option>11 Months</option>
                     <option>1 Year</option>
                     <option>2 Years</option>
@@ -5442,6 +5448,8 @@ const ProductCreation = () => {
                 <h3 className='basicinfotitle'>Lease Duration<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
+                    <option>3 Months</option>
+                    <option>6 Months</option>
                     <option>11 Months</option>
                     <option>1 Year</option>
                     <option>2 Years</option>
@@ -5480,6 +5488,8 @@ const ProductCreation = () => {
                 <h3 className='basicinfotitle'>Lease Duration<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
+                    <option>3 Months</option>
+                    <option>6 Months</option>
                     <option>11 Months</option>
                     <option>1 Year</option>
                     <option>2 Years</option>
@@ -5518,6 +5528,8 @@ const ProductCreation = () => {
                 <h3 className='basicinfotitle'>Lease Duration<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
+                    <option>3 Months</option>
+                    <option>6 Months</option>
                     <option>11 Months</option>
                     <option>1 Year</option>
                     <option>2 Years</option>
@@ -5556,6 +5568,8 @@ const ProductCreation = () => {
                 <h3 className='basicinfotitle'>Lease Duration<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
+                    <option>3 Months</option>
+                    <option>6 Months</option>
                     <option>11 Months</option>
                     <option>1 Year</option>
                     <option>2 Years</option>
@@ -5594,6 +5608,8 @@ const ProductCreation = () => {
                 <h3 className='basicinfotitle'>Lease Duration<span className="required-star">*</span></h3>
                 <select className="basicinfoinput4">
                     <option value="">Select type<FaChevronDown /></option>
+                    <option>3 Months</option>
+                    <option>6 Months</option>
                     <option>11 Months</option>
                     <option>1 Year</option>
                     <option>2 Years</option>
