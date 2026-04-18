@@ -130,6 +130,10 @@ const Products = () => {
   const userId = user?.id || user?.userId || user?._id;
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     if (!userId) {
       setProducts([]);
       return;
