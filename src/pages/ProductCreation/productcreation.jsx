@@ -2253,7 +2253,7 @@ const ProductCreation = () => {
         <h3 className='basicinfotitle'>Social Media Link</h3>
         <input type="url" placeholder="Youtube, Instagram url" className="basicinfoinput" />
         <h3 className='basicinfotitle'>Description<span className="required-star">*</span></h3>
-        <textarea rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
+        <textarea ref={marketplaceDescriptionRef} rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
     </div>
     {activeTab === "realestate" &&
         <div className='basiccatinputs'>
@@ -3746,7 +3746,7 @@ const ProductCreation = () => {
         <h3 className='basicinfotitle'>Social Media Link</h3>
         <input type="url" placeholder="Youtube, Instagram url" className="basicinfoinput" />
         <h3 className='basicinfotitle'>Description<span className="required-star">*</span></h3>
-        <textarea rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
+        <textarea ref={marketplaceDescriptionRef} rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
     </div>
     {activeTab === "realestate" &&
         <div className='basiccatinputs'>
@@ -5231,7 +5231,7 @@ const ProductCreation = () => {
         <h3 className='basicinfotitle'>Social Media Link</h3>
         <input type="url" placeholder="Youtube, Instagram url" className="basicinfoinput" />
         <h3 className='basicinfotitle'>Description<span className="required-star">*</span></h3>
-        <textarea rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
+        <textarea ref={marketplaceDescriptionRef} rows={4} placeholder="Provide a detailed description of the product..." className="basicinfoinput" />
     </div>
     {activeTab === "residential" &&
         <div className='basiccatinputs'>
