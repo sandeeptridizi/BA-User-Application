@@ -229,6 +229,7 @@ const ProductCreation = () => {
         if (!rawLabel) continue;
         let key = normalizeMetaKey(rawLabel);
         if (!key) continue;
+        if (key === "description" || key === "title" || key === "value" || key === "rent" || key === "country") continue;
 
         if (meta[key] !== undefined) {
           let suffix = 2;
