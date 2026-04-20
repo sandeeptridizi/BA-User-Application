@@ -229,7 +229,7 @@ const ProductCreation = () => {
         if (!rawLabel) continue;
         let key = normalizeMetaKey(rawLabel);
         if (!key) continue;
-        if (key === "description" || key === "title" || key === "value" || key === "rent" || key === "country") continue;
+        if (key === "description" || key === "title" || key === "value" || key === "rent" || key === "country" || key === "startingPrice") continue;
 
         if (meta[key] !== undefined) {
           let suffix = 2;
@@ -349,7 +349,7 @@ const ProductCreation = () => {
 
         if (!title) missing.push("Title");
         if (!description?.trim()) missing.push("Description");
-        if (!rawValue) missing.push(listingMode === "tolet" ? "Rent" : "Value");
+        if (!rawValue) missing.push(listingMode === "tolet" ? "Rent" : listingMode === "auction" ? "Starting Price" : "Value");
         if (marketplaceFilePreviews.length === 0) missing.push("At least one product image");
 
         const inputDivs = Array.from(root?.querySelectorAll(".basicinfoinputdiv") || []);
@@ -3718,8 +3718,12 @@ const ProductCreation = () => {
         <input type="text" placeholder="Please enter your Product Title" className="basicinfoinput" />
         <div className='basicinforow'>
             <div className='basicinfoinputdiv'>
-                <h3 className='basicinfotitle'>Price<span className="required-star">*</span></h3>
-                <input type="number" inputMode="numeric" placeholder="e.g., 55000000" className="basicinfoinput1" />
+                <h3 className='basicinfotitle'>Starting Price<span className="required-star">*</span></h3>
+                <input type="number" inputMode="numeric" min="0" placeholder="e.g., 55000000" className="basicinfoinput1" />
+            </div>
+            <div className='basicinfoinputdiv'>
+                <h3 className='basicinfotitle'>Reserve Price<span className="required-star">*</span></h3>
+                <input type="number" inputMode="numeric" min="0" placeholder="e.g., 60000000" className="basicinfoinput1" />
             </div>
             <div className='basicinfoinputdiv'>
                 <h3 className='basicinfotitle'>City<span className="required-star">*</span></h3>
