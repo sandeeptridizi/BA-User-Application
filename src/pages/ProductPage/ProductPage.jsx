@@ -282,7 +282,7 @@ const ProductPage = () => {
                   <span className="productdetail-value">{product.country}</span>
                 </div>
               )}
-              {meta.city && (
+              {meta.city && product.listingType !== "AUCTIONS" && (
                 <div className="productdetail-item">
                   <span className="productdetail-label">City</span>
                   <span className="productdetail-value">{meta.city}</span>
