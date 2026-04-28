@@ -29,6 +29,8 @@ const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [businessName, setBusinessName] = useState('');
   const [phoneDigits, setPhoneDigits] = useState('');
   const [error, setError] = useState('');
@@ -48,6 +50,10 @@ const SignUp = () => {
     }
     if (!password || password.length < 6 || password.length > 12) {
       setError('Password must be between 6 and 12 characters');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
       return;
     }
 
@@ -196,6 +202,28 @@ const SignUp = () => {
                 style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 8px' }}
               >
                 {showPassword ? <FiEyeOff /> : <FiEye />}
+              </button>
+            </div>
+          </div>
+
+          <div className='sign-in-label-container'>
+            <label className='label-name'>Confirm Password *</label>
+            <div className='sign-in-icon-container'>
+              <FiLock className='mobile-icon' />
+              <input
+                type={showConfirmPassword ? 'text' : 'password'}
+                placeholder='Re-enter your password'
+                className='sign-in-input'
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+              <button
+                type='button'
+                className='password-toggle-btn'
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 8px' }}
+              >
+                {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
               </button>
             </div>
           </div>

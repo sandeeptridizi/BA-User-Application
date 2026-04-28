@@ -5654,7 +5654,7 @@ const ProductCreation = () => {
         <div className="successmodal" onClick={(e) => e.stopPropagation()}>
           <div className="successmodal-icon">&#10003;</div>
           <h2>Product Created Successfully</h2>
-          <p>Your product has been submitted and is now under review.</p>
+          <p>Your product has been submitted and is currently under review. Once approved, your ad will go live within 1-3 hours.</p>
           <button className="successmodal-btn" onClick={() => { setShowSuccessModal(false); navigate("/products"); window.scrollTo(0, 0); }}>Go to My Products</button>
         </div>
       </div>
