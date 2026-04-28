@@ -51,13 +51,14 @@ const SignUp = () => {
       return;
     }
 
+    const digits = phoneDigits.replace(/\D/g, '');
+    if (digits.length < 10 || digits.length > 13) {
+      setError('Enter a valid mobile number (10–13 digits)');
+      return;
+    }
+    const phone = digits;
+
     if (tab === 'phone') {
-      const digits = phoneDigits.replace(/\D/g, '');
-      if (digits.length !== 10) {
-        setError('Enter a valid 10-digit mobile number');
-        return;
-      }
-      const phone = '91' + digits;
       setLoading(true);
       try {
         await api.post('/api/user/otp/send', {
@@ -86,9 +87,6 @@ const SignUp = () => {
         setLoading(false);
       }
     } else {
-      // Email tab: phone is optional
-      const digits = phoneDigits.replace(/\D/g, '');
-      const phone = digits.length === 10 ? '91' + digits : undefined;
       setLoading(true);
       try {
         await api.post('/api/user/otp/send', {
@@ -203,21 +201,20 @@ const SignUp = () => {
           </div>
 
           <div className='sign-in-label-container'>
-            <label className='label-name'>
-              Mobile Number {tab === 'phone' ? '*' : '(Optional)'}
-            </label>
+            <label className='label-name'>Mobile Number *</label>
             <div className='sign-in-icon-container'>
               <TbDeviceMobile className='mobile-icon' />
-              <p>+91</p>
               <input
-                type='text'
-                placeholder='Enter 10-digit mobile number'
+                type='tel'
+                placeholder='Enter mobile number (10–13 digits, include country code)'
                 className='sign-in-input'
                 value={phoneDigits}
                 onChange={(e) =>
-                  setPhoneDigits(e.target.value.replace(/\D/g, '').slice(0, 10))
+                  setPhoneDigits(e.target.value.replace(/\D/g, '').slice(0, 13))
                 }
-                maxLength={10}
+                minLength={10}
+                maxLength={13}
+                required
               />
             </div>
           </div>
